@@ -1,19 +1,23 @@
 [package]
-name = "arc"
+name = "proc"
 version = "0.1.0"
 authors = ["Freddy Wordingham <fjmw201@exeter.ac.uk>"]
 edition = "2018"
 default-run = "main"
-license = "license.txt"
+license = "../../../liscense.txt"
 repository = "https://github.com/FreddyWordingham/arc"
 readme = "README.md"
-keywords = ["physics", "mcrt", "ode", "diffusion"]
-catagories = ["science", "simulation"]
-description = "Simulation code library and binaries by Freddy Wordingham."
+keywords = ["support"]
+catagories = []
+description = "Support attribute macro meta-programming library by Freddy Wordingham."
+
+[lib]
+proc-macro = true
 
 [dependencies]
-attr = { path = "res/crates/attr" }
-proc = { path = "res/crates/proc" }
+proc-macro2 = "1.0.8"
+quote = "1.0.2"
+syn = { version = "1.0.14", features = ["full"] }
 
 # Development profile: "cargo build".
 [profile.dev]
