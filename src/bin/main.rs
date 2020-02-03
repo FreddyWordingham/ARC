@@ -1,1 +1,17 @@
-pub fn main() {}
+//! Main function.
+
+use attr::form;
+use colog;
+use log::info;
+
+#[form]
+struct Parameters {
+    num_phot: f64,
+}
+
+fn main() {
+    colog::init();
+    // banner::title(&exec::name());
+
+    info!("Hello world!");
+}
