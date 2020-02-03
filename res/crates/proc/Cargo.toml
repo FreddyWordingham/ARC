@@ -3,7 +3,6 @@ name = "proc"
 version = "0.1.0"
 authors = ["Freddy Wordingham <fjmw201@exeter.ac.uk>"]
 edition = "2018"
-default-run = "main"
 license = "../../../liscense.txt"
 repository = "https://github.com/FreddyWordingham/arc"
 readme = "README.md"
