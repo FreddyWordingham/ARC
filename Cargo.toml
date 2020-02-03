@@ -1,0 +1,58 @@
+[package]
+name = "arc"
+version = "0.1.0"
+authors = ["Freddy Wordingham <fjmw201@exeter.ac.uk>"]
+edition = "2018"
+default-run = "main"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# attr = { path = "res/crates/attr" }
+# proc = { path = "res/crates/proc" }
+
+# Development profile: "cargo build".
+[profile.dev]
+opt-level = 0
+debug = true
+rpath = false
+lto = false
+debug-assertions = true
+codegen-units = 16
+panic = 'unwind'
+incremental = true
+overflow-checks = true
+
+# Release profile: "cargo build --release"
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = false
+debug-assertions = false
+codegen-units = 16
+panic = 'unwind'
+incremental = false
+overflow-checks = false
+
+# Testing profile: "cargo test"
+[profile.test]
+opt-level = 0
+debug = 2
+rpath = false
+lto = false
+debug-assertions = true
+codegen-units = 16
+incremental = true
+overflow-checks = true
+
+# Benchmark profile: "cargo bench" (and "cargo test --release)".
+[profile.bench]
+opt-level = 3
+debug = false
+rpath = false
+lto = false
+debug-assertions = false
+codegen-units = 16
+incremental = false
+overflow-checks = false
