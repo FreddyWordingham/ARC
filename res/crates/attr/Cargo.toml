@@ -1,0 +1,65 @@
+[package]
+name = "attr"
+version = "0.1.0"
+authors = ["Freddy Wordingham <fjmw201@exeter.ac.uk>"]
+edition = "2018"
+license = "../../../liscense.txt"
+repository = "https://github.com/FreddyWordingham/arc"
+readme = "README.md"
+keywords = ["support"]
+description = "Support attribute macro meta-meta-programming library by Freddy Wordingham."
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc = { path = "../proc" }
+proc-macro2 = "1.0.8"
+quote = "1.0.2"
+syn = { version = "1.0.14", features = ["full"] }
+
+# Development profile: "cargo build".
+[profile.dev]
+opt-level = 0
+debug = true
+rpath = false
+lto = false
+debug-assertions = true
+codegen-units = 16
+panic = 'unwind'
+incremental = true
+overflow-checks = true
+
+# Release profile: "cargo build --release"
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = false
+debug-assertions = false
+codegen-units = 16
+panic = 'unwind'
+incremental = false
+overflow-checks = false
+
+# Testing profile: "cargo test"
+[profile.test]
+opt-level = 0
+debug = 2
+rpath = false
+lto = false
+debug-assertions = true
+codegen-units = 16
+incremental = true
+overflow-checks = true
+
+# Benchmark profile: "cargo bench" (and "cargo test --release)".
+[profile.bench]
+opt-level = 3
+debug = false
+rpath = false
+lto = false
+debug-assertions = false
+codegen-units = 16
+incremental = false
+overflow-checks = false
