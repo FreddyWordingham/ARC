@@ -1,2 +1,2 @@
 # arc
-Thesis repositoy.
+Thesis repository.
