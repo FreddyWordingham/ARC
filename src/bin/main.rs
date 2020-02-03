@@ -1,5 +1,6 @@
 //! Main function.
 
+use arc::util::{banner, exec};
 use attr::form;
 use colog;
 use log::info;
@@ -11,7 +12,7 @@ struct Parameters {
 
 fn main() {
     colog::init();
-    // banner::title(&exec::name());
+    banner::title(&exec::name());
 
     info!("Hello world!");
 }
