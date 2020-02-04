@@ -26,15 +26,17 @@ use json::*;
 use proc_macro::TokenStream;
 
 /// Create the attribute macro form.
-#[inline]
 #[proc_macro_attribute]
+#[inline]
+#[must_use]
 pub fn form(metadata: TokenStream, input: TokenStream) -> TokenStream {
     form_impl(&metadata, input)
 }
 
 /// Create the attribute macro json.
-#[inline]
 #[proc_macro_attribute]
+#[inline]
+#[must_use]
 pub fn json(metadata: TokenStream, input: TokenStream) -> TokenStream {
     json_impl(&metadata, input)
 }

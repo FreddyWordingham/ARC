@@ -5,6 +5,8 @@ use quote::quote;
 use syn::{parse_macro_input, Item};
 
 /// Implement `Save` and `Load` traits using json parsing.
+#[inline]
+#[must_use]
 pub fn form_derive_impl(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as Item);
 
@@ -35,6 +37,8 @@ pub fn form_derive_impl(input: TokenStream) -> TokenStream {
 }
 
 /// Implement `Save` and `Load` traits using json parsing.
+#[inline]
+#[must_use]
 pub fn json_derive_impl(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as Item);
 

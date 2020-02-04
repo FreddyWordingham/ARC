@@ -32,28 +32,32 @@ use new::*;
 /// Create the procedural macro `HelloMacro`.
 #[proc_macro_derive(HelloMacro)]
 #[inline]
+#[must_use]
 pub fn hello_derive(input: TokenStream) -> TokenStream {
     let ast = syn::parse(input).expect("Unable to parse token stream.");
     hello_derive_impl(&ast)
 }
 
 /// Create the procedural macro New.
-#[inline]
 #[proc_macro_derive(New)]
+#[inline]
+#[must_use]
 pub fn new_derive(input: TokenStream) -> TokenStream {
     new_derive_impl(input)
 }
 
 /// Create the procedural macro Form.
-#[inline]
 #[proc_macro_derive(Form)]
+#[inline]
+#[must_use]
 pub fn form_derive(input: TokenStream) -> TokenStream {
     form_derive_impl(input)
 }
 
 /// Create the procedural macro Json.
-#[inline]
 #[proc_macro_derive(Json)]
+#[inline]
+#[must_use]
 pub fn json_derive(input: TokenStream) -> TokenStream {
     json_derive_impl(input)
 }
