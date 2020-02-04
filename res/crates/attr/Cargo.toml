@@ -7,6 +7,7 @@ license = "../../../liscense.txt"
 repository = "https://github.com/FreddyWordingham/arc"
 readme = "README.md"
 keywords = ["support"]
+catagories = []
 description = "Support attribute macro meta-meta-programming library by Freddy Wordingham."
 
 [lib]
@@ -14,6 +15,7 @@ proc-macro = true
 
 [dependencies]
 proc = { path = "../proc" }
+
 proc-macro2 = "1.0.8"
 quote = "1.0.2"
 syn = { version = "1.0.14", features = ["full"] }

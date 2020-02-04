@@ -8,7 +8,7 @@ license = "license.txt"
 repository = "https://github.com/FreddyWordingham/arc"
 readme = "README.md"
 keywords = ["physics", "mcrt", "ode", "diffusion"]
-catagories = ["science", "simulation"]
+categories = ["science", "simulation"]
 description = "Simulation code library and binaries by Freddy Wordingham."
 
 [dependencies]
