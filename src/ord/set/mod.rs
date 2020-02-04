@@ -26,7 +26,7 @@ impl<T> Set<T> {
     pub fn get(&self, key: &Key) -> &T {
         self.map
             .get(key)
-            .expect(&format!("Key {} does not exist within the set.", key))
+            .unwrap_or_else(|| panic!("Key {} does not exist within the set.", key))
     }
 }
 
