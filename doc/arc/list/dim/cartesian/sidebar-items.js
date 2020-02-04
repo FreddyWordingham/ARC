@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Cartesian","Cartesian coordinate system."]]});
