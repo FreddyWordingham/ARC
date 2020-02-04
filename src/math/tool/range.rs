@@ -1,9 +1,10 @@
 //! Range implementation.
 
-use crate::access;
+use crate::clone;
 use std::f64::{INFINITY, NEG_INFINITY};
 
 /// One-dimensional inclusive Range.
+#[derive(Debug, Clone)]
 pub struct Range {
     /// Minimum bound.
     min: f64,
@@ -12,8 +13,8 @@ pub struct Range {
 }
 
 impl Range {
-    access!(min, f64);
-    access!(max, f64);
+    clone!(min, f64);
+    clone!(max, f64);
 
     /// Construct a new Range.
     #[inline]
