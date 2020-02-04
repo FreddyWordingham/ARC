@@ -20,6 +20,7 @@
     clippy::integer_division,
     clippy::missing_const_for_fn,
     clippy::module_name_repetitions,
+    clippy::multiple_crate_versions,
     clippy::option_expect_used,
     clippy::panic,
     clippy::print_stdout,
