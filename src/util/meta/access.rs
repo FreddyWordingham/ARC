@@ -41,7 +41,7 @@ macro_rules! clone {
         #[inline]
         #[must_use]
         pub fn $field(&self) -> $type {
-            self.$field
+            self.$field.clone()
         }
 
         #[inline]

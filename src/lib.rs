@@ -19,6 +19,7 @@
     clippy::integer_arithmetic,
     clippy::integer_division,
     clippy::missing_const_for_fn,
+    clippy::missing_inline_in_public_items,
     clippy::module_name_repetitions,
     clippy::multiple_crate_versions,
     clippy::option_expect_used,
@@ -33,7 +34,7 @@
 pub mod data;
 // pub mod dom;
 pub mod file;
-// pub mod geom;
+pub mod geom;
 pub mod list;
 pub mod math;
 pub mod phys;
