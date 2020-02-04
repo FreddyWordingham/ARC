@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["from_json","Deserialise the type in json format."],["map","Load a map of instances."]],"trait":[["Load","Types implementing this trait can be loaded from a file."]]});
