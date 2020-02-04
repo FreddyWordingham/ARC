@@ -1,84 +1,71 @@
 //! Histogram implementation.
 
-use crate::{access, clone, file::Save, math::Range};
+use crate::{
+    access,
+    file::Save,
+    math::{Indexer, Range},
+};
 use ndarray::Array1;
 use std::{fs::File, io::Write, path::Path};
 
 /// Static range, constant bin width, Histogram.
 pub struct Histogram {
-    /// Domain of values.
-    range: Range,
-    /// Width of each bin.
-    bin_width: f64,
-    /// Bin data.
-    bins: Array1<f64>,
+    /// Indexer.
+    indexer: Indexer,
+    /// Count data.
+    counts: Array1<f64>,
 }
 
 impl Histogram {
-    clone!(range, Range);
-    clone!(bin_width, f64);
-    access!(bins, Array1<f64>);
+    access!(indexer, Indexer);
+    access!(counts, Array1<f64>);
 
     /// Construct a new instance
     #[inline]
     #[must_use]
-    pub fn new(range: Range, num_bins: usize) -> Self {
-        assert!(num_bins > 0);
-
-        let bin_width = range.width() / num_bins as f64;
+    pub fn new(min: f64, max: f64, bins: u64) -> Self {
+        assert!(min < max);
+        assert!(bins > 0);
 
         Self {
-            range,
-            bin_width,
-            bins: Array1::zeros(num_bins),
+            indexer: Indexer::new(Range::new(min, max), bins),
+            counts: Array1::zeros(bins as usize),
         }
-    }
-
-    /// Find the corresponding index of the bin data for a given value.
-    #[inline]
-    #[must_use]
-    fn find_index(&self, x: f64) -> usize {
-        assert!(self.range.contains(x));
-
-        (((x - self.range.min()) / self.range.width()) * self.bins.len() as f64).floor() as usize
     }
 
     /// Increment the bin corresponding to x by unity.
     #[inline]
     pub fn collect(&mut self, x: f64) {
-        assert!(self.range.contains(x));
+        assert!(self.indexer.range().contains(x));
 
-        let index = self.find_index(x);
-        *self.bins.get_mut(index).expect("Invalid index.") += 1.0;
+        let index = self.indexer.index(x);
+        *self.counts.get_mut(index).expect("Invalid index.") += 1.0;
     }
 
-    /// Increment the bin corresponding to x by the given weight.
+    /// Increment the bin corresponding to x by a given weight.
     #[inline]
     pub fn collect_weight(&mut self, x: f64, weight: f64) {
-        assert!(self.range.contains(x));
+        assert!(self.indexer.range().contains(x));
+        assert!(weight > 0.0);
 
-        let index = self.find_index(x);
-        *self.bins.get_mut(index).expect("Invalid index.") += weight;
+        let index = self.indexer.index(x);
+        *self.counts.get_mut(index).expect("Invalid index.") += weight;
     }
 
-    /// Increment the bin corresponding to x by unity if the value of x is within the value range.
+    /// Increment the bin corresponding to x by unity if x is contained within the range.
     #[inline]
     pub fn try_collect(&mut self, x: f64) {
-        if !self.range.contains(x) {
-            return;
+        if let Some(index) = self.indexer.try_index(x) {
+            *self.counts.get_mut(index).expect("Invalid index.") += 1.0;
         }
-
-        self.collect(x);
     }
 
-    /// Increment the bin corresponding to x by the given weight if the value of x is within the value range.
+    /// Increment the bin corresponding to x by unity if x is contained within the range.
     #[inline]
     pub fn try_collect_weight(&mut self, x: f64, weight: f64) {
-        if !self.range.contains(x) {
-            return;
+        if let Some(index) = self.indexer.try_index(x) {
+            *self.counts.get_mut(index).expect("Invalid index.") += weight;
         }
-
-        self.collect_weight(x, weight);
     }
 }
 
@@ -88,8 +75,11 @@ impl Save for Histogram {
     fn save(&self, path: &Path) {
         let mut file = File::create(path).expect("Unable to create histogram file.");
 
-        for (iter, value) in self.bins.iter().enumerate() {
-            let x = (iter as f64 + 0.5).mul_add(self.bin_width, self.range.min());
+        let bin_width = self.indexer.bin_width();
+        let min = self.indexer.range().min();
+
+        for (iter, value) in self.counts.iter().enumerate() {
+            let x = (iter as f64 + 0.5).mul_add(bin_width, min);
             writeln!(file, "{:>31}, {:>31}", x, value).expect("Failed to write to file.");
         }
     }
