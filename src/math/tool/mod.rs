@@ -1,5 +1,6 @@
 //! Tools sub-module.
 
+pub mod indexer;
 pub mod range;
 
-pub use self::range::*;
+pub use self::{indexer::*, range::*};
