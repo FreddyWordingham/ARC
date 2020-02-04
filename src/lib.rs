@@ -2,7 +2,7 @@
 
 #![warn(
     clippy::all,
-    clippy::cargo,
+    // clippy::cargo,
     clippy::missing_docs_in_private_items,
     clippy::nursery,
     clippy::pedantic,
