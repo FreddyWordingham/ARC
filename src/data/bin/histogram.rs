@@ -1,6 +1,6 @@
 //! Histogram implementation.
 
-use crate::{access, file::Save, math::Range};
+use crate::{access, clone, file::Save, math::Range};
 use ndarray::Array1;
 use std::{fs::File, io::Write, path::Path};
 
@@ -15,14 +15,16 @@ pub struct Histogram {
 }
 
 impl Histogram {
-    access!(range, Range);
-    access!(bin_width, f64);
+    clone!(range, Range);
+    clone!(bin_width, f64);
     access!(bins, Array1<f64>);
 
     /// Construct a new instance
     #[inline]
     #[must_use]
     pub fn new(range: Range, num_bins: usize) -> Self {
+        assert!(num_bins > 0);
+
         let bin_width = range.width() / num_bins as f64;
 
         Self {
@@ -36,6 +38,8 @@ impl Histogram {
     #[inline]
     #[must_use]
     fn find_index(&self, x: f64) -> usize {
+        assert!(self.range.contains(x));
+
         (((x - self.range.min()) / self.range.width()) * self.bins.len() as f64).floor() as usize
     }
 
@@ -85,7 +89,7 @@ impl Save for Histogram {
         let mut file = File::create(path).expect("Unable to create histogram file.");
 
         for (iter, value) in self.bins.iter().enumerate() {
-            let x = ((iter as f64 + 0.5) * self.bin_width()) + self.range.min();
+            let x = (iter as f64 + 0.5).mul_add(self.bin_width, self.range.min());
             writeln!(file, "{:>31}, {:>31}", x, value).expect("Failed to write to file.");
         }
     }
