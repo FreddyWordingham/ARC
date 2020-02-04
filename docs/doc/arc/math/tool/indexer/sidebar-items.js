@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Indexer","One-dimensional indexing structure."]]});

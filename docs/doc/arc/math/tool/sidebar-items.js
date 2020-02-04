@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["range","Range implementation."]]});
+initSidebarItems({"mod":[["indexer","Indexer implementation."],["range","Range implementation."]]});
