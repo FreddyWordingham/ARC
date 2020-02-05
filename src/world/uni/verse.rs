@@ -1,27 +1,22 @@
 //! Material implementation.
 
-// use crate::{access, ord::SurfSet};
+use crate::{access, ord::InterSet};
 
 /// Material physical properties.
 pub struct Verse {
     // /// Surfaces.
-// surfs: SurfSet,
+    // surfs: SurfSet,
+    /// Interfaces.
+    inters: InterSet,
 }
 
 impl Verse {
-    // access!(surfs, SurfSet);
-
-    // /// Construct a new instance.
-    // #[inline]
-    // #[must_use]
-    // pub fn new(surfs: SurfSet) -> Self {
-    //     Self { surfs }
-    // }
+    access!(inters, InterSet);
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(inters: InterSet) -> Self {
+        Self { inters }
     }
 }
