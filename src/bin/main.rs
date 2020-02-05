@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::Load,
+    file::{Load, Verse as VerseForm},
     report,
     util::{banner, exec, init},
 };
@@ -14,6 +14,7 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     num_phot: f64,
+    verse: VerseForm,
 }
 
 fn main() {
@@ -27,7 +28,7 @@ fn main() {
     report!(params_path.display(), "parameters path");
 
     banner::section("Prelude");
-    let params = Parameters::load(&params_path);
+    let _params = Parameters::load(&params_path);
     info!("loaded parameters file");
 }
 
