@@ -21,7 +21,9 @@
         "inters": [
             "subject"
         ],
-        "reacts": [],
+        "reacts": [
+            "ppix_synthesis"
+        ],
         "lights": [],
     }
 }
