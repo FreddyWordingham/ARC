@@ -17,8 +17,10 @@ pub fn from_json<T>(path: &Path) -> T
 where
     for<'de> T: Deserialize<'de>,
 {
-    json5::from_str(&read_to_string(path).expect("Unable to read file."))
-        .expect("Unable to parse json file.")
+    json5::from_str(
+        &read_to_string(path).unwrap_or_else(|_| panic!("Unable to read file: {}", path.display())),
+    )
+    .expect("Unable to parse json file.")
 }
 
 /// Load a map of instances.
