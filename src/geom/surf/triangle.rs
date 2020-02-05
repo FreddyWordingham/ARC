@@ -9,6 +9,7 @@ use nalgebra::{Point3, Similarity3, Unit, Vector3};
 use rand::{rngs::ThreadRng, Rng};
 
 /// Triangle geometry.
+#[derive(Debug, Clone)]
 pub struct Triangle {
     /// Vertex points.
     verts: [Point3<f64>; 3],

@@ -7,6 +7,7 @@ use crate::{
 use std::f64::consts::FRAC_PI_2;
 
 /// Aperture geometry.
+#[derive(Debug, Clone)]
 pub struct Aperture {
     /// Ray.
     ray: Ray,

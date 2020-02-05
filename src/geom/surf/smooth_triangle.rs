@@ -16,6 +16,7 @@ use std::{
 
 /// Triangle geometry with Phong normal interpolation.
 /// Used to form meshes.
+#[derive(Debug, Clone)]
 pub struct SmoothTriangle {
     /// Base triangle.
     tri: Triangle,

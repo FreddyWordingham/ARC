@@ -35,4 +35,9 @@ macro_rules! key {
     };
 }
 
-key!(Key);
+key!(InterKey);
+key!(MatKey);
+key!(MeshKey);
+key!(ReactKey);
+key!(SpecKey);
+key!(SurfKey);
