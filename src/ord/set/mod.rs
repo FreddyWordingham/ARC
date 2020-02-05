@@ -57,6 +57,9 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
 // /// Alias for the interface set.
 // pub type InterSet = Set<InterKey, Interface>;
 
+// /// Alias for the light set.
+// pub type LightSet = Set<LightKey, Light>;
+
 /// Alias for the material set.
 pub type MatSet = Set<MatKey, Material>;
 

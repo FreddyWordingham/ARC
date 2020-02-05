@@ -29,8 +29,15 @@ fn main() {
     report!(params_path.display(), "parameters path");
 
     banner::section("Prelude");
-    let _params = Parameters::load(&params_path);
-    info!("loaded parameters file");
+    info!("Loading parameters file...");
+    let params = Parameters::load(&params_path);
+
+    info!("Loading universe files...");
+    let _verse = params.verse.form(&in_dir);
+
+    // for inter in params.verse.inters() {
+    //     println!("Loading interface: {}", inter);
+    // }
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
