@@ -2,7 +2,7 @@
 
 use crate::{
     access,
-    ord::{InterKey, InterSet, LightKey, ReactKey, Set},
+    ord::{InterKey, InterSet, LightKey, ReactKey, ReactSet, Set},
     world::Verse as WorldVerse,
 };
 use attr::json;
@@ -32,6 +32,11 @@ impl Verse {
         inter_names.sort();
         inter_names.dedup();
         let inters: InterSet = Set::load(&in_dir.join("interfaces"), &inter_names, "json");
+
+        let mut react_names = self.reacts.clone();
+        react_names.sort();
+        react_names.dedup();
+        let reacts: ReactSet = Set::load(&in_dir.join("reactions"), &react_names, "json");
 
         WorldVerse::new(inters)
     }
