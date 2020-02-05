@@ -6,9 +6,9 @@ use attr::json;
 /// Species reaction structure.
 #[json]
 pub struct Reaction {
-    /// List of reactant species buy id, and their stoichiometric coefficient.
+    /// List of reactant species buy key, and their stoichiometric coefficient.
     reactants: Vec<(SpecKey, i32)>,
-    /// List of product species buy id, and their stoichiometric coefficient.
+    /// List of product species buy key, and their stoichiometric coefficient.
     products: Vec<(SpecKey, i32)>,
     /// Rate.
     rate: Rate,

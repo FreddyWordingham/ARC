@@ -2,7 +2,11 @@
 
 use crate::{
     access,
-    ord::{InterKey, InterSet, LightKey, LightSet, ReactKey, ReactSet, Set},
+    file::Surface as SurfaceForm,
+    ord::{
+        InterKey, InterSet, LightKey, LightSet, MatSet, MeshSet, ReactKey, ReactSet, Set, SpecSet,
+        SurfKey, SurfSet,
+    },
     world::Verse as WorldVerse,
 };
 use attr::json;
@@ -28,21 +32,49 @@ impl Verse {
     #[inline]
     #[must_use]
     pub fn form(&self, in_dir: &Path) -> WorldVerse {
-        let mut inter_names = self.inters.clone();
-        inter_names.sort();
-        inter_names.dedup();
-        let inters: InterSet = Set::load(&in_dir.join("interfaces"), &inter_names, "json");
+        let mut inter_keys = self.inters.clone();
+        inter_keys.sort();
+        inter_keys.dedup();
+        let inters: InterSet = Set::load(&in_dir.join("interfaces"), &inter_keys, "json");
 
-        let mut react_names = self.reacts.clone();
-        react_names.sort();
-        react_names.dedup();
-        let _reacts: ReactSet = Set::load(&in_dir.join("reactions"), &react_names, "json");
+        let mut react_keys = self.reacts.clone();
+        react_keys.sort();
+        react_keys.dedup();
+        let reacts: ReactSet = Set::load(&in_dir.join("reactions"), &react_keys, "json");
 
-        let mut light_names = self.lights.clone();
-        light_names.sort();
-        light_names.dedup();
-        let _lights: LightSet = Set::load(&in_dir.join("lights"), &light_names, "json");
+        let mut light_keys = self.lights.clone();
+        light_keys.sort();
+        light_keys.dedup();
+        let lights: LightSet = Set::load(&in_dir.join("lights"), &light_keys, "json");
 
-        WorldVerse::new(inters)
+        let mut mat_keys = inters.mat_keys();
+        mat_keys.sort();
+        mat_keys.dedup();
+        let mats: MatSet = Set::load(&in_dir.join("materials"), &mat_keys, "json");
+
+        let mut spec_keys = reacts.spec_keys();
+        spec_keys.sort();
+        spec_keys.dedup();
+        let specs: SpecSet = Set::load(&in_dir.join("species"), &spec_keys, "json");
+
+        let mut surf_keys = inters.surf_keys();
+        surf_keys.append(&mut lights.surf_keys());
+        surf_keys.sort();
+        surf_keys.dedup();
+        let proto_surfs: Set<SurfKey, SurfaceForm> =
+            Set::load(&in_dir.join("surfaces"), &surf_keys, "json");
+
+        let mut mesh_keys: Vec<_> = proto_surfs
+            .map()
+            .values()
+            .map(|surf| surf.mesh().clone())
+            .collect();
+        mesh_keys.sort();
+        mesh_keys.dedup();
+        let meshes: MeshSet = Set::load(&in_dir.join("meshes"), &mesh_keys, "obj");
+
+        let surfs = SurfSet::build(&proto_surfs, &meshes);
+
+        WorldVerse::new(inters, reacts, lights, mats, specs, surfs)
     }
 }
