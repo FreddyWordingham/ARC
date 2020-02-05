@@ -33,7 +33,10 @@ fn main() {
     let params = Parameters::load(&params_path);
 
     info!("Loading universe files...");
-    let _verse = params.verse.form(&in_dir);
+    let verse = params.verse.form(&in_dir);
+
+    info!("Building grid...");
+    let _grid = params.grid.form(&verse);
 
     // for inter in params.verse.inters() {
     //     println!("Loading interface: {}", inter);
