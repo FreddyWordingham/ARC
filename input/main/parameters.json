@@ -24,6 +24,8 @@
         "reacts": [
             "ppix_synthesis"
         ],
-        "lights": [],
+        "lights": [
+            "led"
+        ],
     }
 }
