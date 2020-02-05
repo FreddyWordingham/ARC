@@ -4,8 +4,8 @@ use crate::{
     access,
     file::Load,
     geom::Mesh,
-    ord::{MatKey, MeshKey, SurfKey},
-    world::Material,
+    ord::{InterKey, MatKey, MeshKey, SurfKey},
+    world::{Interface, Material},
 };
 use log::info;
 use std::{collections::BTreeMap, fmt::Display, path::Path};
@@ -54,8 +54,8 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
     }
 }
 
-// /// Alias for the interface set.
-// pub type InterSet = Set<InterKey, Interface>;
+/// Alias for the interface set.
+pub type InterSet = Set<InterKey, Interface>;
 
 // /// Alias for the light set.
 // pub type LightSet = Set<LightKey, Light>;
