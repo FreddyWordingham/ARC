@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::{Load, Verse as VerseForm},
+    file::{Grid as GridForm, Load, Verse as VerseForm},
     report,
     util::{banner, exec, init},
 };
@@ -15,6 +15,7 @@ use std::path::PathBuf;
 struct Parameters {
     num_phot: f64,
     verse: VerseForm,
+    grid: GridForm,
 }
 
 fn main() {
