@@ -59,12 +59,3 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
         Set::new(map)
     }
 }
-
-// /// Alias for the light set.
-// pub type LightSet = Set<LightKey, Light>;
-
-// /// Alias for the reaction set.
-// pub type ReactSet = Set<ReactKey, Reaction>;
-
-// /// Alias for the species set.
-// pub type SpecSet = Set<SpecKey, Reaction>;

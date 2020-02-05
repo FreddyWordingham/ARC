@@ -30,7 +30,7 @@
     clippy::wildcard_enum_match_arm
 )]
 
-// pub mod chem;
+pub mod chem;
 pub mod data;
 pub mod file;
 pub mod geom;
