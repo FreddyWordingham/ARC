@@ -13,6 +13,7 @@ const RIGHT_ANGLE_TOLERANCE: f64 = 1.0e-3;
 
 /// Rectangle geometry.
 /// This is a special case of Parallelogram.
+#[derive(Debug, Clone)]
 pub struct Rectangle {
     /// Base parallelogram.
     para: Parallelogram,

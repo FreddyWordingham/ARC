@@ -11,6 +11,7 @@ use rand::{rngs::ThreadRng, Rng};
 use std::path::Path;
 
 /// Mesh geometry.
+#[derive(Debug, Clone)]
 pub struct Mesh {
     /// Bounding box.
     aabb: Aabb,

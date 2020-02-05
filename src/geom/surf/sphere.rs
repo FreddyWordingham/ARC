@@ -9,7 +9,7 @@ use rand::rngs::ThreadRng;
 use std::f64::consts::PI;
 
 /// Sphere geometry.
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Sphere {
     /// Central point.
     pos: Point3<f64>,

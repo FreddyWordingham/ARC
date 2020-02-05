@@ -10,6 +10,7 @@ use rand::{rngs::ThreadRng, Rng};
 
 /// Parallelogram geometry.
 /// Used to form `Rectangles`.
+#[derive(Debug, Clone)]
 pub struct Parallelogram {
     /// Vertex points.
     verts: [Point3<f64>; 3],
