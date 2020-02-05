@@ -36,6 +36,7 @@ macro_rules! key {
 }
 
 key!(InterKey);
+key!(LightKey);
 key!(MatKey);
 key!(MeshKey);
 key!(ReactKey);

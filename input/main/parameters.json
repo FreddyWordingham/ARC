@@ -17,5 +17,11 @@
             1.0e-3
         ]
     },
-    "verse": {}
+    "verse": {
+        "inters": [
+            "subject"
+        ],
+        "reacts": [],
+        "lights": [],
+    }
 }
