@@ -1,14 +1,20 @@
 //! Set implementation.
 
-use crate::{
-    access,
-    file::Load,
-    geom::Mesh,
-    ord::{InterKey, MatKey, MeshKey, SurfKey},
-    world::{Interface, Material},
-};
+use crate::{access, file::Load};
 use log::info;
 use std::{collections::BTreeMap, fmt::Display, path::Path};
+
+pub mod inter_set;
+pub mod light_set;
+pub mod mat_set;
+pub mod mesh_set;
+pub mod react_set;
+pub mod spec_set;
+pub mod surf_set;
+
+pub use self::{
+    inter_set::*, light_set::*, mat_set::*, mesh_set::*, react_set::*, spec_set::*, surf_set::*,
+};
 
 /// Set mapping.
 pub struct Set<K, T> {
@@ -40,7 +46,7 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
     /// Load a set of files.
     #[inline]
     #[must_use]
-    pub fn load(dir: &Path, keys: &[K], ext: &str) -> Set<K, T> {
+    pub fn load(dir: &Path, keys: &[K], ext: &str) -> Self {
         let mut map = BTreeMap::new();
 
         for key in keys {
@@ -54,23 +60,11 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
     }
 }
 
-/// Alias for the interface set.
-pub type InterSet = Set<InterKey, Interface>;
-
 // /// Alias for the light set.
 // pub type LightSet = Set<LightKey, Light>;
-
-/// Alias for the material set.
-pub type MatSet = Set<MatKey, Material>;
-
-/// Alias for the mesh set.
-pub type MeshSet = Set<MeshKey, Mesh>;
 
 // /// Alias for the reaction set.
 // pub type ReactSet = Set<ReactKey, Reaction>;
 
 // /// Alias for the species set.
 // pub type SpecSet = Set<SpecKey, Reaction>;
-
-/// Alias for the surface set.
-pub type SurfSet = Set<SurfKey, Mesh>;
