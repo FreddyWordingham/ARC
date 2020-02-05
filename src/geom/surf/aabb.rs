@@ -25,7 +25,7 @@ impl Aabb {
     #[inline]
     #[must_use]
     pub fn new(mins: Point3<f64>, maxs: Point3<f64>) -> Self {
-        assert!(mins < maxs);
+        // assert!(mins < maxs);
 
         Self { mins, maxs }
     }

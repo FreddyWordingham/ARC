@@ -14,7 +14,9 @@ impl Spectrum {
     /// Construct a new laser spectrum.
     #[inline]
     #[must_use]
-    pub const fn new_laser(wavelength: f64) -> Self {
+    pub fn new_laser(wavelength: f64) -> Self {
+        assert!(wavelength > 0.0);
+
         Self::Laser { 0: wavelength }
     }
 
