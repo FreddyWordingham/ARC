@@ -5,7 +5,8 @@ use std::sync::{Arc, Mutex};
 pub fn main() {
     println!("beep");
 
-    let total = 24;
+    let shape = [40, 30, 50];
+    let total = shape[0] * shape[1] * shape[2];
     let num_threads = 1;
 
     let pb = ParProgressBar::new("Building", total as u64);
@@ -13,12 +14,10 @@ pub fn main() {
 
     let thread_ids: Vec<usize> = (0..num_threads).collect();
 
-    let shape = [4, 3, 2];
-
     let now = std::time::Instant::now();
     let thread_data: Vec<_> = thread_ids
         .par_iter()
-        .map(|id| task(*id, Arc::clone(&pb), total / 2, shape))
+        .map(|id| task(*id, Arc::clone(&pb), 1000, shape))
         .collect();
     pb.lock().unwrap().finish_with_message("Complete.");
     println!("Took {} sec to build.", now.elapsed().as_secs());
@@ -29,16 +28,7 @@ pub fn main() {
 
     println!("Data len: {}", data.len());
 
-    // for (i, d) in data.iter().enumerate() {
-    //     // assert!(i == *d);
-    //     println!("{}\t:\t{}\t{}\t{}", i, d[0], d[1], d[2]);
-    // }
-
     let arr3 = ndarray::Array3::from_shape_vec(shape, data).unwrap();
-
-    // for a in arr3.iter() {
-    //     println!("{:?}", a);
-    // }
 
     for xi in 0..shape[0] {
         for yi in 0..shape[1] {
@@ -46,9 +36,7 @@ pub fn main() {
                 let id = [xi, yi, zi];
                 let a = arr3[id];
 
-                println!("{} {} {}\t{} {} {}", id[0], id[1], id[2], a[0], a[1], a[2]);
-
-                // assert!(id == a, "{:?} -> {:?}", id, a);
+                assert!(id == a, "{:?} -> {:?}", id, a);
             }
         }
     }
@@ -57,7 +45,7 @@ pub fn main() {
 }
 
 fn task(
-    id: usize,
+    _id: usize,
     pb: Arc<Mutex<ParProgressBar>>,
     block_size: u64,
     shape: [usize; 3],
@@ -69,7 +57,7 @@ fn task(
         std::mem::drop(pb);
         b
     } {
-        println!("{}: Running from {} -> {}", id, start, end);
+        // println!("{}: Running from {} -> {}", id, start, end);
 
         let mut data: Vec<[usize; 3]> = Vec::with_capacity((end - start) as usize);
         for n in start..end {
