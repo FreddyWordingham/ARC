@@ -11,7 +11,8 @@ pub mod state_set;
 pub mod surf_set;
 
 pub use self::{
-    inter_set::*, light_set::*, mat_set::*, mesh_set::*, react_set::*, spec_set::*, surf_set::*,
+    inter_set::*, light_set::*, mat_set::*, mesh_set::*, react_set::*, region_set::*, spec_set::*,
+    state_set::*, surf_set::*,
 };
 
 use crate::{
