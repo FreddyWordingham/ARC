@@ -1,23 +1,30 @@
 //! Set implementation.
 
-use crate::{access, file::Load};
-use log::info;
-use std::{collections::BTreeMap, fmt::Display, path::Path};
-
 pub mod inter_set;
 pub mod light_set;
 pub mod mat_set;
 pub mod mesh_set;
 pub mod react_set;
+pub mod region_set;
 pub mod spec_set;
+pub mod state_set;
 pub mod surf_set;
 
 pub use self::{
     inter_set::*, light_set::*, mat_set::*, mesh_set::*, react_set::*, spec_set::*, surf_set::*,
 };
 
+use crate::{
+    access,
+    file::{as_json, from_json, Load, Save},
+};
+use log::info;
+use serde::{Deserialize, Serialize};
+use std::{collections::BTreeMap, fmt::Display, path::Path};
+
 /// Set mapping.
-pub struct Set<K, T> {
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Set<K: Ord, T> {
     /// Internal map.
     map: BTreeMap<K, T>,
 }
@@ -57,5 +64,24 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
         }
 
         Set::new(map)
+    }
+}
+
+impl<K: Ord + Serialize, T: Serialize> Save for Set<K, T> {
+    #[inline]
+    fn save(&self, path: &Path) {
+        as_json(self, path);
+    }
+}
+
+impl<K, T> Load for Set<K, T>
+where
+    for<'de> K: Ord + Deserialize<'de>,
+    for<'de> T: Deserialize<'de>,
+{
+    #[inline]
+    #[must_use]
+    fn load(path: &Path) -> Self {
+        from_json(path)
     }
 }
