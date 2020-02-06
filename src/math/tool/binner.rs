@@ -1,17 +1,17 @@
-//! Indexer implementation.
+//! Binner implementation.
 
 use crate::{clone, math::Range};
 
-/// One-dimensional indexing structure.
+/// One-dimensional binning structure.
 #[derive(Debug, Clone)]
-pub struct Indexer {
+pub struct Binner {
     /// Range.
     range: Range,
     /// Total number of bins.
     bins: u64,
 }
 
-impl Indexer {
+impl Binner {
     clone!(range, Range);
     clone!(bins, u64);
 
@@ -31,21 +31,21 @@ impl Indexer {
         self.range.width() / self.bins as f64
     }
 
-    /// Determine the corresponding index.
+    /// Determine the corresponding bin.
     #[inline]
     #[must_use]
-    pub fn index(&self, x: f64) -> usize {
+    pub fn bin(&self, x: f64) -> usize {
         assert!(self.range.contains(x));
 
         ((x - self.range.min() / self.range.width()) * self.bins as f64).floor() as usize
     }
 
-    /// Determine the corresponding index if the value is within the range.
+    /// Determine the corresponding bin if the value is within the range.
     #[inline]
     #[must_use]
-    pub fn try_index(&self, x: f64) -> Option<usize> {
+    pub fn try_bin(&self, x: f64) -> Option<usize> {
         if self.range.contains(x) {
-            Some(self.index(x))
+            Some(self.bin(x))
         } else {
             None
         }
