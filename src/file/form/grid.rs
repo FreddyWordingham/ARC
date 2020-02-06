@@ -27,7 +27,14 @@ impl Grid {
     /// Form a new instance.
     #[inline]
     #[must_use]
-    pub fn form(&self, verse: &Verse) -> WorldGrid {
-        WorldGrid::new(Aabb::new(self.mins, self.maxs), self.res, verse)
+    pub fn form(&self, num_threads: usize, verse: &Verse) -> WorldGrid {
+        assert!(num_threads > 0);
+
+        WorldGrid::new(
+            num_threads,
+            Aabb::new(self.mins, self.maxs),
+            self.res,
+            verse,
+        )
     }
 }
