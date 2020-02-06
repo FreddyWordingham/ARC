@@ -27,7 +27,7 @@ impl Grid {
     /// Form a new instance.
     #[inline]
     #[must_use]
-    pub fn form(&self, _verse: &Verse) -> WorldGrid {
-        WorldGrid::new(Aabb::new(self.mins, self.maxs), self.res)
+    pub fn form(&self, verse: &Verse) -> WorldGrid {
+        WorldGrid::new(Aabb::new(self.mins, self.maxs), self.res, verse)
     }
 }

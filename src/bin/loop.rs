@@ -61,7 +61,7 @@ fn task(
 
         let mut data: Vec<[usize; 3]> = Vec::with_capacity((end - start) as usize);
         for n in start..end {
-            data.push(arc::math::three_dim(n as usize, shape));
+            data.push(arc::math::indexer::three_dim(n as usize, shape));
         }
         blocks.push((start as usize, data));
     }
