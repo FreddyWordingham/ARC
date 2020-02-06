@@ -2,7 +2,7 @@
 
 use crate::{
     access,
-    ord::{InterSet, LightSet, MatSet, ReactSet, RegionSet, SpecSet, SurfSet},
+    ord::{InterSet, LightSet, MatSet, ReactSet, RegionSet, SpecSet, StateSet, SurfSet},
 };
 
 /// Material physical properties.
@@ -17,6 +17,8 @@ pub struct Verse {
     lights: LightSet,
     /// Meshes.
     mats: MatSet,
+    /// States.
+    states: StateSet,
     /// Species.
     specs: SpecSet,
     /// Surfaces.
@@ -29,6 +31,7 @@ impl Verse {
     access!(reacts, ReactSet);
     access!(lights, LightSet);
     access!(mats, MatSet);
+    access!(states, StateSet);
     access!(specs, SpecSet);
     access!(surfs, SurfSet);
 
@@ -41,6 +44,7 @@ impl Verse {
         reacts: ReactSet,
         lights: LightSet,
         mats: MatSet,
+        states: StateSet,
         specs: SpecSet,
         surfs: SurfSet,
     ) -> Self {
@@ -50,6 +54,7 @@ impl Verse {
             reacts,
             lights,
             mats,
+            states,
             specs,
             surfs,
         }
