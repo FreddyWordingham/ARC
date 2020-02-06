@@ -102,6 +102,9 @@ impl Grid {
 
                 let mins = Point3::new(x, y, z);
                 let maxs = mins + cell_size;
+                let bound = Aabb::new(mins, maxs);
+
+                let p = bound.centre();
 
                 cells.push(Cell::new(
                     Aabb::new(mins, maxs),
