@@ -71,6 +71,7 @@ impl Verse {
         let specs: SpecSet = Set::load(&in_dir.join("species"), &spec_keys, "json");
 
         let mut surf_keys = inters.surf_keys();
+        surf_keys.append(&mut regions.surf_keys());
         surf_keys.append(&mut lights.surf_keys());
         surf_keys.sort();
         surf_keys.dedup();

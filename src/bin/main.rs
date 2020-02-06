@@ -81,6 +81,11 @@ fn overview(verse: &Verse) {
         info!("\t{}", key);
     }
 
+    info!("{} states:", verse.states().map().len());
+    for key in verse.states().map().keys() {
+        info!("\t{}", key);
+    }
+
     info!("{} species:", verse.specs().map().len());
     for key in verse.specs().map().keys() {
         info!("\t{}", key);
