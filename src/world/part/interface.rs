@@ -17,7 +17,7 @@ pub struct Interface {
     out_mat: MatKey,
 }
 
-impl<'a> Interface {
+impl Interface {
     access!(surf, SurfKey);
     access!(in_mat, MatKey);
     access!(out_mat, MatKey);
