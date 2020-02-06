@@ -1,0 +1,5 @@
+{
+    "surf": "living_epidermis_to_papillary_dermis",
+    "in_mat": "papillary_dermis",
+    "out_mat": "living_epidermis"
+}
