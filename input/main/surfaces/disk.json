@@ -1,0 +1,6 @@
+{
+    "mesh": "cylinder",
+    "trans": {
+        "scale": 0.1
+    }
+}
