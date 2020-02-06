@@ -5,7 +5,7 @@ use crate::{
     file::Surface as SurfaceForm,
     ord::{
         InterKey, InterSet, LightKey, LightSet, MatSet, MeshSet, ReactKey, ReactSet, RegionKey,
-        RegionSet, Set, SpecSet, SurfKey, SurfSet,
+        RegionSet, Set, SpecSet, StateSet, SurfKey, SurfSet,
     },
     world::Verse as WorldVerse,
 };
@@ -60,6 +60,11 @@ impl Verse {
         mat_keys.dedup();
         let mats: MatSet = Set::load(&in_dir.join("materials"), &mat_keys, "json");
 
+        let mut state_keys = regions.state_keys();
+        state_keys.sort();
+        state_keys.dedup();
+        let states: StateSet = Set::load(&in_dir.join("states"), &state_keys, "json");
+
         let mut spec_keys = reacts.spec_keys();
         spec_keys.sort();
         spec_keys.dedup();
@@ -83,6 +88,6 @@ impl Verse {
 
         let surfs = SurfSet::build(&proto_surfs, &meshes);
 
-        WorldVerse::new(inters, regions, reacts, lights, mats, specs, surfs)
+        WorldVerse::new(inters, regions, reacts, lights, mats, states, specs, surfs)
     }
 }
