@@ -2,13 +2,15 @@
 
 use crate::{
     access,
-    ord::{InterSet, LightSet, MatSet, ReactSet, SpecSet, SurfSet},
+    ord::{InterSet, LightSet, MatSet, ReactSet, RegionSet, SpecSet, SurfSet},
 };
 
 /// Material physical properties.
 pub struct Verse {
     /// Interfaces.
     inters: InterSet,
+    /// Regions.
+    regions: RegionSet,
     /// Reactions.
     reacts: ReactSet,
     /// Lights.
@@ -23,6 +25,7 @@ pub struct Verse {
 
 impl Verse {
     access!(inters, InterSet);
+    access!(regions, RegionSet);
     access!(reacts, ReactSet);
     access!(lights, LightSet);
     access!(mats, MatSet);
@@ -34,6 +37,7 @@ impl Verse {
     #[must_use]
     pub fn new(
         inters: InterSet,
+        regions: RegionSet,
         reacts: ReactSet,
         lights: LightSet,
         mats: MatSet,
@@ -42,6 +46,7 @@ impl Verse {
     ) -> Self {
         Self {
             inters,
+            regions,
             reacts,
             lights,
             mats,

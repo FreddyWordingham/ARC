@@ -4,8 +4,8 @@ use crate::{
     access,
     file::Surface as SurfaceForm,
     ord::{
-        InterKey, InterSet, LightKey, LightSet, MatSet, MeshSet, ReactKey, ReactSet, Set, SpecSet,
-        SurfKey, SurfSet,
+        InterKey, InterSet, LightKey, LightSet, MatSet, MeshSet, ReactKey, ReactSet, RegionKey,
+        RegionSet, Set, SpecSet, SurfKey, SurfSet,
     },
     world::Verse as WorldVerse,
 };
@@ -17,6 +17,8 @@ use std::path::Path;
 pub struct Verse {
     /// List of interfaces.
     inters: Vec<InterKey>,
+    /// List of regions.
+    regions: Vec<RegionKey>,
     /// List of reactions.
     reacts: Vec<ReactKey>,
     /// List of lights.
@@ -25,6 +27,7 @@ pub struct Verse {
 
 impl Verse {
     access!(inters, Vec<InterKey>);
+    access!(regions, Vec<RegionKey>);
     access!(reacts, Vec<ReactKey>);
     access!(lights, Vec<LightKey>);
 
@@ -36,6 +39,11 @@ impl Verse {
         inter_keys.sort();
         inter_keys.dedup();
         let inters: InterSet = Set::load(&in_dir.join("interfaces"), &inter_keys, "json");
+
+        let mut region_keys = self.regions.clone();
+        region_keys.sort();
+        region_keys.dedup();
+        let regions: RegionSet = Set::load(&in_dir.join("regions"), &region_keys, "json");
 
         let mut react_keys = self.reacts.clone();
         react_keys.sort();
@@ -75,6 +83,6 @@ impl Verse {
 
         let surfs = SurfSet::build(&proto_surfs, &meshes);
 
-        WorldVerse::new(inters, reacts, lights, mats, specs, surfs)
+        WorldVerse::new(inters, regions, reacts, lights, mats, specs, surfs)
     }
 }
