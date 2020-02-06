@@ -40,5 +40,7 @@ key!(LightKey);
 key!(MatKey);
 key!(MeshKey);
 key!(ReactKey);
+key!(RegionKey);
 key!(SpecKey);
+key!(StateKey);
 key!(SurfKey);
