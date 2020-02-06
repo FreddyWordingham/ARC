@@ -28,6 +28,6 @@ impl Grid {
     #[inline]
     #[must_use]
     pub fn form(&self, _verse: &Verse) -> WorldGrid {
-        WorldGrid::new(Aabb::new(self.mins, self.maxs))
+        WorldGrid::new(Aabb::new(self.mins, self.maxs), self.res)
     }
 }
