@@ -1,7 +1,8 @@
 //! Intersection set.
 
 use crate::{
-    ord::{InterKey, MatKey, Set, SurfKey},
+    geom::{Aabb, Ray, Trace},
+    ord::{InterKey, MatKey, Set, SurfKey, SurfSet},
     world::Interface,
 };
 
@@ -39,5 +40,48 @@ impl InterSet {
         mats.append(&mut out_mats);
 
         mats
+    }
+
+    /// Determine which material, if any, would be observed with a given ray.
+    #[inline]
+    #[must_use]
+    pub fn observe_mat(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<MatKey> {
+        assert!(bound.contains(ray.pos()));
+
+        let mut nearest: Option<(&MatKey, f64)> = None;
+
+        for inter in self.map().values() {
+            if let Some((dist, inside)) = surfs.get(inter.surf()).dist_inside(ray) {
+                if nearest.is_none()
+                    || dist
+                        < nearest
+                            .expect("Something went wrong that shouldn't have.")
+                            .1
+                {
+                    nearest = Some((
+                        if inside {
+                            inter.in_mat()
+                        } else {
+                            inter.out_mat()
+                        },
+                        dist,
+                    ));
+                }
+            }
+        }
+
+        if let Some((key, dist)) = nearest {
+            let bound_dist = bound
+                .dist(ray)
+                .expect("Observation ray did not hit boundary.");
+
+            if bound_dist < dist {
+                return None;
+            }
+
+            return Some(key.clone());
+        }
+
+        None
     }
 }
