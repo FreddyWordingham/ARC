@@ -8,18 +8,23 @@
             "udens",
             1
         ],
+        [
+            "o2",
+            1
+        ],
     ],
     "products": [
         [
-            "death",
+            "o-",
             1
         ]
     ],
     "rate": {
-        "Second": [
-            0.2,
+        "Third": [
+            0.01,
             "ppix",
-            "udens"
+            "udens",
+            "o2"
         ]
     }
 }
