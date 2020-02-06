@@ -6,6 +6,8 @@ pub struct ParProgressBar {
     pb: indicatif::ProgressBar,
     /// Current value.
     count: u64,
+    /// Total target value.
+    total: u64,
 }
 
 impl ParProgressBar {
@@ -14,21 +16,19 @@ impl ParProgressBar {
     #[must_use]
     pub fn new(msg: &str, total: u64) -> Self {
         let pb = indicatif::ProgressBar::new(total);
-        pb.set_message(msg);
 
         pb.set_style(
             indicatif::ProgressStyle::default_bar()
             .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/red}] [{pos}/{len}] {percent}% ({eta}) {msg}")
             .progress_chars("\\/")
         );
+        pb.set_message(msg);
 
-        Self { pb, count: 0 }
-    }
-
-    /// Tick the bar forward once.
-    #[inline]
-    pub fn tick(&mut self) {
-        self.pb.inc(1);
+        Self {
+            pb,
+            count: 0,
+            total,
+        }
     }
 
     /// Request a block of values to work on.
@@ -38,17 +38,24 @@ impl ParProgressBar {
     #[inline]
     #[must_use]
     pub fn block(&mut self, size: u64) -> Option<(u64, u64)> {
-        if self.count >= self.pb.position() {
+        if self.count >= self.total {
             None
         } else {
-            let remaining = self.pb.position() - self.count;
+            let remaining = self.total - self.count;
             let alloc = if remaining < size { remaining } else { size };
 
             let block = Some((self.count, self.count + alloc));
 
             self.count += alloc;
+            self.pb.inc(alloc);
 
             block
         }
+    }
+
+    /// Finish with a message.
+    #[inline]
+    pub fn finish_with_message(&mut self, msg: &'static str) {
+        self.pb.finish_with_message(msg);
     }
 }
