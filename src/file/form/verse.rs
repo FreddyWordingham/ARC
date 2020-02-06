@@ -66,6 +66,7 @@ impl Verse {
         let states: StateSet = Set::load(&in_dir.join("states"), &state_keys, "json");
 
         let mut spec_keys = reacts.spec_keys();
+        spec_keys.append(&mut states.spec_keys());
         spec_keys.sort();
         spec_keys.dedup();
         let specs: SpecSet = Set::load(&in_dir.join("species"), &spec_keys, "json");
