@@ -29,7 +29,8 @@
             "subcutaneous_fat"
         ],
         "reacts": [
-            "ppix_synthesis"
+            "ppix_synthesis",
+            "radical_production",
         ],
         "lights": [
             "led"
