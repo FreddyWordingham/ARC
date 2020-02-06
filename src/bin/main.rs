@@ -15,6 +15,7 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     num_phot: f64,
+    num_threads: usize,
     verse: VerseForm,
     grid: GridForm,
 }
@@ -38,7 +39,7 @@ fn main() {
 
     banner::section("Building");
     info!("Building grid...");
-    let _grid = params.grid.form(&verse);
+    let _grid = params.grid.form(params.num_threads, &verse);
 
     banner::section("Overview");
     overview(&verse);
