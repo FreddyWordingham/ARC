@@ -2,19 +2,19 @@
 
 use crate::{
     access,
-    geom::Aabb,
+    geom::{Aabb, Ray},
     math::indexer,
     ord::sort,
     util::ParProgressBar,
     world::{Cell, Verse},
 };
-use nalgebra::{Point3, Vector3};
+use nalgebra::{Point3, Unit, Vector3};
 use ndarray::Array3;
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 
-// /// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
-// const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
+/// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
+const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
 
 /// Grid partition scheme.
 pub struct Grid {
@@ -31,7 +31,9 @@ impl Grid {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(bound: Aabb, res: [usize; 3], _verse: &Verse) -> Self {
+    pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &Verse) -> Self {
+        assert!(num_threads > 0);
+
         let total_cells = res.get(0).expect("Missing resolution index.")
             * res.get(1).expect("Missing resolution index.")
             * res.get(2).expect("Missing resolution index.");
@@ -43,8 +45,6 @@ impl Grid {
             *w /= *n as f64;
         }
 
-        let num_threads = 4;
-
         let pb = ParProgressBar::new("Building", total_cells as u64);
         let pb = Arc::new(Mutex::new(pb));
         let thread_ids: Vec<usize> = (0..num_threads).collect();
@@ -55,9 +55,11 @@ impl Grid {
                 Self::init_cell_blocks(
                     *id,
                     res,
+                    &verse,
+                    &bound,
                     &cell_size,
                     Arc::clone(&pb),
-                    ((total_cells / num_threads) / 100).min(10) as u64,
+                    ((total_cells / num_threads) / 100).max(10) as u64,
                 )
             })
             .collect();
@@ -78,13 +80,33 @@ impl Grid {
     #[inline]
     #[must_use]
     fn init_cell_blocks(
-        _id: usize,
+        id: usize,
         res: [usize; 3],
+        verse: &Verse,
+        bound: &Aabb,
         cell_size: &Vector3<f64>,
         pb: Arc<Mutex<ParProgressBar>>,
         block_size: u64,
     ) -> Vec<(usize, Vec<Cell>)> {
         let mut cell_blocks = Vec::new();
+
+        let gen_ray = |p: &Point3<f64>| -> Ray {
+            for inter in verse.inters().map().values() {
+                let surf = verse.surfs().get(inter.surf());
+                for tri in surf.tris() {
+                    let tc = tri.tri().centre();
+
+                    if bound.contains(&tc) {
+                        let dir = Unit::new_normalize(tc - p);
+                        if dir.dot(tri.tri().plane_norm()).abs() >= HIT_ANGLE_THRESHOLD {
+                            return Ray::new(*p, dir);
+                        }
+                    }
+                }
+            }
+
+            panic!("Unable to determine suitable tracing ray.");
+        };
 
         while let Some((start, end)) = {
             let mut pb = pb.lock().expect("Could not lock progress bar.");
@@ -105,6 +127,8 @@ impl Grid {
                 let bound = Aabb::new(mins, maxs);
 
                 let p = bound.centre();
+
+                let ray = gen_ray(&p);
 
                 cells.push(Cell::new(
                     Aabb::new(mins, maxs),

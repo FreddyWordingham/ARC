@@ -22,6 +22,7 @@
     clippy::missing_inline_in_public_items,
     clippy::module_name_repetitions,
     clippy::multiple_crate_versions,
+    clippy::multiple_inherent_impl,
     clippy::option_expect_used,
     clippy::panic,
     clippy::print_stdout,
