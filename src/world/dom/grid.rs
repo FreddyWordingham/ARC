@@ -51,7 +51,15 @@ impl Grid {
 
         let cell_blocks: Vec<_> = thread_ids
             .par_iter()
-            .map(|id| Self::gen_cell_blocks(*id, res, &cell_size, Arc::clone(&pb), 1000))
+            .map(|id| {
+                Self::init_cell_blocks(
+                    *id,
+                    res,
+                    &cell_size,
+                    Arc::clone(&pb),
+                    ((total_cells / num_threads) / 100).min(10) as u64,
+                )
+            })
             .collect();
         pb.lock()
             .expect("Could not lock progress bar.")
@@ -66,10 +74,10 @@ impl Grid {
         }
     }
 
-    /// Generate the cells populating the grid.
+    /// Initialise the cells populating the grid.
     #[inline]
     #[must_use]
-    fn gen_cell_blocks(
+    fn init_cell_blocks(
         _id: usize,
         res: [usize; 3],
         cell_size: &Vector3<f64>,
