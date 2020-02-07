@@ -90,7 +90,7 @@ impl Grid {
     ) -> Vec<(usize, Vec<Cell>)> {
         let mut cell_blocks = Vec::new();
 
-        let gen_ray = |p: &Point3<f64>| -> Ray {
+        let gen_mat_ray = |p: &Point3<f64>| -> Ray {
             for inter in verse.inters().map().values() {
                 let surf = verse.surfs().get(inter.surf());
                 for tri in surf.tris() {
@@ -105,7 +105,25 @@ impl Grid {
                 }
             }
 
-            panic!("Unable to determine suitable tracing ray.");
+            panic!("Unable to determine suitable material tracing ray.");
+        };
+
+        let gen_state_ray = |p: &Point3<f64>| -> Ray {
+            for region in verse.regions().map().values() {
+                let surf = verse.surfs().get(region.surf());
+                for tri in surf.tris() {
+                    let tc = tri.tri().centre();
+
+                    if bound.contains(&tc) {
+                        let dir = Unit::new_normalize(tc - p);
+                        if dir.dot(tri.tri().plane_norm()).abs() >= HIT_ANGLE_THRESHOLD {
+                            return Ray::new(*p, dir);
+                        }
+                    }
+                }
+            }
+
+            panic!("Unable to determine suitable state tracing ray.");
         };
 
         while let Some((start, end)) = {
@@ -122,19 +140,22 @@ impl Grid {
                 let y = cell_size.y * index[1] as f64;
                 let z = cell_size.z * index[2] as f64;
 
-                let mins = Point3::new(x, y, z);
+                let mins = bound.mins() + Vector3::new(x, y, z);
                 let maxs = mins + cell_size;
-                let bound = Aabb::new(mins, maxs);
+                let cell_bound = Aabb::new(mins, maxs);
 
-                let p = bound.centre();
+                let p = cell_bound.centre();
 
-                let ray = gen_ray(&p);
+                let mat = verse
+                    .inters()
+                    .observe_mat(verse.surfs(), &bound, &gen_mat_ray(&p))
+                    .expect("Unable to observe material.");
+                let state = verse
+                    .regions()
+                    .observe_state(verse.surfs(), &bound, &gen_state_ray(&p))
+                    .expect("Unable to observe state.");
 
-                cells.push(Cell::new(
-                    Aabb::new(mins, maxs),
-                    crate::ord::MatKey::new("mat_key"),
-                    crate::ord::StateKey::new("state_key"),
-                ));
+                cells.push(Cell::new(Aabb::new(mins, maxs), mat, state));
             }
             cell_blocks.push((start as usize, cells));
         }
