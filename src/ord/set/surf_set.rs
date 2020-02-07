@@ -18,7 +18,7 @@ impl SurfSet {
         let mut map = BTreeMap::new();
 
         for (key, form) in proto_surfs.map() {
-            map.insert(key.clone(), form.build(&mesh_set));
+            map.insert(key.clone(), form.build(mesh_set));
         }
 
         Self::new(map)
