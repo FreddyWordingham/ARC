@@ -33,6 +33,7 @@ fn main() {
     banner::section("Loading");
     info!("Loading parameters file...");
     let params = Parameters::load(&params_path);
+    report!(params.num_threads);
 
     info!("Loading universe files...");
     let verse = params.verse.form(&in_dir);
@@ -45,16 +46,19 @@ fn main() {
 
     banner::section("Overview");
     overview(&verse);
+    info!("Material mapping breakdown:");
     for (key, map) in mat_maps.map() {
         let count = map.sum();
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
+    info!("State mapping breakdown:");
     for (key, map) in state_maps.map() {
         let count = map.sum();
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
+    let inter_boundaries = grid.inter_boundaries();
 
     banner::section("Saving");
     for (key, map) in mat_maps.map() {
@@ -63,6 +67,7 @@ fn main() {
     for (key, map) in state_maps.map() {
         map.save(&out_dir.join(format!("state_map_{}.nc", key)));
     }
+    inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Finished");
 }

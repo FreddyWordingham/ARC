@@ -20,21 +20,21 @@ use std::{
 const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
 
 /// Grid partition scheme.
-pub struct Grid {
+pub struct Grid<'a> {
     /// Boundary.
     bound: Aabb,
     /// Cells.
-    cells: Array3<Cell>,
+    cells: Array3<Cell<'a>>,
 }
 
-impl Grid {
+impl<'a> Grid<'a> {
     access!(bound, Aabb);
-    access!(cells, Array3<Cell>);
+    access!(cells, Array3<Cell<'a>>);
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &Verse) -> Self {
+    pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &'a Verse) -> Self {
         assert!(num_threads > 0);
 
         let total_cells = res.get(0).expect("Missing resolution index.")
@@ -85,12 +85,12 @@ impl Grid {
     fn init_cell_blocks(
         _id: usize,
         res: [usize; 3],
-        verse: &Verse,
+        verse: &'a Verse,
         bound: &Aabb,
         cell_size: &Vector3<f64>,
         pb: &Arc<Mutex<ParProgressBar>>,
         block_size: u64,
-    ) -> Vec<(usize, Vec<Cell>)> {
+    ) -> Vec<(usize, Vec<Cell<'a>>)> {
         let mut cell_blocks = Vec::new();
 
         let gen_mat_ray = |p: &Point3<f64>| -> Ray {
@@ -158,7 +158,7 @@ impl Grid {
                     .observe_state(verse.surfs(), bound, &gen_state_ray(&p))
                     .expect("Unable to observe state.");
 
-                cells.push(Cell::new(Aabb::new(mins, maxs), mat, state));
+                cells.push(Cell::new(Aabb::new(mins, maxs), mat, state, verse));
             }
             cell_blocks.push((start as usize, cells));
         }
@@ -206,5 +206,13 @@ impl Grid {
         }
 
         Set::new(set)
+    }
+
+    /// Create a map of the cells containing boundaries.
+    #[inline]
+    #[must_use]
+    pub fn inter_boundaries(&self) -> Array3<f64> {
+        self.cells
+            .map(|c| if c.inter_tris().is_empty() { 0.0 } else { 1.0 })
     }
 }
