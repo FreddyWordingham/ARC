@@ -166,6 +166,19 @@ impl<'a> Grid<'a> {
         cell_blocks
     }
 
+    /// Get the resolution of the grid.
+    #[inline]
+    #[must_use]
+    pub fn res(&self) -> [usize; 3] {
+        let res = self.cells.shape();
+
+        [
+            *res.get(0).expect("Missing resolution index."),
+            *res.get(1).expect("Missing resolution index."),
+            *res.get(2).expect("Missing resolution index."),
+        ]
+    }
+
     /// Create a map of the material keys.
     #[inline]
     #[must_use]

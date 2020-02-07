@@ -1,8 +1,8 @@
 //! Light-Map structure.
 
-use crate::{sim::Record, world::Grid};
+use crate::{file::Save, sim::Record, world::Grid};
 use ndarray::Array3;
-use std::ops::AddAssign;
+use std::{ops::AddAssign, path::Path};
 
 macro_rules! data_dens {
     ($dens_func: ident, $prop: ident) => {
@@ -30,26 +30,13 @@ impl LightMap {
     #[inline]
     #[must_use]
     pub fn new(grid: &Grid) -> Self {
-        let res = grid.cells().shape();
+        let res = grid.res();
         let cell_vol = grid.bound().vol() / grid.cells().len() as f64;
 
         Self {
-            recs: Array3::default([res[0], res[1], res[2]]),
+            recs: Array3::default(res),
             cell_vol,
         }
-    }
-
-    /// Create a list of density mappings.
-    #[inline]
-    #[must_use]
-    pub fn dens_maps(&self) -> Vec<(&str, Array3<f64>)> {
-        vec![
-            ("emission dens", self.emission_dens()),
-            ("scatter dens", self.scatter_dens()),
-            ("absorption dens", self.absorption_dens()),
-            ("shift dens", self.shift_dens()),
-            ("dist travelled dens", self.dist_travelled_dens()),
-        ]
     }
 
     data_dens!(emission_dens, emissions);
@@ -65,5 +52,19 @@ impl AddAssign<&Self> for LightMap {
         assert!((self.cell_vol - rhs.cell_vol).abs() < 1.0e-9);
 
         self.recs += &rhs.recs;
+    }
+}
+
+impl Save for LightMap {
+    fn save(&self, path: &Path) {
+        self.emission_dens()
+            .save(&path.join("lightmap_emission_dens.nc"));
+        self.scatter_dens()
+            .save(&path.join("lightmap_scatter_dens.nc"));
+        self.absorption_dens()
+            .save(&path.join("lightmap_absorption_dens.nc"));
+        self.shift_dens().save(&path.join("lightmap_shift_dens.nc"));
+        self.dist_travelled_dens()
+            .save(&path.join("lightmap_dist_travelled_dens.nc"));
     }
 }
