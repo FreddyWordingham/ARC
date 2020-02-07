@@ -30,7 +30,7 @@ impl State {
     /// Create a new complete concentration array.
     #[inline]
     #[must_use]
-    pub fn new_conc_arr(&self, specs: SpecSet) -> Array1<f64> {
+    pub fn new_conc_arr(&self, specs: &SpecSet) -> Array1<f64> {
         let mut concs = Array1::zeros(specs.map().len());
 
         let mut index = 0;
@@ -50,7 +50,7 @@ impl State {
     /// Create a new complete source array.
     #[inline]
     #[must_use]
-    pub fn new_source_arr(&self, specs: SpecSet) -> Array1<f64> {
+    pub fn new_source_arr(&self, specs: &SpecSet) -> Array1<f64> {
         let mut sources = Array1::zeros(specs.map().len());
 
         let mut index = 0;

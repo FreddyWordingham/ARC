@@ -36,6 +36,7 @@ impl Verse {
     access!(surfs, SurfSet);
 
     /// Construct a new instance.
+    #[allow(clippy::too_many_arguments)]
     #[inline]
     #[must_use]
     pub fn new(
