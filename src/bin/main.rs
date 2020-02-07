@@ -3,7 +3,9 @@
 use arc::{
     args,
     file::{Grid as GridForm, Load, Save, Verse as VerseForm},
+    ord::LightKey,
     report, rows,
+    sim::mcrt,
     util::{banner, exec, init},
     world::Verse,
 };
@@ -68,6 +70,18 @@ fn main() {
         map.save(&out_dir.join(format!("state_map_{}.nc", key)));
     }
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
+
+    banner::section("Simulation");
+    let lm = mcrt::run(
+        params.num_threads,
+        params.num_phot as u64,
+        &LightKey::new("led"),
+        &verse,
+        &grid,
+    );
+
+    banner::section("Saving II");
+    lm.save(&out_dir);
 
     banner::section("Finished");
 }
