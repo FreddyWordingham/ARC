@@ -37,8 +37,8 @@ pub fn run_thread(
 
             let _shifted = false;
 
-            let _cell_rec = cell_and_record(phot.ray().pos(), grid, &mut lm);
-            // *cell_rec.1.emissions_mut() += phot.weight();
+            let cell_rec = cell_and_record(phot.ray().pos(), grid, &mut lm);
+            *cell_rec.1.emissions_mut() += phot.weight();
         }
     }
 
