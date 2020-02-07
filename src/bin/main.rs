@@ -2,8 +2,8 @@
 
 use arc::{
     args,
-    file::{Grid as GridForm, Load, Verse as VerseForm},
-    report,
+    file::{Grid as GridForm, Load, Save, Verse as VerseForm},
+    report, rows,
     util::{banner, exec, init},
     world::Verse,
 };
@@ -39,14 +39,25 @@ fn main() {
 
     banner::section("Building");
     info!("Building grid...");
-    let _grid = params.grid.form(params.num_threads, &verse);
+    let grid = params.grid.form(params.num_threads, &verse);
+    let mat_maps = grid.mat_maps(verse.mats());
+    let state_maps = grid.state_maps(verse.states());
 
     banner::section("Overview");
     overview(&verse);
+    for (key, map) in mat_maps.map() {
+        let count = map.sum();
+        let fraction = count / map.len() as f64 * 100.0;
+        rows!(format!("{}", key), count, format!("{}%", fraction));
+    }
 
-    // for inter in params.verse.inters() {
-    //     println!("Loading interface: {}", inter);
-    // }
+    banner::section("Saving");
+    for (key, map) in mat_maps.map() {
+        map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
+    }
+    for (key, map) in state_maps.map() {
+        map.save(&out_dir.join(format!("state_map_{}.nc", key)));
+    }
 
     banner::section("Finished");
 }
