@@ -50,6 +50,11 @@ fn main() {
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
+    for (key, map) in state_maps.map() {
+        let count = map.sum();
+        let fraction = count / map.len() as f64 * 100.0;
+        rows!(format!("{}", key), count, format!("{}%", fraction));
+    }
 
     banner::section("Saving");
     for (key, map) in mat_maps.map() {
