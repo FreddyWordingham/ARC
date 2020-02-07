@@ -64,7 +64,7 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
             map.insert((*key).clone(), T::load(&path));
         }
 
-        Set::new(map)
+        Self::new(map)
     }
 }
 

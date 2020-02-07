@@ -55,10 +55,10 @@ impl Grid {
                 Self::init_cell_blocks(
                     *id,
                     res,
-                    &verse,
+                    verse,
                     &bound,
                     &cell_size,
-                    Arc::clone(&pb),
+                    &Arc::clone(&pb),
                     ((total_cells / num_threads) / 100).max(10) as u64,
                 )
             })
@@ -80,12 +80,12 @@ impl Grid {
     #[inline]
     #[must_use]
     fn init_cell_blocks(
-        id: usize,
+        _id: usize,
         res: [usize; 3],
         verse: &Verse,
         bound: &Aabb,
         cell_size: &Vector3<f64>,
-        pb: Arc<Mutex<ParProgressBar>>,
+        pb: &Arc<Mutex<ParProgressBar>>,
         block_size: u64,
     ) -> Vec<(usize, Vec<Cell>)> {
         let mut cell_blocks = Vec::new();
@@ -148,11 +148,11 @@ impl Grid {
 
                 let mat = verse
                     .inters()
-                    .observe_mat(verse.surfs(), &bound, &gen_mat_ray(&p))
+                    .observe_mat(verse.surfs(), bound, &gen_mat_ray(&p))
                     .expect("Unable to observe material.");
                 let state = verse
                     .regions()
-                    .observe_state(verse.surfs(), &bound, &gen_state_ray(&p))
+                    .observe_state(verse.surfs(), bound, &gen_state_ray(&p))
                     .expect("Unable to observe state.");
 
                 cells.push(Cell::new(Aabb::new(mins, maxs), mat, state));
