@@ -4,14 +4,17 @@ use crate::{
     access,
     geom::{Aabb, Ray},
     math::indexer,
-    ord::sort,
+    ord::{sort, MatKey, MatSet, Set, StateKey, StateSet},
     util::ParProgressBar,
     world::{Cell, Verse},
 };
 use nalgebra::{Point3, Unit, Vector3};
 use ndarray::Array3;
 use rayon::prelude::*;
-use std::sync::{Arc, Mutex};
+use std::{
+    collections::BTreeMap,
+    sync::{Arc, Mutex},
+};
 
 /// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
 const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
@@ -161,5 +164,47 @@ impl Grid {
         }
 
         cell_blocks
+    }
+
+    /// Create a map of the material keys.
+    #[inline]
+    #[must_use]
+    pub fn mat_keys(&self) -> Array3<&MatKey> {
+        self.cells.map(Cell::mat)
+    }
+
+    /// Create a set of material maps.
+    #[inline]
+    #[must_use]
+    pub fn mat_maps(&self, mats: &MatSet) -> Set<MatKey, Array3<f64>> {
+        let mut set = BTreeMap::new();
+
+        let keys = self.mat_keys();
+        for key in mats.map().keys() {
+            set.insert(key.clone(), keys.map(|k| if k == &key { 1.0 } else { 0.0 }));
+        }
+
+        Set::new(set)
+    }
+
+    /// Create a map of the state keys.
+    #[inline]
+    #[must_use]
+    pub fn state_keys(&self) -> Array3<&StateKey> {
+        self.cells.map(Cell::state)
+    }
+
+    /// Create a set of state maps.
+    #[inline]
+    #[must_use]
+    pub fn state_maps(&self, states: &StateSet) -> Set<StateKey, Array3<f64>> {
+        let mut set = BTreeMap::new();
+
+        let keys = self.state_keys();
+        for key in states.map().keys() {
+            set.insert(key.clone(), keys.map(|k| if k == &key { 1.0 } else { 0.0 }));
+        }
+
+        Set::new(set)
     }
 }
