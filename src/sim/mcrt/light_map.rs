@@ -10,7 +10,7 @@ macro_rules! data_dens {
         #[inline]
         #[must_use]
         pub fn $dens_func(&self) -> Array3<f64> {
-            self.recs.map(|rec| rec.$prop / self.cell_vol)
+            self.recs.map(|rec| rec.$prop() / self.cell_vol)
         }
     };
 }

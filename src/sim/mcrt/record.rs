@@ -1,5 +1,6 @@
 //! Light-Map record structure.
 
+use crate::clone;
 use std::ops::AddAssign;
 
 /// Record structure implementation.
@@ -7,15 +8,23 @@ use std::ops::AddAssign;
 #[derive(Debug, Clone)]
 pub struct Record {
     /// Total weight of photon emissions.
-    pub emissions: f64,
+    emissions: f64,
     /// Total weight of scattering events.
-    pub scatters: f64,
+    scatters: f64,
     /// Total weight of absorption events.
-    pub absorptions: f64,
+    absorptions: f64,
     /// Total weight of shift events.
-    pub shifts: f64,
+    shifts: f64,
     /// Total distance travelled by photons.
-    pub dist_travelled: f64,
+    dist_travelled: f64,
+}
+
+impl Record {
+    clone!(emissions, emissions_mut, f64);
+    clone!(scatters, scatters_mut, f64);
+    clone!(absorptions, absorptions_mut, f64);
+    clone!(shifts, shifts_mut, f64);
+    clone!(dist_travelled, dist_travelled_mut, f64);
 }
 
 impl Default for Record {
