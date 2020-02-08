@@ -104,9 +104,23 @@ pub fn run_thread(
                             shifted = true;
                         }
                     }
-                    Hit::Cell(dist) => {}
-                    Hit::Interface(dist) => {}
-                    Hit::InterfaceCell(dist) => {}
+                    Hit::Cell(dist) => {
+                        let dist = dist + bump_dist;
+                        *cr.rec_mut().dist_travelled_mut() += dist;
+                        phot.ray_mut().travel(dist);
+
+                        if !grid.bound().contains(phot.ray().pos()) {
+                            break;
+                        }
+
+                        cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
+                    }
+                    Hit::Interface(dist) => {
+                        phot.ray_mut().travel(dist + bump_dist);
+                    }
+                    Hit::InterfaceCell(dist) => {
+                        phot.ray_mut().travel(dist + bump_dist);
+                    }
                 }
             }
         }
