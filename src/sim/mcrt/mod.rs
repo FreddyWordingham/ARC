@@ -1,11 +1,12 @@
 //! Monte-Carlo radiative transfer simulation sub-module.
 
+pub mod cell_rec;
 pub mod hit;
 pub mod light_map;
 pub mod photon_loop;
 pub mod record;
 
-pub use self::{hit::*, light_map::*, record::*};
+pub use self::{cell_rec::*, hit::*, light_map::*, record::*};
 
 use crate::{
     ord::LightKey,
