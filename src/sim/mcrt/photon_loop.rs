@@ -2,12 +2,14 @@
 
 use crate::{
     geom::Trace,
-    sim::{CellRec, LightMap},
+    math::distribution,
+    sim::{CellRec, Hit, LightMap},
     util::ParProgressBar,
     world::{Grid, Light, Verse},
 };
 use log::warn;
 use rand::{thread_rng, Rng};
+use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
 
 /// Maximum number of loops a photon will make before being culled prematurely.
@@ -28,6 +30,8 @@ pub fn run_thread(
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: u64,
 ) -> LightMap {
+    let bump_dist = grid.bump_dist();
+
     let mut lm = LightMap::new(grid);
     let mut rng = thread_rng();
 
@@ -42,7 +46,7 @@ pub fn run_thread(
 
             assert!(grid.bound().contains(phot.ray().pos()));
 
-            let _shifted = false;
+            let mut shifted = false;
 
             let mut cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
             *cr.rec_mut().emissions_mut() += phot.weight();
@@ -80,6 +84,30 @@ pub fn run_thread(
                     .dist(&phot.ray())
                     .expect("Unable to determine boundary distance.");
                 let inter_dist = cr.cell().inter_dist(phot.ray());
+
+                match Hit::new(scat_dist, cell_dist, inter_dist, bump_dist) {
+                    Hit::Scattering(dist) => {
+                        *cr.rec_mut().dist_travelled_mut() += dist;
+                        phot.ray_mut().travel(dist);
+
+                        *cr.rec_mut().scatters_mut() += phot.weight();
+                        phot.ray_mut().rotate(
+                            distribution::henyey_greenstein(&mut rng, env.asym()),
+                            rng.gen_range(0.0, 2.0 * PI),
+                        );
+
+                        *cr.rec_mut().absorptions_mut() += env.albedo() * phot.weight();
+                        *phot.weight_mut() *= env.albedo();
+
+                        if !shifted && rng.gen_range(0.0, 1.0) <= env.shift_prob() {
+                            *cr.rec_mut().shifts_mut() += phot.weight();
+                            shifted = true;
+                        }
+                    }
+                    Hit::Cell(dist) => {}
+                    Hit::Interface(dist) => {}
+                    Hit::InterfaceCell(dist) => {}
+                }
             }
         }
     }

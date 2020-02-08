@@ -3,7 +3,7 @@
 use crate::{
     access,
     geom::{Aabb, Ray},
-    math::indexer,
+    math::{indexer, list},
     ord::{sort, MatKey, MatSet, Set, StateKey, StateSet},
     util::ParProgressBar,
     world::{Cell, Verse},
@@ -177,6 +177,21 @@ impl<'a> Grid<'a> {
             *res.get(1).expect("Missing resolution index."),
             *res.get(2).expect("Missing resolution index."),
         ]
+    }
+
+    /// Determine a suitable bump distance for the grid.
+    #[inline]
+    #[must_use]
+    pub fn bump_dist(&self) -> f64 {
+        let mins: Vec<f64> = self
+            .bound
+            .widths()
+            .iter()
+            .zip(&self.res())
+            .map(|(dx, r)| *dx / *r as f64 * 1.0e-3)
+            .collect();
+
+        list::min(&mins)
     }
 
     /// Create a map of the material keys.

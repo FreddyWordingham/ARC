@@ -1,6 +1,6 @@
 //! Photon implementation.
 
-use crate::{clone, geom::Ray};
+use crate::{access, clone, geom::Ray};
 
 /// Photon structure.
 #[derive(Debug)]
@@ -19,7 +19,7 @@ impl Photon {
     clone!(weight, weight_mut, f64);
     clone!(wavelength, f64);
     clone!(power, f64);
-    clone!(ray, ray_mut, Ray);
+    access!(ray, ray_mut, Ray);
 
     /// Construct a new instance.
     #[inline]

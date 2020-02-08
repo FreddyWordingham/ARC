@@ -2,7 +2,7 @@
 
 use crate::{
     access,
-    geom::{Aabb, Collide, SmoothTriangle},
+    geom::{Aabb, Collide, Ray, SmoothTriangle, Trace},
     ord::{InterKey, MatKey, StateKey},
     world::{Interface, Verse},
 };
@@ -58,5 +58,25 @@ impl<'a> Cell<'a> {
             state,
             inter_tris,
         }
+    }
+
+    /// Determine the distance to the next interface along a ray's line of sight.
+    #[inline]
+    #[must_use]
+    pub fn inter_dist(&self, ray: &Ray) -> Option<f64> {
+        assert!(self.bound().contains(ray.pos()));
+
+        let mut nearest = None;
+        for ((_name, _inter), tris) in &self.inter_tris {
+            for tri in tris {
+                if let Some(dist) = tri.dist(ray) {
+                    if nearest.is_none() || dist < nearest.expect("Something went wrong...") {
+                        nearest = Some(dist);
+                    }
+                }
+            }
+        }
+
+        nearest
     }
 }
