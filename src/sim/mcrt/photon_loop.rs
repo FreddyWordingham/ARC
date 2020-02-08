@@ -1,11 +1,10 @@
 //! Core MCRT photon loop function.
 
 use crate::{
-    sim::{LightMap, Record},
+    sim::{CellRec, LightMap},
     util::ParProgressBar,
-    world::{Cell, Grid, Light, Verse},
+    world::{Grid, Light, Verse},
 };
-use nalgebra::Point3;
 use rand::thread_rng;
 use std::sync::{Arc, Mutex};
 
@@ -37,54 +36,12 @@ pub fn run_thread(
 
             let _shifted = false;
 
-            let cell_rec = cell_and_record(phot.ray().pos(), grid, &mut lm);
-            *cell_rec.1.emissions_mut() += phot.weight();
+            let mut cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
+            *cr.rec_mut().emissions_mut() += phot.weight();
 
             // let env = cell
         }
     }
 
     lm
-}
-
-/// Retrieve a reference to the current cell, and corresponding record, that a point belongs to.
-#[inline]
-#[must_use]
-fn cell_and_record<'a>(
-    pos: &Point3<f64>,
-    grid: &'a Grid,
-    light_map: &'a mut LightMap,
-) -> (&'a Cell<'a>, &'a mut Record) {
-    let mins = grid.bound().mins();
-    let maxs = grid.bound().maxs();
-    let res = grid.res();
-
-    let id: Vec<usize> = pos
-        .iter()
-        .zip(mins.iter().zip(maxs.iter()))
-        .zip(&res)
-        .map(|((p, (min, max)), n)| index(*p, *min, *max, *n))
-        .collect();
-    let index = (
-        *id.get(0).expect("Missing index."),
-        *id.get(1).expect("Missing index."),
-        *id.get(2).expect("Missing index."),
-    );
-
-    let cell = grid.cells().get(index).expect("Invalid grid index.");
-    let rec = light_map
-        .recs_mut()
-        .get_mut(index)
-        .expect("Invalid record index.");
-
-    assert!(cell.bound().contains(pos));
-
-    (cell, rec)
-}
-
-/// Determine the index corresponding to a given resolution.
-#[inline]
-#[must_use]
-pub fn index(x: f64, min: f64, max: f64, res: usize) -> usize {
-    (((x - min) / (max - min)) * res as f64) as usize
 }
