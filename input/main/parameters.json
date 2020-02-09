@@ -1,11 +1,11 @@
 {
-    "num_threads": 4,
+    "num_threads": 8,
     "num_phot": 1e6,
     "grid": {
         "res": [
-            128,
-            128,
-            256
+            256,
+            256,
+            512
         ],
         "mins": [
             -1.0e-3,

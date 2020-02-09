@@ -6,9 +6,7 @@ use crate::{
     ord::{InterKey, MatKey, StateKey},
     world::{Interface, Verse},
 };
-
-// /// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
-// const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
+use nalgebra::{Unit, Vector3};
 
 /// Cell holding local information.
 pub struct Cell<'a> {
@@ -72,6 +70,28 @@ impl<'a> Cell<'a> {
                 if let Some(dist) = tri.dist(ray) {
                     if nearest.is_none() || dist < nearest.expect("Something went wrong...") {
                         nearest = Some(dist);
+                    }
+                }
+            }
+        }
+
+        nearest
+    }
+
+    /// Determine the distance to an interface contained within the cell, if hitting on the inside of the interface, and the normal at the intersection point.
+    #[inline]
+    #[must_use]
+    pub fn inter_dist_inside_norm_inter(
+        &self,
+        ray: &Ray,
+    ) -> Option<(f64, bool, Unit<Vector3<f64>>, &Interface)> {
+        let mut nearest: Option<(f64, bool, Unit<Vector3<f64>>, &Interface)> = None;
+
+        for ((_name, inter), tris) in &self.inter_tris {
+            for tri in tris {
+                if let Some((dist, inside, norm)) = tri.dist_inside_norm(ray) {
+                    if nearest.is_none() || dist < nearest.expect("Something went wrong...").0 {
+                        nearest = Some((dist, inside, norm, inter));
                     }
                 }
             }

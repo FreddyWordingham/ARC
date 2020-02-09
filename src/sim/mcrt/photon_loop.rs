@@ -3,17 +3,18 @@
 use crate::{
     geom::Trace,
     math::distribution,
+    phys::{Crossing, Environment, Photon},
     sim::{CellRec, Hit, LightMap},
     util::ParProgressBar,
     world::{Grid, Light, Verse},
 };
 use log::warn;
-use rand::{thread_rng, Rng};
-use std::f64::consts::PI;
+use rand::{rngs::ThreadRng, thread_rng, Rng};
+use std::f64::{consts::PI, MIN_POSITIVE};
 use std::sync::{Arc, Mutex};
 
 /// Maximum number of loops a photon will make before being culled prematurely.
-const MAX_LOOPS: u64 = 1_000;
+const MAX_LOOPS: u64 = 1_000_000;
 
 /// Weight below which to perform roulette each photon loop.
 const ROULETTE: f64 = 0.1;
@@ -78,10 +79,11 @@ pub fn run_thread(
                 }
 
                 let scat_dist = -(rng.gen_range(0.0_f64, 1.0)).ln() / env.inter_coeff();
+
                 let cell_dist = cr
                     .cell()
                     .bound()
-                    .dist(&phot.ray())
+                    .dist(phot.ray())
                     .expect("Unable to determine boundary distance.");
                 let inter_dist = cr.cell().inter_dist(phot.ray());
 
@@ -116,10 +118,30 @@ pub fn run_thread(
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
                     }
                     Hit::Interface(dist) => {
-                        phot.ray_mut().travel(dist + bump_dist);
+                        hit_interface(
+                            &mut rng, &mut phot, &mut cr, &mut env, dist, bump_dist, verse,
+                        );
+
+                        if !cr.cell().bound().contains(phot.ray().pos()) {
+                            // TODO: This should be able to be removed.
+                            if !grid.bound().contains(phot.ray().pos()) {
+                                break;
+                            }
+
+                            warn!("Interface crossing caused cell crossing!");
+                            cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
+                        }
                     }
                     Hit::InterfaceCell(dist) => {
-                        phot.ray_mut().travel(dist + bump_dist);
+                        hit_interface(
+                            &mut rng, &mut phot, &mut cr, &mut env, dist, bump_dist, verse,
+                        );
+
+                        if !grid.bound().contains(phot.ray().pos()) {
+                            break;
+                        }
+
+                        cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
                     }
                 }
             }
@@ -127,4 +149,49 @@ pub fn run_thread(
     }
 
     lm
+}
+
+/// Perform an interface hit event.
+#[inline]
+fn hit_interface(
+    rng: &mut ThreadRng,
+    phot: &mut Photon,
+    cr: &mut CellRec,
+    env: &mut Environment,
+    dist: f64,
+    bump_dist: f64,
+    verse: &Verse,
+) {
+    let (_dist, inside, norm, inter) = cr
+        .cell()
+        .inter_dist_inside_norm_inter(phot.ray())
+        .expect("Failed to observe interface within cell.");
+
+    let next_mat = if inside {
+        inter.out_mat()
+    } else {
+        inter.in_mat()
+    };
+    let next_env = verse.mats().get(next_mat).optics().env(phot.wavelength());
+
+    let n_curr = env.ref_index();
+    let n_next = next_env.ref_index();
+
+    let crossing = Crossing::new(phot.ray().dir(), &norm, n_curr, n_next);
+
+    if rng.gen_range(0.0, 1.0) <= crossing.ref_prob() {
+        let effective_dist = (dist - bump_dist).max(MIN_POSITIVE);
+        *cr.rec_mut().dist_travelled_mut() += effective_dist;
+        phot.ray_mut().travel(effective_dist);
+        *phot.ray_mut().dir_mut() = *crossing.ref_dir();
+    } else {
+        let effective_dist = dist + bump_dist;
+        *cr.rec_mut().dist_travelled_mut() += effective_dist;
+        phot.ray_mut().travel(effective_dist);
+        *phot.ray_mut().dir_mut() = crossing
+            .trans_dir()
+            .expect("Failed to determine transmission direction.");
+
+        *env = next_env;
+    }
 }

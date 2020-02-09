@@ -40,7 +40,7 @@ pub fn run(
                 verse.lights().get(light),
                 num_phot,
                 &Arc::clone(&pb),
-                ((num_phot / num_threads as u64) / 100).max(10) as u64,
+                ((num_phot / num_threads as u64) / 1000).max(10) as u64,
             )
         })
         .collect();
