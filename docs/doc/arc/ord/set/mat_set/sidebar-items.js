@@ -1,1 +1,0 @@
-initSidebarItems({"type":[["MatSet","Alias for the material set."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"type":[["SurfSet","Alias for the surface set."]]});

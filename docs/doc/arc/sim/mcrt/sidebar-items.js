@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["run","Run a Monte-Carlo radiative transfer simulation."]],"mod":[["cell_rec","Cell-Record referencing structure."],["hit","Hit-type enumeration."],["light_map","Light-Map structure."],["photon_loop","Core MCRT photon loop function."],["record","Light-Map record structure."]]});

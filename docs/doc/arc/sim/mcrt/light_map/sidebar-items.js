@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["LightMap","Light-Map structure implementation. Stores output data from an MCRT simulation."]]});

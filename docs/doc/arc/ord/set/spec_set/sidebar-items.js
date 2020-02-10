@@ -1,1 +1,0 @@
-initSidebarItems({"type":[["SpecSet","Alias for the species set."]]});

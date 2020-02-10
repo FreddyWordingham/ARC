@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["dom","Domain sub-module."],["part","Parts sub-module."],["uni","Universe sub-module."]]});

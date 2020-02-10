@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["verse","Material implementation."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["table","Table implementation."]]});

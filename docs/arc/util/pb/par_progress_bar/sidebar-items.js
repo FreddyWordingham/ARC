@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["ParProgressBar","Parallel progress-bar structure."]]});

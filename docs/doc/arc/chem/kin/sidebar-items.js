@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["rate","Rate implementation."],["reaction","Reaction implementation."],["species","Species implementation."]]});

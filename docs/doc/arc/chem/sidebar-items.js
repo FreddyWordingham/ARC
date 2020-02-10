@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["kin","Kinematics sub-module."]]});
