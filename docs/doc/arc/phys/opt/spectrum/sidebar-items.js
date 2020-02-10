@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Spectrum","Spectrum enumeration implementation."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Verse","Material physical properties."]]});
