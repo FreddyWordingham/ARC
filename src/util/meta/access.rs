@@ -18,6 +18,7 @@ macro_rules! access {
             &self.$field
         }
 
+        #[allow(clippy::mut_mut)]
         #[inline]
         #[must_use]
         pub fn $setter(&mut self) -> &mut $type {

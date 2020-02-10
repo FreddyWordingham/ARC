@@ -162,7 +162,7 @@ fn hit_interface(
     bump_dist: f64,
     verse: &Verse,
 ) {
-    let (_dist, inside, norm, inter) = cr
+    let (_, inside, norm, inter) = cr
         .cell()
         .inter_dist_inside_norm_inter(phot.ray())
         .expect("Failed to observe interface within cell.");

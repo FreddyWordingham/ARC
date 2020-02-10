@@ -56,7 +56,7 @@ impl Hit {
     pub fn new(scat_dist: f64, cell_dist: f64, inter_dist: Option<f64>, bump_dist: f64) -> Self {
         debug_assert!(scat_dist > 0.0);
         debug_assert!(cell_dist > 0.0);
-        debug_assert!(inter_dist.is_none() || inter_dist.unwrap() > 0.0);
+        debug_assert!(inter_dist.is_none() || inter_dist.expect("Something went wrong.") > 0.0);
         debug_assert!(bump_dist > 0.0);
 
         if cell_dist <= scat_dist {
