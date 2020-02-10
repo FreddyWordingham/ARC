@@ -10,6 +10,7 @@
 )]
 #![allow(
     clippy::as_conversions,
+    clippy::cargo_common_metadata,
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_precision_loss,
@@ -29,6 +30,7 @@
     clippy::print_stdout,
     clippy::result_expect_used,
     clippy::unreachable,
+    clippy::wildcard_dependencies,
     clippy::wildcard_enum_match_arm
 )]
 
