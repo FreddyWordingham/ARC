@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Interface","Material interface structure."]]});

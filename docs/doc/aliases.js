@@ -29,6 +29,7 @@ ALIASES["lazy_static"] = {};
 ALIASES["libc"] = {};
 ALIASES["libm"] = {};
 ALIASES["log"] = {};
+ALIASES["loop"] = {};
 ALIASES["main"] = {};
 ALIASES["maplit"] = {};
 ALIASES["matrixmultiply"] = {};

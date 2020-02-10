@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Collide","Collide trait implementation. Structures implementing this trait can be tested for collision with an axis-aligned bounding box."]]});

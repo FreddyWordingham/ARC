@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["indexer","Indexer implementation."],["range","Range implementation."]]});
+initSidebarItems({"mod":[["binner","Binner implementation."],["indexer","Index producing functions."],["range","Range implementation."]]});

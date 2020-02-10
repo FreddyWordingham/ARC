@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Surface","Mesh building structure."]]});
