@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Optics","Optical properties structure."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Rectangle","Rectangle geometry. This is a special case of Parallelogram."]]});

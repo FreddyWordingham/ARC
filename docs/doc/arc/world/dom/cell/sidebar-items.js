@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Cell","Cell holding local information."]]});

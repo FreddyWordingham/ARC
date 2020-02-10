@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["root","Get the arc installation directory path from the environment variable. Environment variable must be set."]]});

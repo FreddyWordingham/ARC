@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["max","Determine the maximum value within a vector."],["min","Determine the minimum value within a vector."]]});
