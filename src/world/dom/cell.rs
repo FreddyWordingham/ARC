@@ -21,6 +21,8 @@ pub struct Cell<'a> {
     inter_tris: Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>,
     /// Species concentrations.
     concs: Array1<f64>,
+    /// Species source rates.
+    sources: Array1<f64>,
 }
 
 impl<'a> Cell<'a> {
@@ -32,6 +34,7 @@ impl<'a> Cell<'a> {
         Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>
     );
     access!(concs, Array1<f64>);
+    access!(sources, Array1<f64>);
 
     /// Construct a new instance.
     #[inline]
@@ -55,7 +58,7 @@ impl<'a> Cell<'a> {
         }
 
         let concs = verse.states().get(&state).new_conc_arr(verse.specs());
-        let _sources = verse.states().get(&state).new_source_arr(verse.specs());
+        let sources = verse.states().get(&state).new_source_arr(verse.specs());
 
         Self {
             bound,
@@ -63,6 +66,7 @@ impl<'a> Cell<'a> {
             state,
             inter_tris,
             concs,
+            sources,
         }
     }
 
