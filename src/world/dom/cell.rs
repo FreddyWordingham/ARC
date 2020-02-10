@@ -62,7 +62,7 @@ impl<'a> Cell<'a> {
     #[inline]
     #[must_use]
     pub fn inter_dist(&self, ray: &Ray) -> Option<f64> {
-        assert!(self.bound().contains(ray.pos()));
+        debug_assert!(self.bound().contains(ray.pos()));
 
         let mut nearest = None;
         for ((_name, _inter), tris) in &self.inter_tris {

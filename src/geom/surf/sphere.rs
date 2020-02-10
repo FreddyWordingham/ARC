@@ -25,7 +25,7 @@ impl Sphere {
     #[inline]
     #[must_use]
     pub fn new(pos: Point3<f64>, rad: f64) -> Self {
-        assert!(rad >= 0.0);
+        debug_assert!(rad >= 0.0);
 
         Self { pos, rad }
     }

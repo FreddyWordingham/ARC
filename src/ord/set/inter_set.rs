@@ -46,7 +46,7 @@ impl InterSet {
     #[inline]
     #[must_use]
     pub fn observe_mat(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<MatKey> {
-        assert!(bound.contains(ray.pos()));
+        debug_assert!(bound.contains(ray.pos()));
 
         let mut nearest: Option<(&MatKey, f64)> = None;
 

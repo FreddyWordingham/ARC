@@ -28,7 +28,7 @@ impl Grid {
     #[inline]
     #[must_use]
     pub fn form<'a>(&self, num_threads: usize, verse: &'a Verse) -> WorldGrid<'a> {
-        assert!(num_threads > 0);
+        debug_assert!(num_threads > 0);
 
         WorldGrid::new(
             num_threads,

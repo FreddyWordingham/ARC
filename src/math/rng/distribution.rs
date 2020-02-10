@@ -6,7 +6,7 @@ use rand::{rngs::ThreadRng, Rng};
 #[inline]
 #[must_use]
 pub fn henyey_greenstein(rng: &mut ThreadRng, asym: f64) -> f64 {
-    assert!(asym.abs() <= 1.0);
+    debug_assert!(asym.abs() <= 1.0);
 
     if asym.abs() < 1.0e-6 {
         return rng.gen_range(-1.0_f64, 1.0).acos();

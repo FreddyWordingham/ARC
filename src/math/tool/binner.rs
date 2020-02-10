@@ -19,7 +19,7 @@ impl Binner {
     #[inline]
     #[must_use]
     pub fn new(range: Range, bins: u64) -> Self {
-        assert!(bins > 0);
+        debug_assert!(bins > 0);
 
         Self { range, bins }
     }
@@ -35,7 +35,7 @@ impl Binner {
     #[inline]
     #[must_use]
     pub fn bin(&self, x: f64) -> usize {
-        assert!(self.range.contains(x));
+        debug_assert!(self.range.contains(x));
 
         ((x - self.range.min() / self.range.width()) * self.bins as f64).floor() as usize
     }

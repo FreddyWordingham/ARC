@@ -47,7 +47,7 @@ impl<'a> CellRec<'a> {
             .get_mut(index)
             .expect("Invalid record index.");
 
-        assert!(cell.bound().contains(pos));
+        debug_assert!(cell.bound().contains(pos));
 
         Self { cell, rec }
     }

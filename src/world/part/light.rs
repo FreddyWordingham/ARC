@@ -29,7 +29,7 @@ impl Light {
     #[inline]
     #[must_use]
     pub fn new(surf: SurfKey, spec: Spectrum, power: f64) -> Self {
-        assert!(power > 0.0);
+        debug_assert!(power > 0.0);
 
         Self { surf, spec, power }
     }

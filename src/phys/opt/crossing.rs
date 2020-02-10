@@ -28,8 +28,8 @@ impl Crossing {
         n_curr: f64,
         n_next: f64,
     ) -> Self {
-        assert!(n_curr >= 1.0);
-        assert!(n_next >= 1.0);
+        debug_assert!(n_curr >= 1.0);
+        debug_assert!(n_next >= 1.0);
 
         let norm = if inc.dot(face_norm) > 0.0 {
             Unit::new_normalize(face_norm.as_ref() * -1.0)
@@ -69,8 +69,8 @@ impl Crossing {
     /// Calculate the reflection probability.
     #[must_use]
     fn init_ref_prob(n1: f64, n2: f64, ci: f64, ct: f64) -> f64 {
-        assert!(n1 >= 0.0);
-        assert!(n2 >= 0.0);
+        debug_assert!(n1 >= 0.0);
+        debug_assert!(n2 >= 0.0);
 
         let n1_c_i = n1 * ci;
         let n2_c_t = n2 * ct;

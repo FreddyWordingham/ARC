@@ -20,7 +20,7 @@ impl Range {
     #[inline]
     #[must_use]
     pub fn new(min: f64, max: f64) -> Self {
-        assert!(min < max);
+        debug_assert!(min < max);
 
         Self { min, max }
     }
