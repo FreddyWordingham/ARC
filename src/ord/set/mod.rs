@@ -49,10 +49,10 @@ impl<K: Display + Ord, T> Set<K, T> {
             .unwrap_or_else(|| panic!("Key {} does not exist within the set.", key))
     }
 
-    /// Determine the index corresponding to a name within the set.
+    /// Determine the index corresponding to a key within the set.
     #[inline]
     #[must_use]
-    pub fn index_of_name(&self, key: &K) -> usize {
+    pub fn index_of_key(&self, key: &K) -> usize {
         for (i, k) in self.map.keys().enumerate() {
             if k == key {
                 return i;

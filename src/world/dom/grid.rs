@@ -248,7 +248,7 @@ impl<'a> Grid<'a> {
     #[inline]
     #[must_use]
     pub fn spec_refs(&self, spec: &SpecKey, specs: &SpecSet) -> Array3<&f64> {
-        let index = specs.index_of_name(spec);
+        let index = specs.index_of_key(spec);
         self.cells.map(|c| c.concs().get(index).unwrap())
     }
 
@@ -256,7 +256,7 @@ impl<'a> Grid<'a> {
     #[inline]
     #[must_use]
     pub fn spec_refs_mut(&mut self, spec: &SpecKey, specs: &SpecSet) -> Array3<&mut f64> {
-        let index = specs.index_of_name(spec);
+        let index = specs.index_of_key(spec);
         self.cells
             .map_mut(|c| c.concs_mut().get_mut(index).unwrap())
     }

@@ -45,6 +45,7 @@ fn main() {
     let grid = params.grid.form(params.num_threads, &verse);
     let mat_maps = grid.mat_maps(verse.mats());
     let state_maps = grid.state_maps(verse.states());
+    let spec_maps = grid.spec_set_refs(verse.specs());
 
     banner::section("Overview");
     overview(&verse);
@@ -60,6 +61,11 @@ fn main() {
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
+    info!("Species mapping breakdown:");
+    for (key, map) in spec_maps.map() {
+        let total: f64 = map.map(|x| **x).sum();
+        rows!(format!("{}", key), total);
+    }
     let inter_boundaries = grid.inter_boundaries();
 
     banner::section("Saving");
@@ -68,6 +74,10 @@ fn main() {
     }
     for (key, map) in state_maps.map() {
         map.save(&out_dir.join(format!("state_map_{}.nc", key)));
+    }
+    for (key, map) in spec_maps.map() {
+        map.map(|x| **x)
+            .save(&out_dir.join(format!("spec_map_{}.nc", key)));
     }
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
