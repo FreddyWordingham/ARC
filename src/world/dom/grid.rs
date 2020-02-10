@@ -260,4 +260,20 @@ impl<'a> Grid<'a> {
         self.cells
             .map_mut(|c| c.concs_mut().get_mut(index).unwrap())
     }
+
+    /// Create a set of species concentration reference maps.
+    #[inline]
+    #[must_use]
+    pub fn spec_set_refs(&self, specs: &SpecSet) -> Set<SpecKey, Array3<&f64>> {
+        let mut set = BTreeMap::new();
+
+        for (index, key) in specs.map().keys().enumerate() {
+            set.insert(
+                key.clone(),
+                self.cells.map(|c| c.concs().get(index).unwrap()),
+            );
+        }
+
+        Set::new(set)
+    }
 }
