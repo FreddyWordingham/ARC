@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Transform","Json parsable transform structure."]]});

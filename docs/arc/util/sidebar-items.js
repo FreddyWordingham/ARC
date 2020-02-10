@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["dir","Directory sub-module."],["info","Information sub-module."],["meta","Macro sub-module."],["pb","Progress-Bar sub-module."],["print","Printing sub-module."]]});

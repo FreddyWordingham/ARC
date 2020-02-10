@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Species","Reactive species structure."]]});

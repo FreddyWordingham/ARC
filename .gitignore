@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 target/
 output/
 **/*.rs.bk
 Cargo.lock
 .DS_Store
+=======
+/target
+**/*.rs.bk
+Cargo.lock
+>>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372

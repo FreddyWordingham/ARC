@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["SmoothTriangle","Triangle geometry with Phong normal interpolation. Used to form meshes."]]});

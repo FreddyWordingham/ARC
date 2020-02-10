@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Material","Material physical properties."]]});

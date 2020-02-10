@@ -1,1 +1,0 @@
-initSidebarItems({"type":[["InterSet","Alias for the interface set."]]});

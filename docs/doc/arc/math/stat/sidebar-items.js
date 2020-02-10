@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["list","List functions."]]});

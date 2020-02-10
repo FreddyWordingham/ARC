@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Hit","Hit enumeration implementation."]]});

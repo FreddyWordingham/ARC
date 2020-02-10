@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["mcrt","Monte-Carlo radiative transfer simulation sub-module."]]});

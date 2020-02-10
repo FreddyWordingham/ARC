@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["henyey_greenstein","Sample the Henyey-Greenstein phase function with a given asymmetry parameter."]]});

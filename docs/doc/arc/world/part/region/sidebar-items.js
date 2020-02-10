@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Region","Region boundary structure."]]});

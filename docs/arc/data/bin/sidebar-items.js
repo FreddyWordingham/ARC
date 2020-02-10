@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["histogram","Histogram implementation."]]});
