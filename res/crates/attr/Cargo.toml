@@ -1,14 +1,14 @@
 [package]
+authors = ["Freddy Wordingham <fjmw201@exeter.ac.uk>"]
 name = "attr"
 version = "0.1.0"
-authors = ["Freddy Wordingham <fjmw201@exeter.ac.uk>"]
-edition = "2018"
-license = "../../../liscense.txt"
+description = "Support attribute macro meta-meta-programming library by Freddy Wordingham."
 repository = "https://github.com/FreddyWordingham/arc"
-readme = "README.md"
+readme = "../../../README.md"
+license = "../../../liscense.txt"
 keywords = ["support"]
 catagories = []
-description = "Support attribute macro meta-meta-programming library by Freddy Wordingham."
+edition = "2018"
 
 [lib]
 proc-macro = true

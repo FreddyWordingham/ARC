@@ -23,17 +23,13 @@ impl<'a> CellRec<'a> {
     pub fn new(pos: &Point3<f64>, grid: &'a Grid, light_map: &'a mut LightMap) -> Self {
         let mins = grid.bound().mins();
         let maxs = grid.bound().maxs();
-        let res = grid.res();
-
-        let index = |x: f64, min: f64, max: f64, res: usize| {
-            (((x - min) / (max - min)) * res as f64) as usize
-        };
+        let resolution = grid.res();
 
         let id: Vec<usize> = pos
             .iter()
             .zip(mins.iter().zip(maxs.iter()))
-            .zip(&res)
-            .map(|((p, (min, max)), n)| index(*p, *min, *max, *n))
+            .zip(&resolution)
+            .map(|((p, (min, max)), n)| (((p - min) / (max - min)) * *n as f64) as usize)
             .collect();
         let index = (
             *id.get(0).expect("Missing index."),
