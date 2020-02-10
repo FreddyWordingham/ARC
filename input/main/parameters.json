@@ -3,9 +3,9 @@
     "num_phot": 1e6,
     "grid": {
         "res": [
-            25,
-            25,
-            51
+            128,
+            128,
+            256
         ],
         "mins": [
             -1.0e-3,
@@ -27,7 +27,8 @@
             "reticular_dermis",
             "tumour",
             "deep_blood_net_dermis",
-            "subcutaneous_fat"
+            "subcutaneous_fat",
+            "blood"
         ],
         "reacts": [
             "ppix_synthesis",
