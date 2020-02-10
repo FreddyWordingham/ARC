@@ -2,7 +2,6 @@
 
 use crate::{
     access,
-<<<<<<< HEAD
     geom::{Aabb, Collide, Ray, SmoothTriangle, Trace},
     ord::{InterKey, MatKey, StateKey},
     world::{Interface, Verse},
@@ -11,24 +10,12 @@ use nalgebra::{Unit, Vector3};
 
 /// Cell holding local information.
 pub struct Cell<'a> {
-=======
-    geom::Aabb,
-    ord::{MatKey, StateKey},
-};
-
-// /// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
-// const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
-
-/// Cell holding local information.
-pub struct Cell {
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     /// Boundary.
     bound: Aabb,
     /// Central material.
     mat: MatKey,
     /// Initial state.
     state: StateKey,
-<<<<<<< HEAD
     /// Intersecting interface triangles.
     inter_tris: Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>,
 }
@@ -41,19 +28,10 @@ impl<'a> Cell<'a> {
         inter_tris,
         Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>
     );
-=======
-}
-
-impl Cell {
-    access!(bound, Aabb);
-    access!(mat, MatKey);
-    access!(state, StateKey);
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-<<<<<<< HEAD
     pub fn new(bound: Aabb, mat: MatKey, state: StateKey, verse: &'a Verse) -> Self {
         let mut inter_tris = Vec::new();
 
@@ -120,9 +98,5 @@ impl Cell {
         }
 
         nearest
-=======
-    pub fn new(bound: Aabb, mat: MatKey, state: StateKey) -> Self {
-        Self { bound, mat, state }
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     }
 }

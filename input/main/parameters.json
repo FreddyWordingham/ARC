@@ -1,21 +1,11 @@
 {
-<<<<<<< HEAD
     "num_threads": 8,
     "num_phot": 1e6,
     "grid": {
         "res": [
-            256,
-            256,
-            512
-=======
-    "num_threads": 1,
-    "num_phot": 1e6,
-    "grid": {
-        "res": [
-            16,
-            16,
-            16
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
+            25,
+            25,
+            51
         ],
         "mins": [
             -1.0e-3,
@@ -25,11 +15,7 @@
         "maxs": [
             1.0e-3,
             1.0e-3,
-<<<<<<< HEAD
             2.0e-3
-=======
-            0.0e-3
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
         ]
     },
     "verse": {
@@ -45,11 +31,7 @@
         ],
         "reacts": [
             "ppix_synthesis",
-<<<<<<< HEAD
             "radical_production"
-=======
-            "radical_production",
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
         ],
         "lights": [
             "led"
