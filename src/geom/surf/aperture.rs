@@ -21,8 +21,8 @@ impl Aperture {
 
     /// Construct a new instance.
     pub fn new(ray: Ray, na: f64) -> Self {
-        assert!(na > 0.0);
-        assert!(na < FRAC_PI_2);
+        debug_assert!(na > 0.0);
+        debug_assert!(na < FRAC_PI_2);
 
         Self { ray, na }
     }

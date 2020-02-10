@@ -46,7 +46,7 @@ impl RegionSet {
     #[inline]
     #[must_use]
     pub fn observe_state(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<StateKey> {
-        assert!(bound.contains(ray.pos()));
+        debug_assert!(bound.contains(ray.pos()));
 
         let mut nearest: Option<(&StateKey, f64)> = None;
 

@@ -24,8 +24,8 @@ impl Histogram {
     #[inline]
     #[must_use]
     pub fn new(min: f64, max: f64, bins: u64) -> Self {
-        assert!(min < max);
-        assert!(bins > 0);
+        debug_assert!(min < max);
+        debug_assert!(bins > 0);
 
         Self {
             binner: Binner::new(Range::new(min, max), bins),
@@ -36,7 +36,7 @@ impl Histogram {
     /// Increment the bin corresponding to x by unity.
     #[inline]
     pub fn collect(&mut self, x: f64) {
-        assert!(self.binner.range().contains(x));
+        debug_assert!(self.binner.range().contains(x));
 
         let index = self.binner.bin(x);
         *self.counts.get_mut(index).expect("Invalid index.") += 1.0;
@@ -45,8 +45,8 @@ impl Histogram {
     /// Increment the bin corresponding to x by a given weight.
     #[inline]
     pub fn collect_weight(&mut self, x: f64, weight: f64) {
-        assert!(self.binner.range().contains(x));
-        assert!(weight > 0.0);
+        debug_assert!(self.binner.range().contains(x));
+        debug_assert!(weight > 0.0);
 
         let index = self.binner.bin(x);
         *self.counts.get_mut(index).expect("Invalid index.") += weight;

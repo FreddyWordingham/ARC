@@ -15,7 +15,7 @@ impl ParProgressBar {
     #[inline]
     #[must_use]
     pub fn new(msg: &str, total: u64) -> Self {
-        assert!(total > 0);
+        debug_assert!(total > 0);
 
         let pb = indicatif::ProgressBar::new(total);
 
@@ -40,7 +40,7 @@ impl ParProgressBar {
     #[inline]
     #[must_use]
     pub fn block(&mut self, size: u64) -> Option<(u64, u64)> {
-        assert!(size > 0);
+        debug_assert!(size > 0);
 
         if self.count >= self.total {
             None

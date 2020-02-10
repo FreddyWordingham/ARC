@@ -18,7 +18,7 @@ impl Hit {
     #[inline]
     #[must_use]
     pub fn new_scattering(dist: f64) -> Self {
-        assert!(dist > 0.0);
+        debug_assert!(dist > 0.0);
 
         Self::Scattering(dist)
     }
@@ -27,7 +27,7 @@ impl Hit {
     #[inline]
     #[must_use]
     pub fn new_cell(dist: f64) -> Self {
-        assert!(dist > 0.0);
+        debug_assert!(dist > 0.0);
 
         Self::Cell(dist)
     }
@@ -36,7 +36,7 @@ impl Hit {
     #[inline]
     #[must_use]
     pub fn new_interface(dist: f64) -> Self {
-        assert!(dist > 0.0);
+        debug_assert!(dist > 0.0);
 
         Self::Interface(dist)
     }
@@ -45,7 +45,7 @@ impl Hit {
     #[inline]
     #[must_use]
     pub fn new_interface_cell(dist: f64) -> Self {
-        assert!(dist > 0.0);
+        debug_assert!(dist > 0.0);
 
         Self::InterfaceCell(dist)
     }
@@ -54,10 +54,10 @@ impl Hit {
     #[inline]
     #[must_use]
     pub fn new(scat_dist: f64, cell_dist: f64, inter_dist: Option<f64>, bump_dist: f64) -> Self {
-        assert!(scat_dist > 0.0);
-        assert!(cell_dist > 0.0);
-        assert!(inter_dist.is_none() || inter_dist.unwrap() > 0.0);
-        assert!(bump_dist > 0.0);
+        debug_assert!(scat_dist > 0.0);
+        debug_assert!(cell_dist > 0.0);
+        debug_assert!(inter_dist.is_none() || inter_dist.unwrap() > 0.0);
+        debug_assert!(bump_dist > 0.0);
 
         if cell_dist <= scat_dist {
             if let Some(inter_dist) = inter_dist {

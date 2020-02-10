@@ -36,7 +36,7 @@ pub fn main() {
                 let id = [xi, yi, zi];
                 let a = arr3[id];
 
-                assert!(id == a, "{:?} -> {:?}", id, a);
+                debug_assert!(id == a, "{:?} -> {:?}", id, a);
             }
         }
     }

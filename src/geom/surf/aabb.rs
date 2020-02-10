@@ -25,7 +25,7 @@ impl Aabb {
     #[inline]
     #[must_use]
     pub fn new(mins: Point3<f64>, maxs: Point3<f64>) -> Self {
-        // assert!(mins < maxs);
+        // debug_assert!(mins < maxs);
 
         Self { mins, maxs }
     }
@@ -34,7 +34,7 @@ impl Aabb {
     #[inline]
     #[must_use]
     pub fn new_centred(centre: &Point3<f64>, hws: &Vector3<f64>) -> Self {
-        assert!(hws.iter().all(|x| *x > 0.0));
+        debug_assert!(hws.iter().all(|x| *x > 0.0));
 
         Self::new(centre - hws, centre + hws)
     }

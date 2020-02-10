@@ -32,7 +32,7 @@ impl SmoothTriangle {
     #[inline]
     #[must_use]
     pub fn new(tri: Triangle, norms: [Unit<Vector3<f64>>; 3]) -> Self {
-        assert!(norms.iter().all(|&n| n.dot(tri.plane_norm()) > 0.0));
+        debug_assert!(norms.iter().all(|&n| n.dot(tri.plane_norm()) > 0.0));
 
         Self { tri, norms }
     }

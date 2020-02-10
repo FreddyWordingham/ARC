@@ -15,7 +15,7 @@ impl Spectrum {
     #[inline]
     #[must_use]
     pub fn new_laser(wavelength: f64) -> Self {
-        assert!(wavelength > 0.0);
+        debug_assert!(wavelength > 0.0);
 
         Self::Laser { 0: wavelength }
     }

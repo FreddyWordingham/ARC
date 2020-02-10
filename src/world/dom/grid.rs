@@ -35,13 +35,13 @@ impl<'a> Grid<'a> {
     #[inline]
     #[must_use]
     pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &'a Verse) -> Self {
-        assert!(num_threads > 0);
+        debug_assert!(num_threads > 0);
 
         let total_cells = res.get(0).expect("Missing resolution index.")
             * res.get(1).expect("Missing resolution index.")
             * res.get(2).expect("Missing resolution index.");
 
-        assert!(total_cells > 0);
+        debug_assert!(total_cells > 0);
 
         let mut cell_size = bound.widths();
         for (w, n) in cell_size.iter_mut().zip(&res) {

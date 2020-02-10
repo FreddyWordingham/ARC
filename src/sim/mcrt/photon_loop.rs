@@ -45,7 +45,7 @@ pub fn run_thread(
         for _ in start..end {
             let mut phot = light.emit(&mut rng, total_phot, verse.surfs());
 
-            assert!(grid.bound().contains(phot.ray().pos()));
+            debug_assert!(grid.bound().contains(phot.ray().pos()));
 
             let mut shifted = false;
 
@@ -60,7 +60,7 @@ pub fn run_thread(
 
             let mut num_loops = 0;
             loop {
-                assert!(phot.weight() > 0.0);
+                debug_assert!(phot.weight() > 0.0);
 
                 num_loops += 1;
                 if num_loops >= MAX_LOOPS {

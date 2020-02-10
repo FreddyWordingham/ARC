@@ -51,7 +51,7 @@ impl LightMap {
 impl AddAssign<&Self> for LightMap {
     #[inline]
     fn add_assign(&mut self, rhs: &Self) {
-        assert!((self.cell_vol - rhs.cell_vol).abs() < 1.0e-9);
+        debug_assert!((self.cell_vol - rhs.cell_vol).abs() < 1.0e-9);
 
         self.recs += &rhs.recs;
     }

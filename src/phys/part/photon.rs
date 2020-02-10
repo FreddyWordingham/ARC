@@ -25,8 +25,8 @@ impl Photon {
     #[inline]
     #[must_use]
     pub fn new(wavelength: f64, power: f64, ray: Ray) -> Self {
-        assert!(wavelength > 0.0);
-        assert!(power > 0.0);
+        debug_assert!(wavelength > 0.0);
+        debug_assert!(power > 0.0);
 
         Self {
             weight: 1.0,
