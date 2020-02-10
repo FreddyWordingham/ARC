@@ -27,8 +27,7 @@
             "reticular_dermis",
             "tumour",
             "deep_blood_net_dermis",
-            "subcutaneous_fat",
-            "blood"
+            "subcutaneous_fat"
         ],
         "reacts": [
             "ppix_synthesis",
@@ -38,7 +37,8 @@
             "led"
         ],
         "regions": [
-            "cream"
+            "cream",
+            "blood"
         ]
     }
 }
