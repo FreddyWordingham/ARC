@@ -3,11 +3,7 @@
 use crate::{
     access,
     geom::{Aabb, Ray},
-<<<<<<< HEAD
     math::{indexer, list},
-=======
-    math::indexer,
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     ord::{sort, MatKey, MatSet, Set, StateKey, StateSet},
     util::ParProgressBar,
     world::{Cell, Verse},
@@ -24,7 +20,6 @@ use std::{
 const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
 
 /// Grid partition scheme.
-<<<<<<< HEAD
 pub struct Grid<'a> {
     /// Boundary.
     bound: Aabb,
@@ -35,27 +30,11 @@ pub struct Grid<'a> {
 impl<'a> Grid<'a> {
     access!(bound, Aabb);
     access!(cells, Array3<Cell<'a>>);
-=======
-pub struct Grid {
-    /// Boundary.
-    bound: Aabb,
-    /// Cells.
-    cells: Array3<Cell>,
-}
-
-impl Grid {
-    access!(bound, Aabb);
-    access!(cells, Array3<Cell>);
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-<<<<<<< HEAD
     pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &'a Verse) -> Self {
-=======
-    pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &Verse) -> Self {
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
         assert!(num_threads > 0);
 
         let total_cells = res.get(0).expect("Missing resolution index.")
@@ -106,20 +85,12 @@ impl Grid {
     fn init_cell_blocks(
         _id: usize,
         res: [usize; 3],
-<<<<<<< HEAD
         verse: &'a Verse,
-=======
-        verse: &Verse,
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
         bound: &Aabb,
         cell_size: &Vector3<f64>,
         pb: &Arc<Mutex<ParProgressBar>>,
         block_size: u64,
-<<<<<<< HEAD
     ) -> Vec<(usize, Vec<Cell<'a>>)> {
-=======
-    ) -> Vec<(usize, Vec<Cell>)> {
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
         let mut cell_blocks = Vec::new();
 
         let gen_mat_ray = |p: &Point3<f64>| -> Ray {
@@ -187,11 +158,7 @@ impl Grid {
                     .observe_state(verse.surfs(), bound, &gen_state_ray(&p))
                     .expect("Unable to observe state.");
 
-<<<<<<< HEAD
                 cells.push(Cell::new(Aabb::new(mins, maxs), mat, state, verse));
-=======
-                cells.push(Cell::new(Aabb::new(mins, maxs), mat, state));
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
             }
             cell_blocks.push((start as usize, cells));
         }
@@ -199,7 +166,6 @@ impl Grid {
         cell_blocks
     }
 
-<<<<<<< HEAD
     /// Get the resolution of the grid.
     #[inline]
     #[must_use]
@@ -228,8 +194,6 @@ impl Grid {
         list::min(&mins)
     }
 
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     /// Create a map of the material keys.
     #[inline]
     #[must_use]
@@ -271,7 +235,6 @@ impl Grid {
 
         Set::new(set)
     }
-<<<<<<< HEAD
 
     /// Create a map of the cells containing boundaries.
     #[inline]
@@ -280,6 +243,4 @@ impl Grid {
         self.cells
             .map(|c| if c.inter_tris().is_empty() { 0.0 } else { 1.0 })
     }
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 }

@@ -3,13 +3,9 @@
 use arc::{
     args,
     file::{Grid as GridForm, Load, Save, Verse as VerseForm},
-<<<<<<< HEAD
     ord::LightKey,
     report, rows,
     sim::mcrt,
-=======
-    report, rows,
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     util::{banner, exec, init},
     world::Verse,
 };
@@ -39,10 +35,7 @@ fn main() {
     banner::section("Loading");
     info!("Loading parameters file...");
     let params = Parameters::load(&params_path);
-<<<<<<< HEAD
     report!(params.num_threads);
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 
     info!("Loading universe files...");
     let verse = params.verse.form(&in_dir);
@@ -55,28 +48,19 @@ fn main() {
 
     banner::section("Overview");
     overview(&verse);
-<<<<<<< HEAD
     info!("Material mapping breakdown:");
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     for (key, map) in mat_maps.map() {
         let count = map.sum();
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
-<<<<<<< HEAD
     info!("State mapping breakdown:");
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     for (key, map) in state_maps.map() {
         let count = map.sum();
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
-<<<<<<< HEAD
     let inter_boundaries = grid.inter_boundaries();
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 
     banner::section("Saving");
     for (key, map) in mat_maps.map() {
@@ -85,7 +69,6 @@ fn main() {
     for (key, map) in state_maps.map() {
         map.save(&out_dir.join(format!("state_map_{}.nc", key)));
     }
-<<<<<<< HEAD
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Simulation");
@@ -99,8 +82,6 @@ fn main() {
 
     banner::section("Saving II");
     lm.save(&out_dir);
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 
     banner::section("Finished");
 }

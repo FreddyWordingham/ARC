@@ -9,10 +9,7 @@
     clippy::restriction
 )]
 #![allow(
-<<<<<<< HEAD
     clippy::as_conversions,
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_precision_loss,
@@ -43,10 +40,6 @@ pub mod list;
 pub mod math;
 pub mod ord;
 pub mod phys;
-<<<<<<< HEAD
 pub mod sim;
-=======
-// pub mod sim;
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 pub mod util;
 pub mod world;

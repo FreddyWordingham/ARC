@@ -28,13 +28,10 @@ impl ProgressBar {
     pub fn tick(&mut self) {
         self.pb.inc(1);
     }
-<<<<<<< HEAD
 
     /// Finish with a message.
     #[inline]
     pub fn finish_with_message(&mut self, msg: &'static str) {
         self.pb.finish_with_message(msg);
     }
-=======
->>>>>>> 671c3d8935608ac0c3232ccb50f845e19b0e7372
 }
