@@ -4,7 +4,7 @@ use crate::{
     access,
     geom::{Aabb, Ray},
     math::{indexer, list},
-    ord::{sort, MatKey, MatSet, Set, StateKey, StateSet},
+    ord::{sort, MatKey, MatSet, Set, SpecKey, SpecSet, StateKey, StateSet},
     util::ParProgressBar,
     world::{Cell, Verse},
 };
@@ -242,5 +242,22 @@ impl<'a> Grid<'a> {
     pub fn inter_boundaries(&self) -> Array3<f64> {
         self.cells
             .map(|c| if c.inter_tris().is_empty() { 0.0 } else { 1.0 })
+    }
+
+    /// Create a viewing map of a single species.
+    #[inline]
+    #[must_use]
+    pub fn spec_refs(&self, spec: &SpecKey, specs: &SpecSet) -> Array3<&f64> {
+        let index = specs.index_of_name(spec);
+        self.cells.map(|c| c.concs().get(index).unwrap())
+    }
+
+    /// Create a mutable viewing map of a single species.
+    #[inline]
+    #[must_use]
+    pub fn spec_refs_mut(&mut self, spec: &SpecKey, specs: &SpecSet) -> Array3<&mut f64> {
+        let index = specs.index_of_name(spec);
+        self.cells
+            .map_mut(|c| c.concs_mut().get_mut(index).unwrap())
     }
 }
