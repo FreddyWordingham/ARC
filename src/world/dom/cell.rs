@@ -7,6 +7,7 @@ use crate::{
     world::{Interface, Verse},
 };
 use nalgebra::{Unit, Vector3};
+use ndarray::Array1;
 
 /// Cell holding local information.
 pub struct Cell<'a> {
@@ -18,6 +19,8 @@ pub struct Cell<'a> {
     state: StateKey,
     /// Intersecting interface triangles.
     inter_tris: Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>,
+    /// Species concentrations.
+    concs: Array1<f64>,
 }
 
 impl<'a> Cell<'a> {
@@ -28,6 +31,7 @@ impl<'a> Cell<'a> {
         inter_tris,
         Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>
     );
+    access!(concs, Array1<f64>);
 
     /// Construct a new instance.
     #[inline]
@@ -50,11 +54,15 @@ impl<'a> Cell<'a> {
             }
         }
 
+        let concs = verse.states().get(&state).new_conc_arr(verse.specs());
+        let _sources = verse.states().get(&state).new_source_arr(verse.specs());
+
         Self {
             bound,
             mat,
             state,
             inter_tris,
+            concs,
         }
     }
 
