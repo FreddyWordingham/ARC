@@ -3,9 +3,11 @@
 use arc::{
     args,
     file::{Grid as GridForm, Load, Save, Verse as VerseForm},
-    ord::LightKey,
-    report, rows,
-    sim::{diff, mcrt},
+    // ord::LightKey,
+    report,
+    rows,
+    sim::diff,
+    // sim::mcrt,
     util::{banner, exec, init},
     world::Verse,
 };
@@ -82,15 +84,19 @@ fn main() {
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Simulation");
-    let index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
 
+    let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
+    let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
     let mut time = 0.0;
     let dt = 60.0;
-    for i in 0..20 {
+    for _ in 0..20 {
         time += dt;
         grid.cells()
-            .map(|c| *c.concs().get(index).unwrap())
+            .map(|c| *c.concs().get(ala_index).unwrap())
             .save(&out_dir.join(format!("ala_{}.nc", time)));
+        grid.cells()
+            .map(|c| *c.concs().get(o2_index).unwrap())
+            .save(&out_dir.join(format!("o2_{}.nc", time)));
         diff::run(params.num_threads, dt, &verse, &mut grid);
     }
 
