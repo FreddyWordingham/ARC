@@ -52,18 +52,16 @@ pub fn run(num_threads: usize, total_time: f64, verse: &Verse, grid: &mut Grid) 
                     key
                 )
             }) {
-                let max_dt = (dx.powi(2) / (4.0 * max_coeff.powi(2))) * 0.1;
-                println!("Max dt for {} is {}", key, max_dt);
+                let max_dt = (dx.powi(2) / (4.0 * max_coeff)) * 0.1;
 
                 let steps = (total_time / max_dt).ceil() as u64;
-                report!(steps);
                 let dt = total_time / steps as f64;
-                report!(dt);
+
                 let mut pb = ProgressBar::new(&format!("Diffusing species {}", key), steps);
                 for _ in 0..steps {
                     pb.tick();
                     let delta = rate(&concs, &coeffs, &cell_size) * dt;
-                    // concs += &(rate * dt);
+
                     for (c, r) in concs.iter_mut().zip(delta.iter()) {
                         **c += r;
                     }

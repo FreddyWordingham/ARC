@@ -82,17 +82,25 @@ fn main() {
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Simulation");
-    diff::run(params.num_threads, 1.0, &verse, &mut grid);
-    let lm = mcrt::run(
-        params.num_threads,
-        params.num_phot as u64,
-        &LightKey::new("led"),
-        &verse,
-        &grid,
-    );
+    let index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
 
-    banner::section("Saving II");
-    lm.save(&out_dir);
+    for i in 0..20 {
+        grid.cells()
+            .map(|c| *c.concs().get(index).unwrap())
+            .save(&out_dir.join(format!("ala_{}.nc", i)));
+        diff::run(params.num_threads, 60.0, &verse, &mut grid);
+    }
+
+    // let lm = mcrt::run(
+    //     params.num_threads,
+    //     params.num_phot as u64,
+    //     &LightKey::new("led"),
+    //     &verse,
+    //     &grid,
+    // );
+
+    // banner::section("Saving II");
+    // lm.save(&out_dir);
 
     banner::section("Finished");
 }
