@@ -52,7 +52,7 @@ pub fn run(num_threads: usize, total_time: f64, verse: &Verse, grid: &mut Grid) 
                     key
                 )
             }) {
-                let max_dt = (dx.powi(2) / (4.0 * max_coeff)) * 0.1;
+                let max_dt = (dx.powi(2) / (4.0 * max_coeff)) * 0.9;
 
                 let steps = (total_time / max_dt).ceil() as u64;
                 let dt = total_time / steps as f64;
