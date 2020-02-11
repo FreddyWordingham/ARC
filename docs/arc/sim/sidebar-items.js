@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["diff","Diffusion simulation sub-module."],["mcrt","Monte-Carlo radiative transfer simulation sub-module."]]});
