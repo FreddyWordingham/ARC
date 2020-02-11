@@ -84,11 +84,14 @@ fn main() {
     banner::section("Simulation");
     let index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
 
+    let mut time = 0.0;
+    let dt = 60.0;
     for i in 0..20 {
+        time += dt;
         grid.cells()
             .map(|c| *c.concs().get(index).unwrap())
-            .save(&out_dir.join(format!("ala_{}.nc", i)));
-        diff::run(params.num_threads, 60.0, &verse, &mut grid);
+            .save(&out_dir.join(format!("ala_{}.nc", time)));
+        diff::run(params.num_threads, dt, &verse, &mut grid);
     }
 
     // let lm = mcrt::run(
