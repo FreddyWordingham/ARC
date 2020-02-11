@@ -10,8 +10,10 @@ use crate::{
 };
 use log::warn;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
-use std::f64::{consts::PI, MIN_POSITIVE};
-use std::sync::{Arc, Mutex};
+use std::{
+    f64::{consts::PI, MIN_POSITIVE},
+    sync::{Arc, Mutex},
+};
 
 /// Maximum number of loops a photon will make before being culled prematurely.
 const MAX_LOOPS: u64 = 1_000_000;

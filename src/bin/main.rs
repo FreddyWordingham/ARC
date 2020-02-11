@@ -5,7 +5,7 @@ use arc::{
     file::{Grid as GridForm, Load, Save, Verse as VerseForm},
     ord::LightKey,
     report, rows,
-    sim::mcrt,
+    sim::{diff, mcrt},
     util::{banner, exec, init},
     world::Verse,
 };
@@ -42,7 +42,7 @@ fn main() {
 
     banner::section("Building");
     info!("Building grid...");
-    let grid = params.grid.form(params.num_threads, &verse);
+    let mut grid = params.grid.form(params.num_threads, &verse);
     let mat_maps = grid.mat_maps(verse.mats());
     let state_maps = grid.state_maps(verse.states());
     let spec_maps = grid.spec_set_refs(verse.specs());
@@ -82,6 +82,7 @@ fn main() {
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Simulation");
+    diff::run(params.num_threads, 1.0, &verse, &mut grid);
     let lm = mcrt::run(
         params.num_threads,
         params.num_phot as u64,
