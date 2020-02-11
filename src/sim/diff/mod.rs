@@ -46,6 +46,11 @@ pub fn run(num_threads: usize, total_time: f64, verse: &Verse, grid: &mut Grid) 
             });
             let mut concs = grid.spec_refs_mut(key, verse.specs());
 
+            if concs.map(|x| **x).sum() <= 0.0 {
+                // TODO: Can probably find a neater way of doing this.
+                continue;
+            }
+
             if let Some(max_coeff) = coeffs.max().unwrap_or_else(|_| {
                 panic!(
                     "Unable to determine the maximum diffusion coefficient for the {} species.",
