@@ -33,7 +33,7 @@ impl Environment {
         shift_coeff: f64,
         asym: f64,
     ) -> Self {
-        debug_assert!(false);
+        debug_assert!(ref_index >= 1.0);
         debug_assert!(scat_coeff > 0.0);
         debug_assert!(abs_coeff >= 0.0);
         debug_assert!(shift_coeff >= 0.0);
