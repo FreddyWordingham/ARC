@@ -1,7 +1,7 @@
 //! Diffusion simulation sub-module.
 
 use crate::{
-    clone, report,
+    clone,
     util::ProgressBar,
     world::{Grid, Verse},
 };
@@ -10,10 +10,7 @@ use ndarray::Array3;
 use ndarray_stats::QuantileExt;
 use physical_constants::BOLTZMANN_CONSTANT;
 use rayon::prelude::*;
-use std::{
-    f64::consts::PI,
-    sync::{Arc, Mutex},
-};
+use std::{f64::consts::PI, sync::Mutex};
 
 /// Diffusion temperature.
 const TEMPERATURE: f64 = 310.15;
@@ -57,7 +54,7 @@ pub fn run(num_threads: usize, total_time: f64, verse: &Verse, grid: &mut Grid) 
                     key
                 )
             }) {
-                let max_dt = (dx.powi(2) / (4.0 * max_coeff)) * 0.9;
+                let max_dt = (dx.powi(2) / (8.0 * max_coeff)) * 0.9;
 
                 let steps = (total_time / max_dt).ceil() as u64;
                 let dt = total_time / steps as f64;
@@ -88,7 +85,8 @@ fn rate(
 
     let num_cells = concs.len();
 
-    let rate = Arc::new(Mutex::new(Array3::zeros([shape[0], shape[1], shape[2]])));
+    let rate = Array3::zeros([shape[0], shape[1], shape[2]]);
+    let rate = Mutex::new(rate);
 
     (0..num_cells).into_par_iter().for_each(|n| {
         let xi = n % shape[0];
@@ -106,7 +104,8 @@ fn rate(
         }
     });
 
-    Arc::try_unwrap(rate).unwrap().into_inner().unwrap()
+    rate.into_inner()
+        .expect("Unable to retrieve rates from within mutex.")
 }
 
 struct ConcView {
