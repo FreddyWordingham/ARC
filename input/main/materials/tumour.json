@@ -7,12 +7,12 @@
         },
         "scat_coeff": {
             "Constant": {
-                "c": 212.0e3,
+                "c": 212.0e2,
             }
         },
         "abs_coeff": {
             "Constant": {
-                "c": 23.0e3,
+                "c": 23.0e2,
             }
         },
         "shift_coeff": {
