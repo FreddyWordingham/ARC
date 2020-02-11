@@ -2,6 +2,7 @@
 
 use crate::{
     math::list,
+    report,
     util::ProgressBar,
     world::{Grid, Verse},
 };
@@ -49,6 +50,7 @@ pub fn run(num_threads: usize, total_time: f64, verse: &Verse, grid: &mut Grid) 
                 println!("Max dt for {} is {}", key, max_dt);
 
                 let steps = (total_time / max_dt).ceil() as u64;
+                report!(steps);
                 let mut pb = ProgressBar::new(&format!("Diffusing species {}", key), steps);
                 for _ in 0..steps {
                     pb.tick();
