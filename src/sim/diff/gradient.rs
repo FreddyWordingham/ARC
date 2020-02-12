@@ -48,7 +48,7 @@ impl Gradient {
                 x - 1
             }
         };
-        let next = |x, max| {
+        let wrap_next = |x, max| {
             if x == max {
                 0
             } else {
@@ -62,21 +62,21 @@ impl Gradient {
             .get([wrap_prev(xi, max[0]), yi, zi])
             .expect("Invalid index.");
         let next_x = **concs
-            .get([next(xi, max[0]), yi, zi])
+            .get([wrap_next(xi, max[0]), yi, zi])
             .expect("Invalid index.");
 
         let prev_y = **concs
             .get([xi, wrap_prev(yi, max[1]), zi])
             .expect("Invalid index.");
         let next_y = **concs
-            .get([xi, next(yi, max[1]), zi])
+            .get([xi, wrap_next(yi, max[1]), zi])
             .expect("Invalid index.");
 
         let prev_z = **concs
             .get([xi, yi, wrap_prev(zi, max[2])])
             .expect("Invalid index.");
         let next_z = **concs
-            .get([xi, yi, next(zi, max[2])])
+            .get([xi, yi, wrap_next(zi, max[2])])
             .expect("Invalid index.");
 
         Self {

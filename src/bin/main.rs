@@ -86,17 +86,25 @@ fn main() {
     banner::section("Simulation");
 
     let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
-    let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
-    let mut time = 0.0;
-    let dt = 12.0;
-    for _ in 0..100 {
+    // let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
+
+    let mut time = 0.0_f64;
+    let end_time = 60.0 * 20.0;
+    let dt = 10.0;
+    let steps = ((end_time - time) / dt).floor() as i64;
+
+    grid.cells()
+        .map(|c| *c.concs().get(ala_index).unwrap())
+        .save(&out_dir.join(format!("ala_{}.nc", (time * 1.0e3).floor() as i64)));
+
+    for _ in 0..steps {
         time += dt;
         grid.cells()
             .map(|c| *c.concs().get(ala_index).unwrap())
-            .save(&out_dir.join(format!("ala_{}.nc", time)));
-        grid.cells()
-            .map(|c| *c.concs().get(o2_index).unwrap())
-            .save(&out_dir.join(format!("o2_{}.nc", time)));
+            .save(&out_dir.join(format!("ala_{}.nc", time.floor() as i64)));
+        // grid.cells()
+        //     .map(|c| *c.concs().get(o2_index).unwrap())
+        //     .save(&out_dir.join(format!("o2_{}.nc", (time * 1.0e3).floor() as i64)));
         diff::run(params.num_threads, dt, &verse, &mut grid);
     }
 
