@@ -100,7 +100,7 @@ fn rate(
         let index = [xi, yi, zi];
 
         if let Some(coeff) = coeffs[index] {
-            let cv = Gradient::new(index, concs);
+            let cv = PeriodicXY::new(index, concs);
             *rate.lock().unwrap().get_mut(index).unwrap() = coeff
                 * (((cv.px() - cv.c2() + cv.nx()) / cell_size.x.powi(2))
                     + ((cv.py() - cv.c2() + cv.ny()) / cell_size.y.powi(2))
