@@ -76,12 +76,12 @@ impl PeriodicXY {
         let prev_z =
         // c2-
             **concs
-                .get([xi, yi, wrap_next(zi, max[2])])
+                .get([xi, yi, wrap_prev(zi, max[2])])
                 .expect("Invalid index.");
         let next_z =
         // c2-
             **concs
-                .get([xi, yi, wrap_prev(zi, max[2])])
+                .get([xi, yi, wrap_next(zi, max[2])])
                 .expect("Invalid index.");
 
         Self {
