@@ -1,8 +1,9 @@
 //! Diffusion simulation sub-module.
 
 pub mod gradient;
+pub mod periodic_xy;
 
-pub use self::gradient::*;
+pub use self::{gradient::*, periodic_xy::*};
 
 use crate::{
     util::ProgressBar,
