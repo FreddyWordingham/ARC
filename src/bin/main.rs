@@ -88,8 +88,8 @@ fn main() {
     let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
     let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
     let mut time = 0.0;
-    let dt = 60.0;
-    for _ in 0..20 {
+    let dt = 12.0;
+    for _ in 0..100 {
         time += dt;
         grid.cells()
             .map(|c| *c.concs().get(ala_index).unwrap())
