@@ -3,7 +3,8 @@
 use crate::clone;
 use ndarray::Array3;
 
-/// Construct a viewing gradient of the concentrations.
+/// Construct a periodic view of the concentrations in the x and y dimensions.
+/// The z dimension is handled by a gradient boundary condition.
 pub struct PeriodicXY {
     /// Twice the central concentration.
     c2: f64,
