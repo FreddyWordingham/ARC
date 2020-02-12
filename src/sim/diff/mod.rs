@@ -1,7 +1,10 @@
 //! Diffusion simulation sub-module.
 
+pub mod gradient;
+
+pub use self::gradient::*;
+
 use crate::{
-    clone,
     util::ProgressBar,
     world::{Grid, Verse},
 };
@@ -96,7 +99,7 @@ fn rate(
         let index = [xi, yi, zi];
 
         if let Some(coeff) = coeffs[index] {
-            let cv = ConcView::new(index, concs);
+            let cv = Gradient::new(index, concs);
             *rate.lock().unwrap().get_mut(index).unwrap() = coeff
                 * (((cv.px() - cv.c2() + cv.nx()) / cell_size.x.powi(2))
                     + ((cv.py() - cv.c2() + cv.ny()) / cell_size.y.powi(2))
@@ -106,78 +109,4 @@ fn rate(
 
     rate.into_inner()
         .expect("Unable to retrieve rates from within mutex.")
-}
-
-struct ConcView {
-    c2: f64,
-    px: f64,
-    nx: f64,
-    py: f64,
-    ny: f64,
-    pz: f64,
-    nz: f64,
-}
-
-impl ConcView {
-    clone!(c2, f64);
-    clone!(px, f64);
-    clone!(nx, f64);
-    clone!(py, f64);
-    clone!(ny, f64);
-    clone!(pz, f64);
-    clone!(nz, f64);
-
-    /// Construct a new instance.
-    pub fn new(index: [usize; 3], concs: &Array3<&mut f64>) -> Self {
-        debug_assert!(index.iter().all(|x| *x > 1));
-
-        let shape = concs.shape();
-
-        let [xi, yi, zi] = index;
-
-        let c2 = *concs[[xi, yi, zi]] * 2.0;
-
-        let px = if xi > 0 {
-            *concs[[xi - 1, yi, zi]]
-        } else {
-            c2 - *concs[[xi + 1, yi, zi]]
-        };
-        let nx = if xi < (shape[0] - 1) {
-            *concs[[xi + 1, yi, zi]]
-        } else {
-            c2 - *concs[[xi - 1, yi, zi]]
-        };
-
-        let py = if yi > 0 {
-            *concs[[xi, yi - 1, zi]]
-        } else {
-            c2 - *concs[[xi, yi + 1, zi]]
-        };
-        let ny = if yi < (shape[1] - 1) {
-            *concs[[xi, yi + 1, zi]]
-        } else {
-            c2 - *concs[[xi, yi - 1, zi]]
-        };
-
-        let pz = if zi > 0 {
-            *concs[[xi, yi, zi - 1]]
-        } else {
-            c2 - *concs[[xi, yi, zi + 1]]
-        };
-        let nz = if zi < (shape[2] - 1) {
-            *concs[[xi, yi, zi + 1]]
-        } else {
-            c2 - *concs[[xi, yi, zi - 1]]
-        };
-
-        Self {
-            c2,
-            px,
-            nx,
-            py,
-            ny,
-            pz,
-            nz,
-        }
-    }
 }
