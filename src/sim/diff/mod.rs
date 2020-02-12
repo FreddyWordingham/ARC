@@ -89,19 +89,29 @@ fn rate(
 
     let num_cells = concs.len();
 
-    let rate = Array3::zeros([shape[0], shape[1], shape[2]]);
+    let rate = Array3::zeros([
+        *shape.get(0).expect("Missing index."),
+        *shape.get(1).expect("Missing index."),
+        *shape.get(2).expect("Missing index."),
+    ]);
     let rate = Mutex::new(rate);
 
     (0..num_cells).into_par_iter().for_each(|n| {
-        let xi = n % shape[0];
-        let yi = (n / shape[0]) % shape[1];
-        let zi = n / (shape[0] * shape[1]);
+        let xi = n % shape.get(0).expect("Missing index.");
+        let yi =
+            (n / shape.get(0).expect("Missing index.")) % shape.get(1).expect("Missing index.");
+        let zi =
+            n / (shape.get(0).expect("Missing index.") * shape.get(1).expect("Missing index."));
 
         let index = [xi, yi, zi];
 
-        if let Some(coeff) = coeffs[index] {
+        if let Some(coeff) = coeffs.get(index).expect("Invalid index.") {
             let cv = PeriodicXY::new(index, concs);
-            *rate.lock().unwrap().get_mut(index).unwrap() = coeff
+            *rate
+                .lock()
+                .expect("Unable lock rate array.")
+                .get_mut(index)
+                .expect("Invalid index.") = coeff
                 * (((cv.prev_x() - cv.c2() + cv.next_x()) / cell_size.x.powi(2))
                     + ((cv.prev_y() - cv.c2() + cv.next_y()) / cell_size.y.powi(2))
                     + ((cv.prev_z() - cv.c2() + cv.next_z()) / cell_size.z.powi(2)));
