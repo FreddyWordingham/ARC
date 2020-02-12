@@ -62,26 +62,68 @@ impl Gradient {
 
         let c2 = **concs.get([xi, yi, zi]).expect("Invalid index.") * 2.0;
 
-        let prev_x = **concs
-            .get([wrap_prev(xi, *max.get(0).expect("Missing index.")), yi, zi])
-            .expect("Invalid index.");
-        let next_x = **concs
-            .get([wrap_next(xi, *max.get(0).expect("Missing index.")), yi, zi])
-            .expect("Invalid index.");
+        let prev_x = if xi == 0 {
+            (c2 - **concs
+                .get([wrap_next(xi, *max.get(0).expect("Missing index.")), yi, zi])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
+            **concs
+                .get([wrap_prev(xi, *max.get(0).expect("Missing index.")), yi, zi])
+                .expect("Invalid index.")
+        };
+        let next_x = if xi == *max.get(0).expect("Missing index.") {
+            (c2 - **concs
+                .get([wrap_prev(xi, *max.get(0).expect("Missing index.")), yi, zi])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
+            **concs
+                .get([wrap_next(xi, *max.get(0).expect("Missing index.")), yi, zi])
+                .expect("Invalid index.")
+        };
 
-        let prev_y = **concs
-            .get([xi, wrap_prev(yi, *max.get(1).expect("Missing index.")), zi])
-            .expect("Invalid index.");
-        let next_y = **concs
-            .get([xi, wrap_next(yi, *max.get(1).expect("Missing index.")), zi])
-            .expect("Invalid index.");
+        let prev_y = if yi == 0 {
+            (c2 - **concs
+                .get([xi, wrap_next(yi, *max.get(1).expect("Missing index.")), zi])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
+            **concs
+                .get([xi, wrap_prev(yi, *max.get(1).expect("Missing index.")), zi])
+                .expect("Invalid index.")
+        };
+        let next_y = if yi == *max.get(1).expect("Missing index.") {
+            (c2 - **concs
+                .get([xi, wrap_prev(yi, *max.get(1).expect("Missing index.")), zi])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
+            **concs
+                .get([xi, wrap_next(yi, *max.get(1).expect("Missing index.")), zi])
+                .expect("Invalid index.")
+        };
 
-        let prev_z = **concs
-            .get([xi, yi, wrap_prev(zi, *max.get(2).expect("Missing index."))])
-            .expect("Invalid index.");
-        let next_z = **concs
-            .get([xi, yi, wrap_next(zi, *max.get(2).expect("Missing index."))])
-            .expect("Invalid index.");
+        let prev_z = if zi == 0 {
+            (c2 - **concs
+                .get([xi, yi, wrap_next(zi, *max.get(2).expect("Missing index."))])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
+            **concs
+                .get([xi, yi, wrap_prev(zi, *max.get(2).expect("Missing index."))])
+                .expect("Invalid index.")
+        };
+        let next_z = if zi == *max.get(2).expect("Missing index.") {
+            (c2 - **concs
+                .get([xi, yi, wrap_prev(zi, *max.get(2).expect("Missing index."))])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
+            **concs
+                .get([xi, yi, wrap_next(zi, *max.get(2).expect("Missing index."))])
+                .expect("Invalid index.")
+        };
 
         Self {
             c2,
