@@ -102,9 +102,9 @@ fn rate(
         if let Some(coeff) = coeffs[index] {
             let cv = PeriodicXY::new(index, concs);
             *rate.lock().unwrap().get_mut(index).unwrap() = coeff
-                * (((cv.px() - cv.c2() + cv.nx()) / cell_size.x.powi(2))
-                    + ((cv.py() - cv.c2() + cv.ny()) / cell_size.y.powi(2))
-                    + ((cv.pz() - cv.c2() + cv.nz()) / cell_size.z.powi(2)));
+                * (((cv.prev_x() - cv.c2() + cv.next_x()) / cell_size.x.powi(2))
+                    + ((cv.prev_y() - cv.c2() + cv.next_y()) / cell_size.y.powi(2))
+                    + ((cv.prev_z() - cv.c2() + cv.next_z()) / cell_size.z.powi(2)));
         }
     });
 
