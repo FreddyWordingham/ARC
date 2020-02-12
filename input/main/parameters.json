@@ -38,7 +38,7 @@
         ],
         "regions": [
             "cream",
-            "blood"
+            // "blood"
         ]
     }
 }
