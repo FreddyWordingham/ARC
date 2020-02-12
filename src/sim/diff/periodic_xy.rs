@@ -77,16 +77,26 @@ impl PeriodicXY {
             .get([xi, wrap_next(yi, *max.get(1).expect("Missing index.")), zi])
             .expect("Invalid index.");
 
-        let prev_z =
-        // c2-
+        let prev_z = if zi == 0 {
+            (c2 - **concs
+                .get([xi, yi, wrap_next(zi, *max.get(2).expect("Missing index."))])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
             **concs
                 .get([xi, yi, wrap_prev(zi, *max.get(2).expect("Missing index."))])
-                .expect("Invalid index.");
-        let next_z =
-        // c2-
+                .expect("Invalid index.")
+        };
+        let next_z = if zi == *max.get(2).expect("Missing index.") {
+            (c2 - **concs
+                .get([xi, yi, wrap_prev(zi, *max.get(2).expect("Missing index."))])
+                .expect("Invalid index."))
+            .max(0.0)
+        } else {
             **concs
                 .get([xi, yi, wrap_next(zi, *max.get(2).expect("Missing index."))])
-                .expect("Invalid index.");
+                .expect("Invalid index.")
+        };
 
         Self {
             c2,
