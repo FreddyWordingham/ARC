@@ -37,7 +37,11 @@ impl Gradient {
         debug_assert!(index.iter().all(|x| *x > 1));
 
         let shape = concs.shape();
-        let max = [shape[0] - 1, shape[1] - 1, shape[2] - 1];
+        let max = [
+            shape.get(0).expect("Missing index.") - 1,
+            shape.get(1).expect("Missing index.") - 1,
+            shape.get(2).expect("Missing index.") - 1,
+        ];
 
         let [xi, yi, zi] = index;
 
@@ -56,27 +60,27 @@ impl Gradient {
             }
         };
 
-        let c2 = **concs.get([xi, yi, zi]).expect("Missing index.") * 2.0;
+        let c2 = **concs.get([xi, yi, zi]).expect("Invalid index.") * 2.0;
 
         let prev_x = **concs
-            .get([wrap_prev(xi, max[0]), yi, zi])
+            .get([wrap_prev(xi, *max.get(0).expect("Missing index.")), yi, zi])
             .expect("Invalid index.");
         let next_x = **concs
-            .get([wrap_next(xi, max[0]), yi, zi])
+            .get([wrap_next(xi, *max.get(0).expect("Missing index.")), yi, zi])
             .expect("Invalid index.");
 
         let prev_y = **concs
-            .get([xi, wrap_prev(yi, max[1]), zi])
+            .get([xi, wrap_prev(yi, *max.get(1).expect("Missing index.")), zi])
             .expect("Invalid index.");
         let next_y = **concs
-            .get([xi, wrap_next(yi, max[1]), zi])
+            .get([xi, wrap_next(yi, *max.get(1).expect("Missing index.")), zi])
             .expect("Invalid index.");
 
         let prev_z = **concs
-            .get([xi, yi, wrap_prev(zi, max[2])])
+            .get([xi, yi, wrap_prev(zi, *max.get(2).expect("Missing index."))])
             .expect("Invalid index.");
         let next_z = **concs
-            .get([xi, yi, wrap_next(zi, max[2])])
+            .get([xi, yi, wrap_next(zi, *max.get(2).expect("Missing index."))])
             .expect("Invalid index.");
 
         Self {
