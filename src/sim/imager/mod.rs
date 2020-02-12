@@ -17,5 +17,5 @@ pub fn run(num_threads: usize, cam: &Camera, _verse: &Verse, _grid: &Grid) -> Ar
 
     // cam.to_image()
 
-    Array2::zeros(cam.res())
+    Array2::zeros((cam.res().0 as usize, cam.res().1 as usize))
 }
