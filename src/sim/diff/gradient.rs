@@ -45,27 +45,23 @@ impl Gradient {
         let px = if xi > 0 {
             **concs.get([xi - 1, yi, zi]).expect("Missing index.")
         } else {
-            // c2 - **concs.get([xi + 1, yi, zi]).expect("Missing index.")
-            **concs.get([shape[0] - 1, yi, zi]).expect("Missing index.")
+            c2 - **concs.get([xi + 1, yi, zi]).expect("Missing index.")
         };
         let nx = if xi < (shape[0] - 1) {
             **concs.get([xi + 1, yi, zi]).expect("Missing index.")
         } else {
-            // c2 - **concs.get([xi - 1, yi, zi]).expect("Missing index.")
-            **concs.get([0, yi, zi]).expect("Missing index.")
+            c2 - **concs.get([xi - 1, yi, zi]).expect("Missing index.")
         };
 
         let py = if yi > 0 {
             **concs.get([xi, yi - 1, zi]).expect("Missing index.")
         } else {
-            // c2 - **concs.get([xi, yi + 1, zi]).expect("Missing index.")
-            **concs.get([xi, shape[1] - 1, zi]).expect("Missing index.")
+            c2 - **concs.get([xi, yi + 1, zi]).expect("Missing index.")
         };
         let ny = if yi < (shape[1] - 1) {
             **concs.get([xi, yi + 1, zi]).expect("Missing index.")
         } else {
-            // c2 - **concs.get([xi, yi - 1, zi]).expect("Missing index.")
-            **concs.get([xi, 0, zi]).expect("Missing index.")
+            c2 - **concs.get([xi, yi - 1, zi]).expect("Missing index.")
         };
 
         let pz = if zi > 0 {

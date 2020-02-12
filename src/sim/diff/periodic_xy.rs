@@ -8,27 +8,27 @@ pub struct PeriodicXY {
     /// Twice the central concentration.
     c2: f64,
     /// Previous-x concentration.
-    px: f64,
+    prev_x: f64,
     /// Next-x concentration.
-    nx: f64,
+    next_x: f64,
     /// Previous-y concentration.
-    py: f64,
+    prev_y: f64,
     /// Next-y concentration.
-    ny: f64,
+    next_y: f64,
     /// Previous-z concentration.
-    pz: f64,
+    prev_z: f64,
     /// Next-z concentration.
-    nz: f64,
+    next_z: f64,
 }
 
 impl PeriodicXY {
     clone!(c2, f64);
-    clone!(px, f64);
-    clone!(nx, f64);
-    clone!(py, f64);
-    clone!(ny, f64);
-    clone!(pz, f64);
-    clone!(nz, f64);
+    clone!(prev_x, f64);
+    clone!(next_x, f64);
+    clone!(prev_y, f64);
+    clone!(next_y, f64);
+    clone!(prev_z, f64);
+    clone!(next_z, f64);
 
     /// Construct a new instance.
     #[inline]
@@ -37,52 +37,56 @@ impl PeriodicXY {
         debug_assert!(index.iter().all(|x| *x > 1));
 
         let shape = concs.shape();
+        let max = [shape[0] - 1, shape[1] - 1, shape[2] - 1];
 
         let [xi, yi, zi] = index;
 
+        let wrap_prev = |x, max| {
+            if x == 0 {
+                max
+            } else {
+                x - 1
+            }
+        };
+        let next = |x, max| {
+            if x == max {
+                0
+            } else {
+                x + 1
+            }
+        };
+
         let c2 = **concs.get([xi, yi, zi]).expect("Missing index.") * 2.0;
 
-        let px = if xi > 0 {
-            **concs.get([xi - 1, yi, zi]).expect("Missing index.")
-        } else {
-            c2 - **concs.get([xi + 1, yi, zi]).expect("Missing index.")
-        };
-        let nx = if xi < (shape[0] - 1) {
-            **concs.get([xi + 1, yi, zi]).expect("Missing index.")
-        } else {
-            c2 - **concs.get([xi - 1, yi, zi]).expect("Missing index.")
-        };
+        let prev_x = **concs
+            .get([wrap_prev(xi, max[0]), yi, zi])
+            .expect("Invalid index.");
+        let next_x = **concs
+            .get([next(xi, max[0]), yi, zi])
+            .expect("Invalid index.");
 
-        let py = if yi > 0 {
-            **concs.get([xi, yi - 1, zi]).expect("Missing index.")
-        } else {
-            c2 - **concs.get([xi, yi + 1, zi]).expect("Missing index.")
-        };
-        let ny = if yi < (shape[1] - 1) {
-            **concs.get([xi, yi + 1, zi]).expect("Missing index.")
-        } else {
-            c2 - **concs.get([xi, yi - 1, zi]).expect("Missing index.")
-        };
+        let prev_y = **concs
+            .get([xi, wrap_prev(yi, max[1]), zi])
+            .expect("Invalid index.");
+        let next_y = **concs
+            .get([xi, next(yi, max[1]), zi])
+            .expect("Invalid index.");
 
-        let pz = if zi > 0 {
-            **concs.get([xi, yi, zi - 1]).expect("Missing index.")
-        } else {
-            c2 - **concs.get([xi, yi, zi + 1]).expect("Missing index.")
-        };
-        let nz = if zi < (shape[2] - 1) {
-            **concs.get([xi, yi, zi + 1]).expect("Missing index.")
-        } else {
-            c2 - **concs.get([xi, yi, zi - 1]).expect("Missing index.")
-        };
+        let prev_z = **concs
+            .get([xi, yi, wrap_prev(zi, max[2])])
+            .expect("Invalid index.");
+        let next_z = **concs
+            .get([xi, yi, next(zi, max[2])])
+            .expect("Invalid index.");
 
         Self {
             c2,
-            px,
-            nx,
-            py,
-            ny,
-            pz,
-            nz,
+            prev_x,
+            next_x,
+            prev_y,
+            next_y,
+            prev_z,
+            next_z,
         }
     }
 }
