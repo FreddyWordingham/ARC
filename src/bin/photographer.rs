@@ -2,8 +2,9 @@
 
 use arc::{
     args,
-    file::{Grid as GridForm, Load, Verse as VerseForm},
+    file::{Grid as GridForm, Load, Save, Verse as VerseForm},
     report, rows,
+    sim::{imager, Camera},
     util::{banner, exec, init},
     world::Verse,
 };
@@ -15,9 +16,9 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     num_threads: usize,
-    res: [u64; 2],
     verse: VerseForm,
     grid: GridForm,
+    cam: Camera,
 }
 
 pub fn main() {
@@ -33,8 +34,6 @@ pub fn main() {
     banner::section("Loading");
     info!("Loading parameters file...");
     let params = Parameters::load(&params_path);
-    report!(params.res.get(0).expect("Missing index."), "Hr");
-    report!(params.res.get(1).expect("Missing index."), "Vr");
 
     info!("Loading universe files...");
     let verse = params.verse.form(&in_dir);
@@ -52,6 +51,19 @@ pub fn main() {
         let fraction = count / map.len() as f64 * 100.0;
         rows!(format!("{}", key), count, format!("{}%", fraction));
     }
+    let inter_boundaries = grid.inter_boundaries();
+
+    banner::section("Saving");
+    for (key, map) in mat_maps.map() {
+        map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
+    }
+    inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
+
+    banner::section("Simulation");
+    let img = imager::run(params.num_threads, &params.cam, &verse, &grid);
+    img.save(&out_dir.join("img.nc"));
+
+    banner::section("Finished");
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
