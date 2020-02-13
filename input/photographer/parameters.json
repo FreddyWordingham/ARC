@@ -1,6 +1,6 @@
 {
     "num_threads": 8,
-    "num_phot": 10000000,
+    "num_phot": 1000000,
     "res": [
         512,
         512
