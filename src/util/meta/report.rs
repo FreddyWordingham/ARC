@@ -4,7 +4,7 @@
 #[macro_export]
 macro_rules! report {
     ($expression: expr) => {
-        log::info!("{: <31}: {}", stringify!($expression), $expression);
+        log::info!("{: <31}: {:?}", stringify!($expression), $expression);
     };
 
     ($expression: expr, $desc: tt) => {

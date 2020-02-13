@@ -1,11 +1,12 @@
 //! Monte-Carlo radiative transfer simulation sub-module.
 
 pub mod camera;
+pub mod hit;
 pub mod imaging_loop;
 pub mod settings;
 pub mod tracer;
 
-pub use self::{camera::*, imaging_loop::*, settings::*, tracer::*};
+pub use self::{camera::*, hit::*, imaging_loop::*, settings::*, tracer::*};
 
 use crate::{
     util::ParProgressBar,

@@ -3,7 +3,7 @@
 use crate::{
     access,
     list::Cartesian::{X, Y, Z},
-    sim::{LightMap, Record},
+    sim::mcrt::{LightMap, Record},
     world::{Cell, Grid},
 };
 use nalgebra::Point3;

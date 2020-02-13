@@ -3,8 +3,7 @@
 use crate::{
     geom::Trace,
     list::Cartesian::{X, Y, Z},
-    ord::SurfKey,
-    sim::{Camera, Settings, Tracer},
+    sim::photographer::{Camera, Hit, Settings, Tracer},
     util::ParProgressBar,
     world::{Cell, Grid, Verse},
 };
@@ -28,7 +27,7 @@ pub fn run_thread(
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: u64,
 ) -> Array2<f64> {
-    // let bump_dist = grid.bump_dist();
+    let bump_dist = grid.bump_dist();
 
     let mut img = Array2::zeros(cam.res());
 
@@ -43,9 +42,13 @@ pub fn run_thread(
             let yi = n as usize / cam.res().0;
 
             let ray = cam.gen_ray(xi, yi);
-            let tracer = Tracer::new(ray);
+            let mut tracer = Tracer::new(ray);
 
-            let _cell = find_cell(tracer.ray().pos(), grid);
+            let cell = find_cell(tracer.ray().pos(), grid);
+            crate::report!(cell.bound().mins());
+            crate::report!(cell.bound().maxs());
+            crate::report!(tracer.ray().pos());
+            crate::report!(tracer.ray().dir());
 
             let mut num_loops = 0;
             loop {
@@ -58,12 +61,31 @@ pub fn run_thread(
                     break;
                 }
 
-                if let Some(whale_dist) =
-                    verse.surfs().get(&SurfKey::new("whale")).dist(tracer.ray())
-                {
-                    *img.get_mut((xi, yi)).unwrap() = whale_dist;
+                let cell_dist = cell
+                    .bound()
+                    .dist(tracer.ray())
+                    .expect("Could not determine cell distance.");
+                let inter_dist = cell.inter_dist(tracer.ray());
+
+                match Hit::new(cell_dist, inter_dist) {
+                    Hit::Cell(dist) => {
+                        tracer.travel(dist + bump_dist);
+
+                        if !grid.bound().contains(tracer.ray().pos()) {
+                            break;
+                        }
+                    }
+                    Hit::Interface(dist) => {
+                        tracer.travel(dist + bump_dist);
+
+                        if !grid.bound().contains(tracer.ray().pos()) {
+                            break;
+                        }
+                    }
                 }
             }
+
+            *img.get_mut((xi, yi)).expect("Invalid index.") += tracer.dist_travelled();
         }
     }
 
