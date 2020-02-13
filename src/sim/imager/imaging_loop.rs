@@ -9,7 +9,7 @@ use crate::{
     world::{Cell, Grid, Light, Verse},
 };
 use log::warn;
-use nalgebra::Point3;
+use nalgebra::{Point3, Unit};
 use ndarray::Array2;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 use std::{
@@ -118,9 +118,11 @@ pub fn run_thread(
                             shifted = true;
                         }
 
-                        // if let Some(weight) = peel_off(phot.clone(), env.clone(), universe, cam) {
-                        cam.observe(&mut img, phot.ray().pos(), phot.weight());
-                        // }
+                        if let Some(weight) =
+                            peel_off(phot.clone(), env.clone(), &verse, &grid, &cam, bump_dist)
+                        {
+                            cam.observe(&mut img, phot.ray().pos(), weight);
+                        }
                     }
                     Hit::Cell(dist) => {
                         let dist = dist + bump_dist;
@@ -257,4 +259,98 @@ pub fn find_index(
         *id.get(1).expect("Missing index."),
         *id.get(2).expect("Missing index."),
     )
+}
+
+pub fn peel_off(
+    mut phot: Photon,
+    mut env: Environment,
+    verse: &Verse,
+    grid: &Grid,
+    cam: &Camera,
+    bump_dist: f64,
+) -> Option<f64> {
+    let g = env.asym();
+    let g2 = g.powi(2);
+
+    let dir = Unit::new_normalize(cam.pos() - phot.ray().pos());
+
+    let cos_ang = phot.ray().dir().dot(&dir);
+    let mut prob = 0.5 * ((1.0 - g2) / (1.0 + g2 - (2.0 * g * cos_ang)).powf(1.5));
+    if prob < 0.01 {
+        return None;
+    }
+
+    *phot.ray_mut().dir_mut() = dir;
+    let mut cell = grid
+        .cells()
+        .get(find_index(
+            phot.ray().pos(),
+            grid.bound().mins(),
+            grid.bound().maxs(),
+            [
+                grid.cells().shape()[0],
+                grid.cells().shape()[1],
+                grid.cells().shape()[2],
+            ],
+        ))
+        .unwrap();
+
+    loop {
+        if prob < 0.01 {
+            return None;
+        }
+
+        let cell_dist = cell
+            .bound()
+            .dist(phot.ray())
+            .expect("Unable to determine boundary distance.");
+        let inter_dist = cell.inter_dist_inside_norm_inter(phot.ray());
+
+        if let Some((dist, inside, _norm, inter)) = inter_dist {
+            if dist < cell_dist {
+                prob *= (-(dist + bump_dist) * env.inter_coeff()).exp();
+                phot.ray_mut().travel(dist + bump_dist);
+
+                if inside {
+                    env = verse
+                        .mats()
+                        .get(inter.in_mat())
+                        .optics()
+                        .env(phot.wavelength());
+                } else {
+                    env = verse
+                        .mats()
+                        .get(inter.out_mat())
+                        .optics()
+                        .env(phot.wavelength());
+                }
+            } else {
+                prob *= (-(cell_dist + bump_dist) * env.inter_coeff()).exp();
+                phot.ray_mut().travel(cell_dist + bump_dist);
+            }
+        } else {
+            prob *= (-(cell_dist + bump_dist) * env.inter_coeff()).exp();
+            phot.ray_mut().travel(cell_dist + bump_dist);
+        }
+
+        if !grid.bound().contains(phot.ray().pos()) {
+            break;
+        }
+
+        cell = grid
+            .cells()
+            .get(find_index(
+                phot.ray().pos(),
+                grid.bound().mins(),
+                grid.bound().maxs(),
+                [
+                    grid.cells().shape()[0],
+                    grid.cells().shape()[1],
+                    grid.cells().shape()[2],
+                ],
+            ))
+            .unwrap();
+    }
+
+    Some(prob)
 }

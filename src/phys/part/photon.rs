@@ -3,7 +3,7 @@
 use crate::{access, clone, geom::Ray};
 
 /// Photon structure.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Photon {
     /// Statistical weight.
     weight: f64,
