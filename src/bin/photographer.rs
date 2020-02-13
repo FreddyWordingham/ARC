@@ -16,7 +16,6 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     num_threads: usize,
-    num_phot: f64,
     cam: CameraForm,
     verse: VerseForm,
     grid: GridForm,

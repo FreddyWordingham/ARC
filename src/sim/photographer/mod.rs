@@ -2,8 +2,10 @@
 
 pub mod camera;
 pub mod imaging_loop;
+pub mod settings;
+pub mod tracer;
 
-pub use self::{camera::*, imaging_loop::*};
+pub use self::{camera::*, imaging_loop::*, settings::*, tracer::*};
 
 use crate::{
     util::ParProgressBar,
