@@ -27,6 +27,8 @@ impl Ray {
     /// Move along the direction of travel a given distance.
     #[inline]
     pub fn travel(&mut self, dist: f64) {
+        debug_assert!(dist > 0.0);
+
         self.pos += self.dir.as_ref() * dist;
     }
 
