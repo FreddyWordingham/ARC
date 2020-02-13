@@ -18,7 +18,6 @@ struct Parameters {
     num_threads: usize,
     num_phot: f64,
     cam: CameraForm,
-    res: (usize, usize),
     verse: VerseForm,
     grid: GridForm,
 }
@@ -46,32 +45,43 @@ pub fn main() {
     let mat_maps = grid.mat_maps(verse.mats());
     let cam = params.cam.build();
 
-    banner::section("Overview");
-    overview(&verse);
-    info!("Material mapping breakdown:");
-    for (key, map) in mat_maps.map() {
-        let count = map.sum();
-        let fraction = count / map.len() as f64 * 100.0;
-        rows!(format!("{}", key), count, format!("{}%", fraction));
+    let mut file = std::fs::File::create(&out_dir.join("targets.csv")).unwrap();
+    let total_pix = cam.num_pix();
+    for n in 0..total_pix {
+        let ray = cam.gen_ray(n);
+        let d = ray.dir();
+        {
+            use std::io::Write;
+            writeln!(file, "{},\t{},\t{}", d.x, d.y, d.z).unwrap();
+        }
     }
-    let inter_boundaries = grid.inter_boundaries();
 
-    banner::section("Saving");
-    for (key, map) in mat_maps.map() {
-        map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
-    }
-    inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
+    // banner::section("Overview");
+    // overview(&verse);
+    // info!("Material mapping breakdown:");
+    // for (key, map) in mat_maps.map() {
+    //     let count = map.sum();
+    //     let fraction = count / map.len() as f64 * 100.0;
+    //     rows!(format!("{}", key), count, format!("{}%", fraction));
+    // }
+    // let inter_boundaries = grid.inter_boundaries();
 
-    banner::section("Simulation");
-    let img = photographer::run(
-        params.num_threads,
-        params.num_phot as u64,
-        params.res,
-        &cam,
-        &verse,
-        &grid,
-    );
-    img.save(&out_dir.join("img.nc"));
+    // banner::section("Saving");
+    // for (key, map) in mat_maps.map() {
+    //     map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
+    // }
+    // inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
+
+    // banner::section("Simulation");
+    // let img = photographer::run(
+    //     params.num_threads,
+    //     params.num_phot as u64,
+    //     params.res,
+    //     &cam,
+    //     &verse,
+    //     &grid,
+    // );
+    // img.save(&out_dir.join("img.nc"));
 
     banner::section("Finished");
 }
