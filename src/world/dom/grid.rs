@@ -3,6 +3,7 @@
 use crate::{
     access,
     geom::{Aabb, Ray},
+    list::Cartesian::{X, Y, Z},
     math::{indexer, list},
     ord::{sort, MatKey, MatSet, Set, SpecKey, SpecSet, StateKey, StateSet},
     util::ParProgressBar,
@@ -37,7 +38,7 @@ impl<'a> Grid<'a> {
     pub fn new(num_threads: usize, bound: Aabb, res: [usize; 3], verse: &'a Verse) -> Self {
         debug_assert!(num_threads > 0);
 
-        let total_cells = res.get(0).expect("Missing resolution index.")
+        let total_cells = res.get(X as usize).expect("Missing resolution index.")
             * res.get(1).expect("Missing resolution index.")
             * res.get(2).expect("Missing resolution index.");
 
@@ -173,9 +174,9 @@ impl<'a> Grid<'a> {
         let res = self.cells.shape();
 
         [
-            *res.get(0).expect("Missing resolution index."),
-            *res.get(1).expect("Missing resolution index."),
-            *res.get(2).expect("Missing resolution index."),
+            *res.get(X as usize).expect("Missing resolution index."),
+            *res.get(Y as usize).expect("Missing resolution index."),
+            *res.get(Z as usize).expect("Missing resolution index."),
         ]
     }
 

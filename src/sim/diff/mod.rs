@@ -6,6 +6,7 @@ pub mod periodic_xy;
 pub use self::{gradient::*, periodic_xy::*};
 
 use crate::{
+    list::Cartesian::{X, Y, Z},
     util::ProgressBar,
     world::{Grid, Verse},
 };
@@ -90,18 +91,19 @@ fn rate(
     let num_cells = concs.len();
 
     let rate = Array3::zeros([
-        *shape.get(0).expect("Missing index."),
-        *shape.get(1).expect("Missing index."),
-        *shape.get(2).expect("Missing index."),
+        *shape.get(X as usize).expect("Missing index."),
+        *shape.get(Y as usize).expect("Missing index."),
+        *shape.get(Z as usize).expect("Missing index."),
     ]);
     let rate = Mutex::new(rate);
 
     (0..num_cells).into_par_iter().for_each(|n| {
-        let xi = n % shape.get(0).expect("Missing index.");
-        let yi =
-            (n / shape.get(0).expect("Missing index.")) % shape.get(1).expect("Missing index.");
-        let zi =
-            n / (shape.get(0).expect("Missing index.") * shape.get(1).expect("Missing index."));
+        let xi = n % shape.get(X as usize).expect("Missing index.");
+        let yi = (n / shape.get(X as usize).expect("Missing index."))
+            % shape.get(Y as usize).expect("Missing index.");
+        let zi = n
+            / (shape.get(X as usize).expect("Missing index.")
+                * shape.get(Y as usize).expect("Missing index."));
 
         let index = [xi, yi, zi];
 

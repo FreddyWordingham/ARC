@@ -4,7 +4,7 @@ use crate::{
     access,
     file::Load,
     geom::{Aabb, Collide, Emit, Ray, SmoothTriangle, Trace, Transform},
-    list::Greek::Alpha,
+    list::{Cartesian::X, Greek::Alpha},
 };
 use nalgebra::{Similarity3, Unit, Vector3};
 use rand::{rngs::ThreadRng, Rng};
@@ -36,7 +36,7 @@ impl Mesh {
     /// Initialise the bounding box for the mesh.
     fn init_aabb(tris: &[SmoothTriangle]) -> Aabb {
         let mut mins = *tris
-            .get(0)
+            .get(X as usize)
             .expect("No triangles.")
             .tri()
             .verts()
