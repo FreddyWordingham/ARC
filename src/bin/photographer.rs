@@ -2,10 +2,10 @@
 
 use arc::{
     args,
-    file::{Grid as GridForm, Load, Save, Verse as VerseForm},
+    file::{Camera as CameraForm, Grid as GridForm, Load, Save, Verse as VerseForm},
     ord::LightKey,
     report, rows,
-    sim::{imager, Camera},
+    sim::imager,
     util::{banner, exec, init},
     world::Verse,
 };
@@ -20,7 +20,7 @@ struct Parameters {
     num_phot: u64,
     verse: VerseForm,
     grid: GridForm,
-    cam: Camera,
+    cam: CameraForm,
     res: (usize, usize),
 }
 
@@ -45,6 +45,7 @@ pub fn main() {
     info!("Building grid...");
     let grid = params.grid.form(params.num_threads, &verse);
     let mat_maps = grid.mat_maps(verse.mats());
+    let cam = params.cam.build();
 
     banner::section("Overview");
     overview(&verse);
@@ -67,7 +68,7 @@ pub fn main() {
         params.num_threads,
         params.num_phot,
         &LightKey::new("overhead"),
-        &params.cam,
+        &cam,
         params.res,
         &verse,
         &grid,
