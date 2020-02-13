@@ -2,26 +2,29 @@
 
 use crate::{access, clone, sim::Camera as SimCam};
 use attr::json;
-use nalgebra::{Point3, Vector3};
+use nalgebra::Point3;
 
 /// Camera building structure.
 #[json]
 pub struct Camera {
-    /// Position.
+    /// Viewing position.
     pos: Point3<f64>,
-    /// Direction.
-    dir: Vector3<f64>,
+    /// Target viewing point.
+    tar: Point3<f64>,
     /// Field of view [deg].
     fov: f64,
+    /// Image resolution.
+    res: (usize, usize),
 }
 
 impl Camera {
     access!(pos, Point3<f64>);
-    access!(dir, Vector3<f64>);
+    access!(tar, Point3<f64>);
     clone!(fov, f64);
+    clone!(res, (usize, usize));
 
     /// Build a simulation camera.
     pub fn build(&self) -> SimCam {
-        SimCam::new()
+        SimCam::new(self.pos, self.tar, self.fov, self.res)
     }
 }
