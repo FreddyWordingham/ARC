@@ -5,35 +5,50 @@ use nalgebra::{Point3, Unit, Vector3};
 
 /// Image forming camera.
 pub struct Camera {
-    /// Camera viewing position.
-    pos: Point3<f64>,
-    /// Camera viewing direction.
-    dir: Unit<Vector3<f64>>,
+    /// Forward direction.
+    forward: Ray,
+    /// Up axis.
+    up: Unit<Vector3<f64>>,
+    /// Right axis.
+    right: Unit<Vector3<f64>>,
     /// Field of view.
     fov: (f64, f64),
     /// Image resolution.
     res: (usize, usize),
+    /// Scanning deltas.
+    delta: (f64, f64),
 }
 
 impl Camera {
-    access!(pos, Point3<f64>);
-    access!(dir, Unit<Vector3<f64>>);
+    access!(forward, Ray);
+    access!(up, Vector3<f64>);
+    access!(right, Vector3<f64>);
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
+    clone!(delta, (f64, f64));
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
     pub fn new(pos: Point3<f64>, tar: Point3<f64>, fov_x: f64, res: (usize, usize)) -> Self {
         debug_assert!(fov_x > 0.0);
-        debug_assert!(res.0 > 0);
-        debug_assert!(res.1 > 0);
+        debug_assert!(res.0 > 1);
+        debug_assert!(res.1 > 1);
+
+        let fov = (fov_x, fov_x * (res.1 as f64 / res.0 as f64));
+        let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
+
+        let forward = Ray::new(pos, Unit::new_normalize(tar - pos));
+        let up = Vector3::z_axis();
+        let right = Unit::new_normalize(forward.dir().cross(&up));
 
         Self {
-            pos,
-            dir: Unit::new_normalize(tar - pos),
-            fov: (fov_x, fov_x * (res.1 as f64 / res.0 as f64)),
+            forward,
+            up,
+            right,
+            fov,
             res,
+            delta,
         }
     }
 
@@ -52,6 +67,9 @@ impl Camera {
 
         let xi = n % self.res.0;
         let yi = n / self.res.0;
+
+        let theta = (xi as f64 * self.delta.0) - (self.fov.0 / 2.0);
+        let phi = (yi as f64 * self.delta.1) - (self.fov.1 / 2.0);
 
         Ray::new(Point3::origin(), Vector3::z_axis())
     }
