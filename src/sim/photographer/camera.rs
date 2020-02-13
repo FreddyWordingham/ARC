@@ -1,7 +1,7 @@
 //! Camera implementation.
 
 use crate::{access, clone, geom::Ray};
-use nalgebra::{Point3, Unit, Vector3};
+use nalgebra::{Point3, Rotation3, Unit, Vector3};
 
 /// Image forming camera.
 pub struct Camera {
@@ -71,6 +71,12 @@ impl Camera {
         let theta = (xi as f64 * self.delta.0) - (self.fov.0 / 2.0);
         let phi = (yi as f64 * self.delta.1) - (self.fov.1 / 2.0);
 
-        Ray::new(Point3::origin(), Vector3::z_axis())
+        let mut ray = self.forward.clone();
+
+        *ray.dir_mut() = Rotation3::from_axis_angle(&self.up, theta)
+            * Rotation3::from_axis_angle(&self.right, phi)
+            * ray.dir();
+
+        ray
     }
 }
