@@ -4,7 +4,7 @@ use arc::{
     args,
     file::{Camera as CameraForm, Grid as GridForm, Load, Save, Verse as VerseForm},
     report, rows,
-    sim::photographer,
+    sim::{photographer, Settings},
     util::{banner, exec, init},
     world::Verse,
 };
@@ -15,10 +15,10 @@ use std::path::PathBuf;
 
 #[form]
 struct Parameters {
-    num_threads: usize,
     cam: CameraForm,
     verse: VerseForm,
     grid: GridForm,
+    sett: Settings,
 }
 
 pub fn main() {
@@ -40,7 +40,7 @@ pub fn main() {
 
     banner::section("Building");
     info!("Building grid...");
-    let grid = params.grid.form(params.num_threads, &verse);
+    let grid = params.grid.form(params.sett.num_threads(), &verse);
     let mat_maps = grid.mat_maps(verse.mats());
     let cam = params.cam.build();
 
@@ -61,7 +61,7 @@ pub fn main() {
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Simulation");
-    let img = photographer::run(params.num_threads, &cam, &verse, &grid);
+    let img = photographer::run(&params.sett, &cam, &verse, &grid);
     img.save(&out_dir.join("img.nc"));
 
     banner::section("Finished");

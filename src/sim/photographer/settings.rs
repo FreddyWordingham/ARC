@@ -1,15 +1,15 @@
 //! Settings implementation.
 
-use crate::access;
+use crate::clone;
 use attr::json;
 
 /// Runtime settings structure.
 #[json]
 pub struct Settings {
-    /// Example.
-    example: i32,
+    /// Number of threads to use.
+    num_threads: usize,
 }
 
 impl Settings {
-    access!(example, i32);
+    clone!(num_threads, usize);
 }

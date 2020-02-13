@@ -4,7 +4,7 @@ use crate::{
     geom::Trace,
     list::Cartesian::{X, Y, Z},
     ord::SurfKey,
-    sim::Camera,
+    sim::{Camera, Settings, Tracer},
     util::ParProgressBar,
     world::{Cell, Grid, Verse},
 };
@@ -21,6 +21,7 @@ const MAX_LOOPS: u64 = 1_000;
 #[must_use]
 pub fn run_thread(
     _id: usize,
+    _sett: &Settings,
     cam: &Camera,
     verse: &Verse,
     grid: &Grid,
@@ -42,8 +43,9 @@ pub fn run_thread(
             let yi = n as usize / cam.res().0;
 
             let ray = cam.gen_ray(xi, yi);
+            let tracer = Tracer::new(ray);
 
-            let _cell = find_cell(ray.pos(), grid);
+            let _cell = find_cell(tracer.ray().pos(), grid);
 
             let mut num_loops = 0;
             loop {
@@ -56,11 +58,11 @@ pub fn run_thread(
                     break;
                 }
 
-                if let Some(whale_dist) = verse.surfs().get(&SurfKey::new("whale")).dist(&ray) {
+                if let Some(whale_dist) =
+                    verse.surfs().get(&SurfKey::new("whale")).dist(tracer.ray())
+                {
                     *img.get_mut((xi, yi)).unwrap() = whale_dist;
                 }
-
-                break;
             }
         }
     }
