@@ -11,7 +11,7 @@ pub struct Tracer {
 }
 
 impl Tracer {
-    access!(ray, Ray);
+    access!(ray, ray_mut, Ray);
     clone!(dist_travelled, f64);
 
     /// Construct a new instance.
