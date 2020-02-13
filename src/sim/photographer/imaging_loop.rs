@@ -1,8 +1,9 @@
 //! Core MCRT photon loop function.
 
 use crate::{
+    geom::Trace,
     list::Cartesian::{X, Y, Z},
-    phys::Photon,
+    ord::SurfKey,
     sim::Camera,
     util::ParProgressBar,
     world::{Cell, Grid, Verse},
@@ -41,16 +42,11 @@ pub fn run_thread(
             let yi = n as usize / cam.res().0;
 
             let ray = cam.gen_ray(xi, yi);
-            let mut phot = Photon::new(630.0e-9, 1.0, ray);
 
-            let cell = find_cell(phot.ray().pos(), grid);
-
-            let mut env = verse.mats().get(cell.mat()).optics().env(phot.wavelength());
+            let _cell = find_cell(ray.pos(), grid);
 
             let mut num_loops = 0;
             loop {
-                debug_assert!(phot.weight() > 0.0);
-
                 num_loops += 1;
                 if num_loops >= MAX_LOOPS {
                     warn!(
@@ -59,9 +55,13 @@ pub fn run_thread(
                     );
                     break;
                 }
-            }
 
-            // let mut phot = light.emit(&mut rng, total_phot, verse.surfs());
+                if let Some(whale_dist) = verse.surfs().get(&SurfKey::new("whale")).dist(&ray) {
+                    *img.get_mut((xi, yi)).unwrap() = whale_dist;
+                }
+
+                break;
+            }
         }
     }
 
