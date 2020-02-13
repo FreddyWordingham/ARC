@@ -1,11 +1,12 @@
 {
     "sett": {
-        "num_threads": 1
+        "num_threads": 8,
+        "water_ref_index": 1.3,
     },
     "cam": {
         "pos": [
             8.0,
-            8.0,
+            9.0,
             8.0
         ],
         "tar": [
@@ -13,16 +14,16 @@
             0.0,
             0.0
         ],
-        "fov": 45.1,
+        "fov": 30.0,
         "res": [
-            1024,
-            1024
+            512,
+            512
         ]
     },
     "verse": {
         "inters": [
             "whale",
-            "sea",
+            "sea"
         ],
         "reacts": [],
         "lights": [],
@@ -32,9 +33,9 @@
     },
     "grid": {
         "res": [
-            5,
-            5,
-            5
+            17,
+            17,
+            17
         ],
         "mins": [
             -10.0,

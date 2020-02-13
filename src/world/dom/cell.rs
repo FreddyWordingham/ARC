@@ -77,7 +77,7 @@ impl<'a> Cell<'a> {
         debug_assert!(self.bound().contains(ray.pos()));
 
         let mut nearest = None;
-        for ((_name, _inter), tris) in &self.inter_tris {
+        for ((_key, _inter), tris) in &self.inter_tris {
             for tri in tris {
                 if let Some(dist) = tri.dist(ray) {
                     if nearest.is_none() || dist < nearest.expect("Something went wrong...") {
@@ -99,11 +99,31 @@ impl<'a> Cell<'a> {
     ) -> Option<(f64, bool, Unit<Vector3<f64>>, &Interface)> {
         let mut nearest: Option<(f64, bool, Unit<Vector3<f64>>, &Interface)> = None;
 
-        for ((_name, inter), tris) in &self.inter_tris {
+        for ((_key, inter), tris) in &self.inter_tris {
             for tri in tris {
                 if let Some((dist, inside, norm)) = tri.dist_inside_norm(ray) {
                     if nearest.is_none() || dist < nearest.expect("Something went wrong...").0 {
                         nearest = Some((dist, inside, norm, inter));
+                    }
+                }
+            }
+        }
+
+        nearest
+    }
+
+    /// Determine the distance to the next interface along a ray's line of sight, and the key of the interface hit.
+    #[inline]
+    #[must_use]
+    pub fn inter_dist_key(&self, ray: &Ray) -> Option<(f64, &InterKey)> {
+        debug_assert!(self.bound().contains(ray.pos()));
+
+        let mut nearest: Option<(f64, _)> = None;
+        for ((key, _inter), tris) in &self.inter_tris {
+            for tri in tris {
+                if let Some(dist) = tri.dist(ray) {
+                    if nearest.is_none() || dist < nearest.expect("Something went wrong...").0 {
+                        nearest = Some((dist, *key));
                     }
                 }
             }
