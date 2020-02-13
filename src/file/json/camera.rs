@@ -24,7 +24,9 @@ impl Camera {
     clone!(res, (usize, usize));
 
     /// Build a simulation camera.
+    #[inline]
+    #[must_use]
     pub fn build(&self) -> SimCam {
-        SimCam::new(self.pos, self.tar, self.fov, self.res)
+        SimCam::new(self.pos, self.tar, self.fov.to_radians(), self.res)
     }
 }
