@@ -62,11 +62,9 @@ impl Camera {
     /// Generate the nth ray.
     #[inline]
     #[must_use]
-    pub fn gen_ray(&self, n: usize) -> Ray {
-        debug_assert!(n < self.num_pix());
-
-        let xi = n % self.res.0;
-        let yi = n / self.res.0;
+    pub fn gen_ray(&self, xi: usize, yi: usize) -> Ray {
+        debug_assert!(xi < self.res.0);
+        debug_assert!(yi < self.res.1);
 
         let theta = (xi as f64 * self.delta.0) - (self.fov.0 / 2.0);
         let phi = (yi as f64 * self.delta.1) - (self.fov.1 / 2.0);
