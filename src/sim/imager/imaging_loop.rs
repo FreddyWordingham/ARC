@@ -18,7 +18,7 @@ use std::{
 };
 
 /// Maximum number of loops a photon will make before being culled prematurely.
-const MAX_LOOPS: u64 = 1_000_000;
+const MAX_LOOPS: u64 = 1_000;
 
 /// Weight below which to perform roulette each photon loop.
 const ROULETTE: f64 = 0.1;
@@ -80,10 +80,10 @@ pub fn run_thread(
 
                 num_loops += 1;
                 if num_loops >= MAX_LOOPS {
-                    warn!(
-                        "Photon prematurely killed as number of loops exceeded {}",
-                        MAX_LOOPS
-                    );
+                    // warn!(
+                    //     "Photon prematurely killed as number of loops exceeded {}",
+                    //     MAX_LOOPS
+                    // );
                     break;
                 }
 

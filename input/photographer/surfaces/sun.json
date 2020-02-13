@@ -1,7 +1,7 @@
 {
     "mesh": "circle",
     "trans": {
-        "scale": 10.0,
+        "scale": 6.0,
         "trans": [
             0.0,
             0.0,
