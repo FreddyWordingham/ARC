@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone};
+use crate::{access, clone, sim::Camera as SimCam};
 use attr::json;
 use nalgebra::{Point3, Vector3};
 
@@ -19,4 +19,9 @@ impl Camera {
     access!(pos, Point3<f64>);
     access!(dir, Vector3<f64>);
     clone!(fov, f64);
+
+    /// Build a simulation camera.
+    pub fn build(&self) -> SimCam {
+        SimCam::new()
+    }
 }
