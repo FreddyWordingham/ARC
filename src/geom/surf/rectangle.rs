@@ -3,6 +3,7 @@
 use crate::{
     access,
     geom::{Emit, Parallelogram, Ray, Trace},
+    list::Cartesian::X,
 };
 use nalgebra::{Point3, Unit, Vector3};
 use rand::rngs::ThreadRng;
@@ -26,8 +27,8 @@ impl Rectangle {
     #[inline]
     #[must_use]
     pub fn new(para: Parallelogram) -> Self {
-        let ab = para.verts().get(1).unwrap() - para.verts().get(0).unwrap();
-        let ac = para.verts().get(2).unwrap() - para.verts().get(0).unwrap();
+        let ab = para.verts().get(1).unwrap() - para.verts().get(X as usize).unwrap();
+        let ac = para.verts().get(2).unwrap() - para.verts().get(X as usize).unwrap();
 
         if (ab.angle(&ac) - FRAC_PI_2).abs() > RIGHT_ANGLE_TOLERANCE {
             panic!("Rectangle points do not form a right angle.");

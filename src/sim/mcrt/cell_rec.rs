@@ -2,6 +2,7 @@
 
 use crate::{
     access,
+    list::Cartesian::{X, Y, Z},
     sim::{LightMap, Record},
     world::{Cell, Grid},
 };
@@ -32,9 +33,9 @@ impl<'a> CellRec<'a> {
             .map(|((p, (min, max)), n)| (((p - min) / (max - min)) * *n as f64) as usize)
             .collect();
         let index = (
-            *id.get(0).expect("Missing index."),
-            *id.get(1).expect("Missing index."),
-            *id.get(2).expect("Missing index."),
+            *id.get(X as usize).expect("Missing index."),
+            *id.get(Y as usize).expect("Missing index."),
+            *id.get(Z as usize).expect("Missing index."),
         );
 
         let cell = grid.cells().get(index).expect("Invalid grid index.");

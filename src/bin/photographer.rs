@@ -2,12 +2,10 @@
 
 use arc::{
     args,
-    file::{Camera as CameraForm, Grid as GridForm, Load, Save, Verse as VerseForm},
-    ord::LightKey,
-    report, rows,
-    sim::imager,
+    file::Load,
+    // file::Save,
+    report,
     util::{banner, exec, init},
-    world::Verse,
 };
 use attr::form;
 use colog;
@@ -18,10 +16,7 @@ use std::path::PathBuf;
 struct Parameters {
     num_threads: usize,
     num_phot: u64,
-    verse: VerseForm,
-    grid: GridForm,
-    cam: CameraForm,
-    res: (usize, usize),
+    surf: PathBuf,
 }
 
 pub fn main() {
@@ -36,44 +31,7 @@ pub fn main() {
 
     banner::section("Loading");
     info!("Loading parameters file...");
-    let params = Parameters::load(&params_path);
-
-    info!("Loading universe files...");
-    let verse = params.verse.form(&in_dir);
-
-    banner::section("Building");
-    info!("Building grid...");
-    let grid = params.grid.form(params.num_threads, &verse);
-    let mat_maps = grid.mat_maps(verse.mats());
-    let cam = params.cam.build();
-
-    banner::section("Overview");
-    overview(&verse);
-    info!("Material mapping breakdown:");
-    for (key, map) in mat_maps.map() {
-        let count = map.sum();
-        let fraction = count / map.len() as f64 * 100.0;
-        rows!(format!("{}", key), count, format!("{}%", fraction));
-    }
-    let inter_boundaries = grid.inter_boundaries();
-
-    banner::section("Saving");
-    for (key, map) in mat_maps.map() {
-        map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
-    }
-    inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
-
-    banner::section("Simulation");
-    let img = imager::run(
-        params.num_threads,
-        params.num_phot,
-        &LightKey::new("overhead"),
-        &cam,
-        params.res,
-        &verse,
-        &grid,
-    );
-    img.save(&out_dir.join("img.nc"));
+    let _params = Parameters::load(&params_path);
 
     banner::section("Finished");
 }
@@ -86,26 +44,4 @@ fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
     let params_path = &in_dir.join(params_name);
 
     (in_dir, out_dir, params_path.to_path_buf())
-}
-
-fn overview(verse: &Verse) {
-    info!("{} interfaces:", verse.inters().map().len());
-    for key in verse.inters().map().keys() {
-        info!("\t{}", key);
-    }
-
-    info!("{} lights:", verse.lights().map().len());
-    for key in verse.lights().map().keys() {
-        info!("\t{}", key);
-    }
-
-    info!("{} materials:", verse.mats().map().len());
-    for key in verse.mats().map().keys() {
-        info!("\t{}", key);
-    }
-
-    info!("{} surfaces:", verse.surfs().map().len());
-    for key in verse.surfs().map().keys() {
-        info!("\t{}", key);
-    }
 }
