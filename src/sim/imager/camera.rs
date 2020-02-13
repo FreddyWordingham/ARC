@@ -1,54 +1,80 @@
 //! Camera structure.
 
-use crate::{access, clone, geom::Ray};
+use crate::{
+    access, clone,
+    list::Cartesian::{X, Y},
+};
 use attr::json;
 use nalgebra::{Point3, Unit, Vector3};
+use ndarray::Array2;
 
 /// Image forming structure.
 #[json]
 pub struct Camera {
-    /// Image resolution.
-    res: (u64, u64),
-    /// Position.
+    /// Viewing position.
     pos: Point3<f64>,
-    /// Direction.
+    /// Forward (viewing) direction.
     dir: Unit<Vector3<f64>>,
-    /// Field of view [deg].
+    /// Right direction.
+    right: Unit<Vector3<f64>>,
+    /// Up direction.
+    up: Unit<Vector3<f64>>,
+    /// Field of view.
     fov: f64,
 }
 
 impl Camera {
-    clone!(res, (u64, u64));
     access!(pos, Point3<f64>);
-    access!(fov, f64);
+    access!(dir, Unit<Vector3<f64>>);
+    access!(right, Unit<Vector3<f64>>);
+    access!(up, Unit<Vector3<f64>>);
+    clone!(fov, f64);
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(res: (u64, u64), pos: Point3<f64>, fov: f64) -> Self {
-        debug_assert!(res.0 > 0);
-        debug_assert!(res.1 > 0);
+    pub fn new(pos: Point3<f64>, dir: Unit<Vector3<f64>>, fov: f64) -> Self {
         debug_assert!(fov > 0.0);
 
-        let dir = Unit::new_normalize(Point3::origin() - pos);
+        let right = Unit::new_normalize(dir.cross(&Vector3::z_axis()));
+        let up = Unit::new_normalize(dir.cross(&right));
 
-        Self { res, pos, dir, fov }
+        Self {
+            pos,
+            dir,
+            right,
+            up,
+            fov,
+        }
     }
 
-    /// Calculate the total number of pixels.
+    /// Observe a weighted point.
     #[inline]
     #[must_use]
-    pub fn num_pix(&self) -> u64 {
-        self.res.0 * self.res.1
-    }
+    pub fn observe(&self, img: &mut Array2<f64>, p: &Point3<f64>, w: f64) {
+        let obs = Unit::new_normalize(p - self.pos);
 
-    /// Generate the nth ray.
-    #[inline]
-    #[must_use]
-    pub fn gen_ray(&self, n: u64) -> Ray {
-        debug_assert!(n < self.num_pix());
+        let shape = img.shape();
+        let h_fov_x = self.fov / 2.0;
+        let h_fov_y = h_fov_x
+            * (*shape.get(Y as usize).expect("Invalid index.") as f64
+                / *shape.get(X as usize).expect("Invalid index.") as f64);
 
-        let xi = n % self.res.1;
-        let yi = n / self.res.1;
+        let phi = (self.right.dot(&obs)).asin();
+        if phi.abs() > h_fov_x {
+            return;
+        }
+
+        let theta = (self.up.dot(&obs)).asin();
+        if theta.abs() > h_fov_y {
+            return;
+        }
+
+        let dx = self.fov / shape[X as usize] as f64;
+
+        let x = ((phi + h_fov_x) / dx).floor() as usize;
+        let y = ((theta + h_fov_y) / dx).floor() as usize;
+
+        *img.get_mut([x, y]).expect("Invalid index.") += w;
     }
 }

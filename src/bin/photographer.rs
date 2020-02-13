@@ -3,6 +3,7 @@
 use arc::{
     args,
     file::{Grid as GridForm, Load, Save, Verse as VerseForm},
+    ord::LightKey,
     report, rows,
     sim::{imager, Camera},
     util::{banner, exec, init},
@@ -16,9 +17,11 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     num_threads: usize,
+    num_phot: u64,
     verse: VerseForm,
     grid: GridForm,
     cam: Camera,
+    res: (usize, usize),
 }
 
 pub fn main() {
@@ -60,7 +63,15 @@ pub fn main() {
     inter_boundaries.save(&out_dir.join("boundaries_interfaces.nc"));
 
     banner::section("Simulation");
-    let img = imager::run(params.num_threads, &params.cam, &verse, &grid);
+    let img = imager::run(
+        params.num_threads,
+        params.num_phot,
+        &LightKey::new("overhead"),
+        &params.cam,
+        params.res,
+        &verse,
+        &grid,
+    );
     img.save(&out_dir.join("img.nc"));
 
     banner::section("Finished");
