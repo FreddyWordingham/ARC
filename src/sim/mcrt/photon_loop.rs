@@ -70,6 +70,7 @@ pub fn run_thread(
                         "Photon prematurely killed as number of loops exceeded {}",
                         MAX_LOOPS
                     );
+                    break;
                 }
 
                 if phot.weight() < ROULETTE {
