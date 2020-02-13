@@ -4,7 +4,7 @@ use arc::{
     args,
     file::{Camera as CameraForm, Grid as GridForm, Load, Save, Verse as VerseForm},
     report, rows,
-    sim::{photographer, Settings},
+    sim::{photographer, photographer::Settings},
     util::{banner, exec, init},
     world::Verse,
 };

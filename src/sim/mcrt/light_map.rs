@@ -1,6 +1,6 @@
 //! Light-Map structure.
 
-use crate::{access, file::Save, sim::Record, world::Grid};
+use crate::{access, file::Save, sim::mcrt::Record, world::Grid};
 use ndarray::Array3;
 use std::{ops::AddAssign, path::Path};
 

@@ -4,7 +4,7 @@ use crate::{
     geom::Trace,
     math::distribution,
     phys::{Crossing, Environment, Photon},
-    sim::{CellRec, Hit, LightMap},
+    sim::mcrt::{CellRec, Hit, LightMap},
     util::ParProgressBar,
     world::{Grid, Light, Verse},
 };
@@ -87,7 +87,7 @@ pub fn run_thread(
                     .cell()
                     .bound()
                     .dist(phot.ray())
-                    .expect("Unable to determine boundary distance.");
+                    .expect("Could not determine cell distance.");
                 let inter_dist = cr.cell().inter_dist(phot.ray());
 
                 match Hit::new(scat_dist, cell_dist, inter_dist, bump_dist) {

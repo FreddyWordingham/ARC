@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone, sim::Camera as SimCam};
+use crate::{access, clone, sim::photographer::Camera as SimCam};
 use attr::json;
 use nalgebra::Point3;
 
