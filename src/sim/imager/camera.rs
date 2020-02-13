@@ -50,7 +50,6 @@ impl Camera {
 
     /// Observe a weighted point.
     #[inline]
-    #[must_use]
     pub fn observe(&self, img: &mut Array2<f64>, p: &Point3<f64>, w: f64) {
         let obs = Unit::new_normalize(p - self.pos);
 

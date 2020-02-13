@@ -36,10 +36,10 @@ pub fn run_thread(
     total_phot: u64,
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: u64,
-    _cam: &Camera,
+    cam: &Camera,
     res: (usize, usize),
 ) -> Array2<f64> {
-    let img = Array2::zeros(res);
+    let mut img = Array2::zeros(res);
 
     let bump_dist = grid.bump_dist();
 
@@ -84,6 +84,7 @@ pub fn run_thread(
                         "Photon prematurely killed as number of loops exceeded {}",
                         MAX_LOOPS
                     );
+                    break;
                 }
 
                 if phot.weight() < ROULETTE {
@@ -116,6 +117,10 @@ pub fn run_thread(
                         if !shifted && rng.gen_range(0.0, 1.0) <= env.shift_prob() {
                             shifted = true;
                         }
+
+                        // if let Some(weight) = peel_off(phot.clone(), env.clone(), universe, cam) {
+                        cam.observe(&mut img, phot.ray().pos(), phot.weight());
+                        // }
                     }
                     Hit::Cell(dist) => {
                         let dist = dist + bump_dist;
