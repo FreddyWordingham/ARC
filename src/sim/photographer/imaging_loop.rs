@@ -20,7 +20,7 @@ const MAX_LOOPS: u64 = 1_000;
 #[must_use]
 pub fn run_thread(
     _id: usize,
-    _sett: &Settings,
+    sett: &Settings,
     cam: &Camera,
     _verse: &Verse,
     grid: &Grid,
@@ -74,21 +74,22 @@ pub fn run_thread(
                         cell = find_cell(tracer.ray().pos(), grid);
                     }
                     Hit::Target(_dist) => {
+                        break;
                         let (_, _, norm, _) = cell
                             .inter_dist_inside_norm_inter(tracer.ray())
                             .expect("Failed to observe interface within cell.");
 
                         *img.get_mut((xi, yi)).expect("Invalid index.") +=
                         // 2.0 * tracer.dist_travelled();
-                        norm.dot(&-nalgebra::Vector3::y_axis()) + 1.0;
+                        norm.dot(&sett.light_dir()) + 1.0;
 
                         break;
                     }
                     Hit::Refract(dist) => {
                         tracer.travel(dist + bump_dist);
 
-                        *img.get_mut((xi, yi)).expect("Invalid index.") +=
-                            tracer.dist_travelled() * 0.1;
+                        // *img.get_mut((xi, yi)).expect("Invalid index.") +=
+                        //     tracer.dist_travelled() * 0.1;
 
                         if !grid.bound().contains(tracer.ray().pos()) {
                             break;
