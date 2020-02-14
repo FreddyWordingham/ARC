@@ -23,16 +23,16 @@
         "res": [
             // 4096,
             // 4096
-            256,
-            256
+            1024,
+            1024
         ]
     },
     "verse": {
         "inters": [
             "whale",
             "sea",
-            "fan_f",
-            "fan_k"
+            // "fan_f",
+            // "fan_k"
         ],
         "reacts": [],
         "lights": [],

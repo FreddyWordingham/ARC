@@ -3,6 +3,7 @@
 use crate::{
     geom::Trace,
     list::Cartesian::{X, Y, Z},
+    phys::Crossing,
     sim::photographer::{Camera, Hit, Settings, Tracer},
     util::ParProgressBar,
     world::{Cell, Grid, Verse},
@@ -68,28 +69,36 @@ pub fn run_thread(
                         tracer.travel(dist + bump_dist);
 
                         if !grid.bound().contains(tracer.ray().pos()) {
+                            // *img.get_mut((xi, yi)).expect("Invalid index.") += tracer.ray().pos().z;
+
                             break;
                         }
 
                         cell = find_cell(tracer.ray().pos(), grid);
                     }
                     Hit::Target(_dist) => {
-                        break;
                         let (_, _, norm, _) = cell
                             .inter_dist_inside_norm_inter(tracer.ray())
                             .expect("Failed to observe interface within cell.");
 
                         *img.get_mut((xi, yi)).expect("Invalid index.") +=
-                        // 2.0 * tracer.dist_travelled();
-                        norm.dot(&sett.light_dir()) + 1.0;
+                            norm.dot(&sett.light_dir());
 
                         break;
                     }
                     Hit::Refract(dist) => {
-                        tracer.travel(dist + bump_dist);
+                        let (_, _, norm, _) = cell
+                            .inter_dist_inside_norm_inter(tracer.ray())
+                            .expect("Failed to observe interface within cell.");
 
-                        // *img.get_mut((xi, yi)).expect("Invalid index.") +=
-                        //     tracer.dist_travelled() * 0.1;
+                        tracer.travel(dist);
+
+                        let crossing =
+                            Crossing::new(tracer.ray().dir(), &norm, 1.0, sett.water_ref_index());
+                        *tracer.ray_mut().dir_mut() =
+                            crossing.trans_dir().expect("No transmission direction.");
+
+                        tracer.travel(bump_dist);
 
                         if !grid.bound().contains(tracer.ray().pos()) {
                             break;
@@ -97,17 +106,11 @@ pub fn run_thread(
                         if !cell.bound().contains(tracer.ray().pos()) {
                             cell = find_cell(tracer.ray().pos(), grid);
                         }
-
-                        // break;
                     }
                     Hit::Scene(dist) => {
-                        let (_, _, norm, _) = cell
-                            .inter_dist_inside_norm_inter(tracer.ray())
-                            .expect("Failed to observe interface within cell.");
+                        tracer.travel(dist);
 
-                        *img.get_mut((xi, yi)).expect("Invalid index.") +=
-                    // 2.0 * tracer.dist_travelled();
-                    norm.dot(&nalgebra::Vector3::x_axis()) + 2.0;
+                        *img.get_mut((xi, yi)).expect("Invalid index.") += tracer.dist_travelled();
 
                         break;
                     }
