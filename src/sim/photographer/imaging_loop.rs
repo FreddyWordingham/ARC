@@ -3,7 +3,6 @@
 use crate::{
     geom::Trace,
     list::Cartesian::{X, Y, Z},
-    phys::Crossing,
     sim::photographer::{Camera, Hit, Settings, Tracer},
     util::ParProgressBar,
     world::{Cell, Grid, Verse},
@@ -21,7 +20,7 @@ const MAX_LOOPS: u64 = 1_000;
 #[must_use]
 pub fn run_thread(
     _id: usize,
-    sett: &Settings,
+    _sett: &Settings,
     cam: &Camera,
     _verse: &Verse,
     grid: &Grid,
@@ -74,36 +73,43 @@ pub fn run_thread(
 
                         cell = find_cell(tracer.ray().pos(), grid);
                     }
-                    Hit::Target(dist) => {
-                        tracer.travel(dist + bump_dist);
-
-                        *img.get_mut((xi, yi)).expect("Invalid index.") += tracer.dist_travelled();
-                        break;
-                    }
-                    Hit::Refract(dist) => {
+                    Hit::Target(_dist) => {
                         let (_, _, norm, _) = cell
                             .inter_dist_inside_norm_inter(tracer.ray())
                             .expect("Failed to observe interface within cell.");
 
-                        tracer.travel(dist);
+                        *img.get_mut((xi, yi)).expect("Invalid index.") +=
+                        // 2.0 * tracer.dist_travelled();
+                        norm.dot(&-nalgebra::Vector3::y_axis()) + 1.0;
 
-                        let crossing =
-                            Crossing::new(tracer.ray().dir(), &norm, 1.0, sett.water_ref_index());
-                        *tracer.ray_mut().dir_mut() = crossing
-                            .trans_dir()
-                            .expect("Failed to determine transmission direction.");
+                        break;
+                    }
+                    Hit::Refract(dist) => {
+                        tracer.travel(dist + bump_dist);
 
-                        tracer.travel(bump_dist);
+                        *img.get_mut((xi, yi)).expect("Invalid index.") +=
+                            tracer.dist_travelled() * 0.1;
 
                         if !grid.bound().contains(tracer.ray().pos()) {
                             break;
                         }
                         if !cell.bound().contains(tracer.ray().pos()) {
-                            // warn!("Happened here too!");
                             cell = find_cell(tracer.ray().pos(), grid);
                         }
+
+                        // break;
                     }
-                    _ => unreachable!("...in theory."),
+                    Hit::Scene(dist) => {
+                        let (_, _, norm, _) = cell
+                            .inter_dist_inside_norm_inter(tracer.ray())
+                            .expect("Failed to observe interface within cell.");
+
+                        *img.get_mut((xi, yi)).expect("Invalid index.") +=
+                    // 2.0 * tracer.dist_travelled();
+                    norm.dot(&nalgebra::Vector3::x_axis()) + 4.0;
+
+                        break;
+                    }
                 }
             }
         }

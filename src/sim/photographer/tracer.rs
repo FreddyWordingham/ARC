@@ -1,6 +1,6 @@
 //! Tracer implementation.
 
-use crate::{access, clone, geom::Ray};
+use crate::{access, geom::Ray};
 
 /// Ray tracer.
 pub struct Tracer {
@@ -12,7 +12,6 @@ pub struct Tracer {
 
 impl Tracer {
     access!(ray, ray_mut, Ray);
-    clone!(dist_travelled, f64);
 
     /// Construct a new instance.
     #[inline]
@@ -31,5 +30,14 @@ impl Tracer {
 
         self.ray.travel(dist);
         self.dist_travelled += dist;
+    }
+
+    /// Get the distance travelled and reset the counter.
+    #[inline]
+    #[must_use]
+    pub fn dist_travelled(&mut self) -> f64 {
+        let d = self.dist_travelled;
+        self.dist_travelled = 0.0;
+        d
     }
 }
