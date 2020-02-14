@@ -106,7 +106,7 @@ pub fn run_thread(
 
                         *img.get_mut((xi, yi)).expect("Invalid index.") +=
                     // 2.0 * tracer.dist_travelled();
-                    norm.dot(&nalgebra::Vector3::x_axis()) + 4.0;
+                    norm.dot(&nalgebra::Vector3::x_axis()) + 2.0;
 
                         break;
                     }
