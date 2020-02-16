@@ -87,25 +87,34 @@ pub fn run_thread(
                         break;
                     }
                     Hit::Refract(dist) => {
+                        // let (_, _, norm, _) = cell
+                        //     .inter_dist_inside_norm_inter(tracer.ray())
+                        //     .expect("Failed to observe interface within cell.");
+
+                        // tracer.travel(dist);
+
+                        // let crossing =
+                        //     Crossing::new(tracer.ray().dir(), &norm, 1.0, sett.water_ref_index());
+                        // *tracer.ray_mut().dir_mut() =
+                        //     crossing.trans_dir().expect("No transmission direction.");
+
+                        // tracer.travel(bump_dist);
+
+                        // if !grid.bound().contains(tracer.ray().pos()) {
+                        //     break;
+                        // }
+                        // if !cell.bound().contains(tracer.ray().pos()) {
+                        //     cell = find_cell(tracer.ray().pos(), grid);
+                        // }
+
                         let (_, _, norm, _) = cell
                             .inter_dist_inside_norm_inter(tracer.ray())
                             .expect("Failed to observe interface within cell.");
 
-                        tracer.travel(dist);
+                        *img.get_mut((xi, yi)).expect("Invalid index.") +=
+                            norm.dot(&sett.light_dir());
 
-                        let crossing =
-                            Crossing::new(tracer.ray().dir(), &norm, 1.0, sett.water_ref_index());
-                        *tracer.ray_mut().dir_mut() =
-                            crossing.trans_dir().expect("No transmission direction.");
-
-                        tracer.travel(bump_dist);
-
-                        if !grid.bound().contains(tracer.ray().pos()) {
-                            break;
-                        }
-                        if !cell.bound().contains(tracer.ray().pos()) {
-                            cell = find_cell(tracer.ray().pos(), grid);
-                        }
+                        break;
                     }
                     Hit::Scene(dist) => {
                         tracer.travel(dist);
