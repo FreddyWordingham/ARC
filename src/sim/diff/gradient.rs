@@ -34,6 +34,7 @@ impl Gradient {
     clone!(next_z, f64);
 
     /// Construct a new instance.
+    #[allow(clippy::too_many_lines)]
     #[inline]
     #[must_use]
     pub fn new(index: [usize; 3], concs: &Array3<&mut f64>) -> Self {

@@ -17,6 +17,8 @@ pub enum Hit {
 
 impl Hit {
     /// Construct a new instance.
+    #[inline]
+    #[must_use]
     pub fn new(cell_dist: f64, inter_dist_key: Option<(f64, &InterKey)>, bump_dist: f64) -> Self {
         if let Some((inter_dist, inter_key)) = inter_dist_key {
             if inter_dist < (cell_dist + bump_dist) {
