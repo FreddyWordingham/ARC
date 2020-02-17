@@ -55,3 +55,22 @@ fn overview(verse: &Verse) {
         info!("{}", format!("{}:\n{}", key, react));
     }
 }
+
+use arc::{access, math::Multivariate};
+use ndarray::Array1;
+
+pub struct Reactor {
+    /// Rate formulae.
+    rates: Array1<Multivariate>,
+}
+
+impl Reactor {
+    access!(rates, Array1<Multivariate>);
+
+    /// Construct a new instance.
+    #[inline]
+    #[must_use]
+    pub fn new(rates: Array1<Multivariate>) -> Self {
+        Self { rates }
+    }
+}
