@@ -56,7 +56,11 @@ fn overview(verse: &Verse) {
     }
 }
 
-use arc::{access, math::Multivariate};
+use arc::{
+    access,
+    math::Multivariate,
+    ord::{ReactSet, SpecSet},
+};
 use ndarray::Array1;
 
 pub struct Reactor {
@@ -70,7 +74,13 @@ impl Reactor {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(rates: Array1<Multivariate>) -> Self {
+    pub fn new(reacts: &ReactSet, specs: &SpecSet) -> Self {
+        let rates = reacts
+            .map()
+            .values()
+            .map(|r| r.rate().create_lambda(specs))
+            .collect();
+
         Self { rates }
     }
 }
