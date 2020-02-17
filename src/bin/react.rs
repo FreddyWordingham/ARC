@@ -37,6 +37,8 @@ pub fn main() {
 
     banner::section("Overview");
     overview(&verse);
+
+    let reactor = Reactor::new(verse.reacts(), verse.specs());
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
@@ -82,5 +84,12 @@ impl Reactor {
             .collect();
 
         Self { rates }
+    }
+
+    /// Determine the current reaction rates.
+    #[inline]
+    #[must_use]
+    pub fn calc_rates(&self, concs: &Array1<f64>) -> Array1<f64> {
+        self.rates.map(|lambda| lambda.y(concs))
     }
 }
