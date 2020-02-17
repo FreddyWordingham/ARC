@@ -38,7 +38,7 @@ pub fn main() {
     banner::section("Overview");
     overview(&verse);
 
-    let reactor = Reactor::new(verse.reacts(), verse.specs());
+    let _reactor = Reactor::new(verse.reacts(), verse.specs());
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
