@@ -1,15 +1,22 @@
 //! Reaction testing function.
 
 use arc::{
-    args, report,
+    args,
+    file::{Load, Verse as VerseForm},
+    report,
     util::{banner, exec, init},
+    world::Verse,
 };
 use attr::form;
 use colog;
+use log::info;
+// use ndarray::Array1;
 use std::path::PathBuf;
 
 #[form]
-struct Parameters {}
+struct Parameters {
+    verse: VerseForm,
+}
 
 pub fn main() {
     colog::init();
@@ -20,6 +27,16 @@ pub fn main() {
     report!(in_dir.display(), "input directory");
     report!(out_dir.display(), "output directory");
     report!(params_path.display(), "parameters path");
+
+    banner::section("Loading");
+    info!("Loading parameters file...");
+    let params = Parameters::load(&params_path);
+
+    info!("Loading universe files...");
+    let verse = params.verse.form(&in_dir);
+
+    banner::section("Overview");
+    overview(&verse);
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
@@ -30,4 +47,11 @@ fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
     let params_path = &in_dir.join(params_name);
 
     (in_dir, out_dir, params_path.to_path_buf())
+}
+
+fn overview(verse: &Verse) {
+    info!("{} reactions:", verse.reacts().map().len());
+    for (key, react) in verse.reacts().map() {
+        info!("{}", format!("{}:\n{}", key, react));
+    }
 }

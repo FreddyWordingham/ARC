@@ -2,6 +2,7 @@
 
 use crate::{access, chem::Rate, ord::SpecKey};
 use attr::json;
+use std::fmt::{Display, Formatter, Result};
 
 /// Species reaction structure.
 #[json]
@@ -28,5 +29,27 @@ impl Reaction {
             products,
             rate,
         }
+    }
+}
+
+impl Display for Reaction {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        if let Some((name, coeff)) = self.reactants.first() {
+            write!(fmt, "\tform: {}{}", coeff, name)?;
+            for (name, coeff) in self.reactants.iter().skip(1) {
+                write!(fmt, " + {}{}", coeff, name)?;
+            }
+        }
+
+        write!(fmt, " -> ").expect("Could not write to formatter.");
+
+        if let Some((name, coeff)) = self.products.first() {
+            write!(fmt, "{}{}", coeff, name)?;
+            for (name, coeff) in self.products.iter().skip(1) {
+                write!(fmt, " + {}{}", coeff, name)?;
+            }
+        }
+
+        write!(fmt, "\n\trate: {:<32} ", self.rate)
     }
 }

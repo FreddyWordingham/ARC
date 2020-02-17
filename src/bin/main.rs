@@ -132,16 +132,7 @@ fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
     (in_dir, out_dir, params_path.to_path_buf())
 }
 
-fn overview(verse: &Verse) {
-    info!("{} interfaces:", verse.inters().map().len());
-    for key in verse.inters().map().keys() {
-        info!("\t{}", key);
-    }
-
-    info!("{} reactions:", verse.reacts().map().len());
-    for key in verse.reacts().map().keys() {
-        info!("\t{}", key);
-    }
+1
 
     info!("{} lights:", verse.lights().map().len());
     for key in verse.lights().map().keys() {
