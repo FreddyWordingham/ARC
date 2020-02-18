@@ -19,7 +19,6 @@ use crate::{
     access,
     file::{as_json, from_json, Load, Save},
 };
-use log::info;
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fmt::Display, path::Path};
 
@@ -72,7 +71,7 @@ impl<K: Display + Clone + Ord, T: Load> Set<K, T> {
 
         for key in keys {
             let path = dir.join(format!("{}.{}", key, ext));
-            info!("Loading: {}", path.display());
+            println!("\tLoading: {}", path.display());
 
             map.insert((*key).clone(), T::load(&path));
         }

@@ -3,7 +3,7 @@
 use arc::{
     args,
     file::Load,
-    ord::InterKey,
+    ord::{InterKey, InterSet, LightKey, LightSet, MatSet},
     report,
     util::{banner, exec, init},
 };
@@ -14,7 +14,8 @@ use std::path::PathBuf;
 
 #[form]
 struct Parameters {
-    interfaces: Vec<InterKey>,
+    inters: Vec<InterKey>,
+    light: LightKey,
 }
 
 pub fn main() {
@@ -29,8 +30,14 @@ pub fn main() {
 
     banner::section("Loading");
     info!("Loading parameters file...");
-    let _params = Parameters::load(&params_path);
-    // let reacts = ReactSet::load(&in_dir.join("reactions"), &params.reacts, "json");
+    let params = Parameters::load(&params_path);
+
+    info!("Loading interfaces");
+    let inters = InterSet::load(&in_dir.join("interfaces"), &params.inters, "json");
+    info!("Loading lights");
+    let lights = LightSet::load(&in_dir.join("lights"), &[params.light], "json");
+    info!("Loading materials");
+    let mats = MatSet::load(&in_dir.join("materials"), &inters.mat_keys(), "json");
 
     banner::section("Overview");
     // info!("{} reactions:", reacts.map().len());

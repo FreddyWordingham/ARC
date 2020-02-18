@@ -43,6 +43,7 @@ pub fn main() {
     banner::section("Loading");
     info!("Loading parameters file...");
     let params = Parameters::load(&params_path);
+
     let reacts = ReactSet::load(&in_dir.join("reactions"), &params.reacts, "json");
     let specs = SpecSet::load(&in_dir.join("species"), &reacts.spec_keys(), "json");
     let mut concs = params.state.new_conc_arr(&specs);

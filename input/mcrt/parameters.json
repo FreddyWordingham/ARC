@@ -1,5 +1,7 @@
 {
-    "interfaces": [
-        "one"
-    ]
+    "inters": [
+        "top",
+        "bottom"
+    ],
+    "light": "overhead"
 }
