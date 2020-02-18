@@ -5,7 +5,10 @@ use arc::{
     file::Load,
     ord::{ReactKey, ReactSet, SpecSet},
     report,
-    sim::kin::{Reactor, Settings},
+    sim::{
+        kin,
+        kin::{Reactor, Settings},
+    },
     util::{banner, exec, init},
     world::State,
 };
@@ -56,16 +59,26 @@ pub fn main() {
     }
 
     banner::section("Simulation");
-    // let reactor = Reactor::new(&reacts, &specs);
-    let mut pb = arc::util::ProgressBar::new("Kinetics", params.iterations);
     let mut t = 0.0;
 
     let mut file = init_file(&out_dir, &specs);
-
     print_vals(&mut file, t, &concs);
+
     let reactor = Reactor::new(&reacts, &specs);
+
+    let mut pb = arc::util::ProgressBar::new("Kinetics", params.iterations);
     for _ in 0..params.iterations {
-        arc::sim::kin::run_with_reactor(&params.sett, &reactor, &mut concs);
+        kin::run_with_reactor(&params.sett, &reactor, &mut concs);
+        pb.tick();
+        t += params.sett.time();
+        print_vals(&mut file, t, &concs);
+    }
+    pb.finish_with_message("Kinetics complete.");
+
+    concs[2] += 1.0;
+    concs[4] += 1.0;
+    for _ in 0..params.iterations {
+        kin::run_with_reactor(&params.sett, &reactor, &mut concs);
         pb.tick();
         t += params.sett.time();
         print_vals(&mut file, t, &concs);
