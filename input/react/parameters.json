@@ -1,4 +1,5 @@
 {
+    "min_timestep": 1.0e-3,
     "verse": {
         "inters": [],
         "reacts": [

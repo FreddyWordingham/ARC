@@ -19,7 +19,7 @@ print("Loading file", filename)
 
 data = np.genfromtxt(filename, delimiter=',', names=True)
 
-for name in data.dtype.names[1:]:
+for name in data.dtype.names[1:-1]:
     plt.plot(data['time'], data[name], label=name)
 
 plt.xlabel(X_AXIS_LABEL)

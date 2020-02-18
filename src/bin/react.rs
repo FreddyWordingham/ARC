@@ -10,12 +10,16 @@ use arc::{
 use attr::form;
 use colog;
 use log::info;
-// use ndarray::Array1;
+use ndarray_stats::QuantileExt;
 use std::path::PathBuf;
+
+/// Maximum fraction a concentration can change during a single timestep.
+const MAX_FRAC_DELTA: f64 = 0.1;
 
 #[form]
 struct Parameters {
     verse: VerseForm,
+    min_timestep: f64,
 }
 
 pub fn main() {
@@ -42,7 +46,7 @@ pub fn main() {
     // println!("Reactor:\n{:?}", reactor);
 
     let mut time = 0.0;
-    let dt = 0.1;
+    let mut dt;
     let mut concs: Array1<f64> = Array1::zeros(verse.specs().map().len());
     for c in concs.iter_mut() {
         *c += 1.0;
@@ -57,9 +61,23 @@ pub fn main() {
 
     print_vals(&mut file, time, &concs);
     while time < 100.0 {
-        time += dt;
+        println!("t: {}", time);
         let rates = reactor.calc_rates(&concs);
-        concs += &(dt * rates);
+        dt = (&concs / &rates * MAX_FRAC_DELTA)
+            .mapv(f64::abs)
+            .min()
+            .unwrap()
+            .max(params.min_timestep);
+        time += dt;
+
+        let k1 = &rates * dt;
+        let k2 = (&rates + &(&k1 / 2.0)) * dt;
+        let k3 = (&rates + &(&k2 / 2.0)) * dt;
+        let k4 = (rates + &k3) * dt;
+
+        concs += &((k1 + (2.0 * k2) + (2.0 * k3) + k4) / 6.0);
+
+        // concs += &(rates * dt);
 
         print_vals(&mut file, time, &concs);
     }
@@ -135,15 +153,15 @@ impl Reactor {
     pub fn calc_rates(&self, concs: &Array1<f64>) -> Array1<f64> {
         let rs = self.rates.map(|lambda| lambda.y(concs));
 
-        let mut outs = Array1::zeros(concs.len());
+        let mut rates = Array1::zeros(concs.len());
 
         for (i, r) in rs.iter().enumerate() {
             for (j, _c) in concs.iter().enumerate() {
-                *outs.get_mut(j).unwrap() += r * self.cs.get((i, j)).unwrap();
+                *rates.get_mut(j).unwrap() += r * self.cs.get((i, j)).unwrap();
             }
         }
 
-        outs
+        rates
     }
 }
 
