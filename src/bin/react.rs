@@ -53,9 +53,9 @@ pub fn main() {
     }
 
     let mut file = std::fs::File::create(&out_dir.join("concs.dat")).expect("Unable to open file.");
-    write!(file, "{:<24}", format!("time,")).expect("Unable to write to file.");
+    write!(file, "{:>24}", format!("time")).expect("Unable to write to file.");
     for key in verse.specs().map().keys() {
-        write!(file, "{:<24}", format!("{},", key)).expect("Unable to write to file.");
+        write!(file, ",{:>24}", format!("{}", key)).expect("Unable to write to file.");
     }
     writeln!(file).expect("Unable to write to file.");
 
@@ -167,9 +167,9 @@ impl Reactor {
 
 /// Print the time and current concentration values to a file.
 fn print_vals(file: &mut File, t: f64, cs: &Array1<f64>) {
-    write!(file, "{:<24}", format!("{},", t)).expect("Unable to write to file.");
+    write!(file, "{:>24}", t).expect("Unable to write to file.");
     for c in cs {
-        write!(file, "{:<24}", format!("{},", c)).expect("Unable to write to file.");
+        write!(file, ",{:>24}", c).expect("Unable to write to file.");
     }
     writeln!(file).expect("Unable to write to file.");
 }
