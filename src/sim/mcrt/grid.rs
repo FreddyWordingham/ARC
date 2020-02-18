@@ -4,9 +4,8 @@ use crate::{
     access,
     geom::{Aabb, Ray},
     list::Cartesian::X,
-    math::indexer,
-    ord::sort,
-    ord::{InterSet, SurfSet},
+    math::{indexer, list},
+    ord::{sort, InterSet, MatKey, MatSet, Set, SurfSet},
     sim::mcrt::Cell,
     util::ParProgressBar,
 };
@@ -14,10 +13,16 @@ use nalgebra::{Point3, Unit, Vector3};
 use ndarray::Array3;
 use num_cpus;
 use rayon::prelude::*;
-use std::sync::{Arc, Mutex};
+use std::{
+    collections::BTreeMap,
+    sync::{Arc, Mutex},
+};
 
 /// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
 const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
+
+/// Scaling to bump photons through boundaries within the grid.
+const BUMP_SCALE: f64 = 1.0e-3;
 
 /// Grid partition scheme.
 pub struct Grid<'a> {
@@ -138,10 +143,46 @@ impl<'a> Grid<'a> {
         cell_blocks
     }
 
+    /// Create a map of the material keys.
+    #[inline]
+    #[must_use]
+    pub fn mat_keys(&self) -> Array3<&MatKey> {
+        self.cells.map(Cell::mat)
+    }
+
+    /// Create a set of material maps.
+    #[inline]
+    #[must_use]
+    pub fn mat_maps(&self, mats: &MatSet) -> Set<MatKey, Array3<f64>> {
+        let mut set = BTreeMap::new();
+
+        let keys = self.mat_keys();
+        for key in mats.map().keys() {
+            set.insert(key.clone(), keys.map(|k| if k == &key { 1.0 } else { 0.0 }));
+        }
+
+        Set::new(set)
+    }
+
     /// Determine the number of intersecting interfaces in each cell.
     #[inline]
     #[must_use]
-    pub fn boundaries(&self) -> Array3<usize> {
-        self.cells().map(|c| c.inter_tris().len() as usize)
+    pub fn boundaries(&self) -> Array3<f64> {
+        self.cells().map(|c| c.inter_tris().len() as f64)
+    }
+
+    /// Determine a suitable bump distance for the grid.
+    #[inline]
+    #[must_use]
+    pub fn bump_dist(&self) -> f64 {
+        let mins: Vec<f64> = self
+            .bound
+            .widths()
+            .iter()
+            .zip(self.cells.shape())
+            .map(|(dx, r)| *dx / *r as f64 * BUMP_SCALE)
+            .collect();
+
+        list::min(&mins)
     }
 }

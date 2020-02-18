@@ -45,9 +45,12 @@ pub fn main() {
     verse.overview();
 
     banner::section("Pre-Flight");
-    grid.boundaries()
-        .map(|x| *x as f64)
-        .save(&out_dir.join("boundaries.nc"));
+    info!("Saving boundary map.");
+    grid.boundaries().save(&out_dir.join("boundaries.nc"));
+    for (key, map) in grid.mat_maps(verse.mats()).map() {
+        info!("Saving {} material map.", key);
+        map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
+    }
 
     banner::section("Simulation");
 

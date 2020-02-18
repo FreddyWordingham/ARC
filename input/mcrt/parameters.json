@@ -12,9 +12,9 @@
         "light": "overhead"
     },
     "res": [
-        64,
-        64,
-        64
+        65,
+        65,
+        65
     ],
     "bound": {
         "mins": [
