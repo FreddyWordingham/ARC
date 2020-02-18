@@ -5,7 +5,7 @@ use arc::{
     file::Load,
     ord::{ReactKey, ReactSet, SpecSet},
     report,
-    sim::kin::Settings,
+    sim::kin::{Reactor, Settings},
     util::{banner, exec, init},
     world::State,
 };
@@ -63,8 +63,9 @@ pub fn main() {
     let mut file = init_file(&out_dir, &specs);
 
     print_vals(&mut file, t, &concs);
+    let reactor = Reactor::new(&reacts, &specs);
     for _ in 0..params.iterations {
-        arc::sim::kin::run(&params.sett, &reacts, &specs, &mut concs);
+        arc::sim::kin::run_with_reactor(&params.sett, &reactor, &mut concs);
         pb.tick();
         t += params.sett.time();
         print_vals(&mut file, t, &concs);
@@ -74,6 +75,7 @@ pub fn main() {
     banner::section("Finished");
 }
 
+/// Initialise the directories.
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
     args!(_bin_path: String;
         params_name: String);
@@ -84,6 +86,7 @@ fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
     (in_dir, out_dir, params_path.to_path_buf())
 }
 
+/// Initialise the output file.
 fn init_file(out_dir: &Path, specs: &SpecSet) -> File {
     let mut file = std::fs::File::create(&out_dir.join("concs.dat")).expect("Unable to open file.");
 

@@ -14,7 +14,7 @@ use ndarray_stats::QuantileExt;
 pub fn run(sett: &Settings, reacts: &ReactSet, specs: &SpecSet, concs: &mut Array1<f64>) {
     debug_assert!(specs.map().len() == concs.len());
 
-    let reactor = Reactor::new(&reacts, &specs);
+    let reactor = Reactor::new(reacts, specs);
 
     run_with_reactor(sett, &reactor, concs);
 }
