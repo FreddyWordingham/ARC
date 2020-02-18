@@ -28,9 +28,13 @@ pub fn main() {
 
     banner::section("Loading");
     info!("Loading parameters file...");
-    let _params = Parameters::load(&params_path);
+    let params = Parameters::load(&params_path);
+
+    info!("Loading universe files...");
+    let verse = params.verse.form(&in_dir);
 
     banner::section("Overview");
+    verse.overview();
 
     banner::section("Simulation");
 
