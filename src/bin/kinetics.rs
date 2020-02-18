@@ -5,7 +5,9 @@ use arc::{
     file::Load,
     ord::{ReactKey, ReactSet, SpecSet},
     report,
+    sim::kin::Settings,
     util::{banner, exec, init},
+    world::State,
 };
 use attr::form;
 use colog;
@@ -15,6 +17,8 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     reacts: Vec<ReactKey>,
+    state: State,
+    sett: Settings,
 }
 
 pub fn main() {
@@ -32,6 +36,8 @@ pub fn main() {
     let params = Parameters::load(&params_path);
     let reacts = ReactSet::load(&in_dir.join("reactions"), &params.reacts, "json");
     let specs = SpecSet::load(&in_dir.join("species"), &reacts.spec_keys(), "json");
+    let mut concs = params.state.new_conc_arr(&specs);
+    let _sources = params.state.new_source_arr(&specs);
 
     banner::section("Overview");
     info!("{} reactions:", reacts.map().len());
@@ -42,6 +48,10 @@ pub fn main() {
     for (i, key) in specs.map().keys().enumerate() {
         println!("\t{}\t{}", i, key);
     }
+
+    banner::section("Simulation");
+    // let reactor = Reactor::new(&reacts, &specs);
+    arc::sim::kin::run(&params.sett, &reacts, &specs, &mut concs);
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {

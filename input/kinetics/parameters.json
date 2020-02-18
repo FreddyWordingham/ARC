@@ -3,4 +3,19 @@
         "test_0",
         "test_1"
     ],
+    "state": {
+        "concs": {
+            "map": {
+                "a": 1.0
+            }
+        },
+        "sources": {
+            "map": {}
+        }
+    },
+    "sett": {
+        "time": 10.0,
+        "max_conc_frac_delta": 0.1,
+        "min_timestep": 1.0e-3
+    }
 }
