@@ -28,6 +28,7 @@ pub fn run_with_reactor(sett: &Settings, reactor: &Reactor, concs: &mut Array1<f
 
         let dt = ((&*concs / &rates) * sett.max_conc_frac_delta())
             .mapv(f64::abs)
+            .mapv(|x| if x.is_nan() { std::f64::MAX } else { x })
             .min()
             .expect("Could not determine minimum timestep.")
             .max(sett.min_timestep())
