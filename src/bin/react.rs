@@ -56,7 +56,7 @@ pub fn main() {
     writeln!(file).expect("Unable to write to file.");
 
     print_vals(&mut file, time, &concs);
-    while time < 10.0 {
+    while time < 100.0 {
         time += dt;
         let rates = reactor.calc_rates(&concs);
         concs += &(dt * rates);
