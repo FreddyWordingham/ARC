@@ -47,13 +47,21 @@ pub fn main() {
     for c in concs.iter_mut() {
         *c += 1.0;
     }
-    print_vals(time, &concs);
+
+    let mut file = std::fs::File::create(&out_dir.join("concs.dat")).expect("Unable to open file.");
+    write!(file, "{:<24}", format!("time,")).expect("Unable to write to file.");
+    for key in verse.specs().map().keys() {
+        write!(file, "{:<24}", format!("{},", key)).expect("Unable to write to file.");
+    }
+    writeln!(file).expect("Unable to write to file.");
+
+    print_vals(&mut file, time, &concs);
     while time < 10.0 {
         time += dt;
         let rates = reactor.calc_rates(&concs);
         concs += &(dt * rates);
 
-        print_vals(time, &concs);
+        print_vals(&mut file, time, &concs);
     }
 }
 
@@ -80,6 +88,7 @@ use arc::{
     ord::{ReactSet, SpecSet},
 };
 use ndarray::{Array1, Array2};
+use std::{fs::File, io::Write};
 
 #[derive(Debug)]
 pub struct Reactor {
@@ -129,7 +138,7 @@ impl Reactor {
         let mut outs = Array1::zeros(concs.len());
 
         for (i, r) in rs.iter().enumerate() {
-            for (j, c) in concs.iter().enumerate() {
+            for (j, _c) in concs.iter().enumerate() {
                 *outs.get_mut(j).unwrap() += r * self.cs.get((i, j)).unwrap();
             }
         }
@@ -138,10 +147,10 @@ impl Reactor {
     }
 }
 
-pub fn print_vals(t: f64, cs: &Array1<f64>) {
-    print!("{:<16}\t", t);
+pub fn print_vals(file: &mut File, t: f64, cs: &Array1<f64>) {
+    write!(file, "{:<24}", format!("{},", t)).expect("Unable to write to file.");
     for c in cs {
-        print!("{:<16}\t", c);
+        write!(file, "{:<24}", format!("{},", c)).expect("Unable to write to file.");
     }
-    println!();
+    writeln!(file).expect("Unable to write to file.");
 }
