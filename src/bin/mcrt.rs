@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::{Load, Verse as VerseForm},
+    file::{Load, Save, Verse as VerseForm},
     geom::Aabb,
     report,
     sim::mcrt::Settings,
@@ -39,10 +39,15 @@ pub fn main() {
     let verse = params.verse.form(&in_dir);
 
     info!("Constructing grid...");
-    let _grid = arc::sim::mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
+    let grid = arc::sim::mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
 
     banner::section("Overview");
     verse.overview();
+
+    banner::section("Pre-Flight");
+    grid.boundaries()
+        .map(|x| *x as f64)
+        .save(&out_dir.join("boundaries.nc"));
 
     banner::section("Simulation");
 

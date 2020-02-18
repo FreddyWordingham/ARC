@@ -34,7 +34,7 @@ impl<'a> Grid<'a> {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(res: [usize; 3], bound: Aabb, inters: &InterSet, surfs: &SurfSet) -> Self {
+    pub fn new(res: [usize; 3], bound: Aabb, inters: &'a InterSet, surfs: &'a SurfSet) -> Self {
         let total_cells = res.get(X as usize).expect("Missing resolution index.")
             * res.get(1).expect("Missing resolution index.")
             * res.get(2).expect("Missing resolution index.");
@@ -82,8 +82,8 @@ impl<'a> Grid<'a> {
         block_size: u64,
         res: &[usize; 3],
         bound: &Aabb,
-        inters: &InterSet,
-        surfs: &SurfSet,
+        inters: &'a InterSet,
+        surfs: &'a SurfSet,
         cell_size: &Vector3<f64>,
     ) -> Vec<(usize, Vec<Cell<'a>>)> {
         let mut cell_blocks = Vec::new();
@@ -136,5 +136,12 @@ impl<'a> Grid<'a> {
         }
 
         cell_blocks
+    }
+
+    /// Determine the number of intersecting interfaces in each cell.
+    #[inline]
+    #[must_use]
+    pub fn boundaries(&self) -> Array3<usize> {
+        self.cells().map(|c| c.inter_tris().len() as usize)
     }
 }

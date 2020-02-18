@@ -28,7 +28,7 @@ impl<'a> Cell<'a> {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(bound: Aabb, mat: MatKey, inters: &InterSet, surfs: &SurfSet) -> Self {
+    pub fn new(bound: Aabb, mat: MatKey, inters: &'a InterSet, surfs: &'a SurfSet) -> Self {
         let mut inter_tris = Vec::new();
 
         for (key, inter) in inters.map() {
@@ -49,7 +49,7 @@ impl<'a> Cell<'a> {
         Self {
             bound,
             mat,
-            inter_tris: Vec::new(),
+            inter_tris,
         }
     }
 }
