@@ -130,7 +130,7 @@ impl<'a> Grid<'a> {
                     .observe_mat(surfs, bound, &gen_mat_ray(&p))
                     .expect("Unable to observe material.");
 
-                cells.push(Cell::new(Aabb::new(mins, maxs), mat));
+                cells.push(Cell::new(Aabb::new(mins, maxs), mat, inters, surfs));
             }
             cell_blocks.push((start as usize, cells));
         }
