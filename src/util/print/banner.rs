@@ -3,15 +3,28 @@
 use colored::Colorize;
 use terminal_size::terminal_size;
 
+/// Fallback terminal width if it cannot be determined at runtime.
+const FALLBACK_TERM_WIDTH: usize = 80;
+
+/// Determine the terminal width.
+#[inline]
+#[must_use]
+fn term_width() -> usize {
+    let ts = terminal_size();
+
+    if ts.is_some() {
+        (ts.unwrap().0).0 as usize
+    } else {
+        FALLBACK_TERM_WIDTH
+    }
+}
+
 /// Print a main title bar.
 #[inline]
 pub fn title(title: &str) {
     let title = title.to_uppercase();
 
-    let term_width = (terminal_size()
-        .expect("Unable to determine the terminal size.")
-        .0)
-        .0 as usize;
+    let term_width = term_width();
 
     let (left_bar, right_bar) = if term_width < ((title.len() * 2) + 11) {
         (4, 4)
@@ -40,10 +53,7 @@ pub fn title(title: &str) {
 /// Print a section bar.
 #[inline]
 pub fn section(title: &str) {
-    let term_width = (terminal_size()
-        .expect("Unable to determine the terminal size.")
-        .0)
-        .0 as usize;
+    let term_width = term_width();
 
     print!("\n====");
 

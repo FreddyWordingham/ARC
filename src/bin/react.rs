@@ -38,7 +38,23 @@ pub fn main() {
     banner::section("Overview");
     overview(&verse);
 
-    let _reactor = Reactor::new(verse.reacts(), verse.specs());
+    let reactor = Reactor::new(verse.reacts(), verse.specs());
+    // println!("Reactor:\n{:?}", reactor);
+
+    let mut time = 0.0;
+    let dt = 0.1;
+    let mut concs: Array1<f64> = Array1::zeros(verse.specs().map().len());
+    for c in concs.iter_mut() {
+        *c += 1.0;
+    }
+    print_vals(time, &concs);
+    while time < 10.0 {
+        time += dt;
+        let rates = reactor.calc_rates(&concs);
+        concs += &(dt * rates);
+
+        print_vals(time, &concs);
+    }
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
@@ -65,6 +81,7 @@ use arc::{
 };
 use ndarray::{Array1, Array2};
 
+#[derive(Debug)]
 pub struct Reactor {
     /// Rate formulae.
     rates: Array1<Multivariate>,
@@ -107,6 +124,24 @@ impl Reactor {
     #[inline]
     #[must_use]
     pub fn calc_rates(&self, concs: &Array1<f64>) -> Array1<f64> {
-        self.rates.map(|lambda| lambda.y(concs))
+        let rs = self.rates.map(|lambda| lambda.y(concs));
+
+        let mut outs = Array1::zeros(concs.len());
+
+        for (i, r) in rs.iter().enumerate() {
+            for (j, c) in concs.iter().enumerate() {
+                *outs.get_mut(j).unwrap() += r * self.cs.get((i, j)).unwrap();
+            }
+        }
+
+        outs
     }
+}
+
+pub fn print_vals(t: f64, cs: &Array1<f64>) {
+    print!("{:<16}\t", t);
+    for c in cs {
+        print!("{:<16}\t", c);
+    }
+    println!();
 }
