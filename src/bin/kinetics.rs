@@ -107,7 +107,7 @@ fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
 fn init_file(out_dir: &Path, specs: &SpecSet) -> File {
     let mut file = std::fs::File::create(&out_dir.join("concs.dat")).expect("Unable to open file.");
 
-    write!(file, "{:>32}", format!("time")).expect("Unable to write to file.");
+    write!(file, "{:>32}", "time".to_string()).expect("Unable to write to file.");
     for key in specs.map().keys() {
         write!(file, ",{:>32}", format!("{}", key)).expect("Unable to write to file.");
     }

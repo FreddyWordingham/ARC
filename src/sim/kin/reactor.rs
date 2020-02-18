@@ -35,12 +35,12 @@ impl Reactor {
         for (i, react) in reacts.map().values().enumerate() {
             for (r, c) in react.reactants() {
                 *cs.get_mut((i, specs.index_of_key(r)))
-                    .expect("Invalid index.") -= *c as f64;
+                    .expect("Invalid index.") -= f64::from(*c);
             }
 
             for (p, c) in react.products() {
                 *cs.get_mut((i, specs.index_of_key(p)))
-                    .expect("Invalid index.") += *c as f64;
+                    .expect("Invalid index.") += f64::from(*c);
             }
         }
 

@@ -13,12 +13,14 @@ pub enum Multivariate {
         /// Constant value.
         c: f64,
     },
+    /// First order scaled function.
     ScaledFirstOrder {
         /// Scaling constant.
         k: f64,
         /// First order index.
         a: usize,
     },
+    /// Second order scaled function.
     ScaledSecondOrder {
         /// Scaling constant.
         k: f64,
@@ -27,6 +29,7 @@ pub enum Multivariate {
         /// Second order index.
         b: usize,
     },
+    /// Third order scaled function.
     ScaledThirdOrder {
         /// Scaling constant.
         k: f64,

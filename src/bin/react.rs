@@ -53,7 +53,7 @@ pub fn main() {
     }
 
     let mut file = std::fs::File::create(&out_dir.join("concs.dat")).expect("Unable to open file.");
-    write!(file, "{:>24}", format!("time")).expect("Unable to write to file.");
+    write!(file, "{:>24}", "time".to_string()).expect("Unable to write to file.");
     for key in verse.specs().map().keys() {
         write!(file, ",{:>24}", format!("{}", key)).expect("Unable to write to file.");
     }
