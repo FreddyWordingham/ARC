@@ -3,6 +3,7 @@
 use arc::{
     args,
     file::{Load, Verse as VerseForm},
+    geom::Aabb,
     report,
     sim::mcrt::Settings,
     util::{banner, exec, init},
@@ -16,6 +17,8 @@ use std::path::PathBuf;
 struct Parameters {
     verse: VerseForm,
     sett: Settings,
+    res: [usize; 3],
+    bound: Aabb,
 }
 
 pub fn main() {
@@ -34,6 +37,9 @@ pub fn main() {
 
     info!("Loading universe files...");
     let verse = params.verse.form(&in_dir);
+
+    info!("Constructing grid...");
+    let _grid = arc::sim::mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
 
     banner::section("Overview");
     verse.overview();

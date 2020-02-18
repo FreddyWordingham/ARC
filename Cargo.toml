@@ -25,6 +25,7 @@ ndarray = { version = "0.13.0", features = ["rayon", "serde-1"] }
 # ndarray-parallel = "0.9.1"
 ndarray-stats = "0.3.0"
 netcdf = "0.4.0"
+num_cpus = "1.12.0"
 physical_constants = "0.3.0"
 rand = "0.7.3"
 rayon = "1.3.0"

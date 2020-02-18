@@ -4,12 +4,14 @@ use crate::{
     access,
     geom::{Collide, Ray, Trace},
 };
+use attr::json;
 use nalgebra::{Point3, Unit, Vector3};
 use std::cmp::Ordering;
 
 /// Axis-aligned bounding box geometry.
 /// Used for spatial partitioning.
-#[derive(Debug, Clone)]
+#[json]
+#[derive(Clone)]
 pub struct Aabb {
     /// Minimum bound.
     mins: Point3<f64>,
