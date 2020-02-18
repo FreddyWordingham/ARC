@@ -147,7 +147,8 @@ impl Reactor {
     }
 }
 
-pub fn print_vals(file: &mut File, t: f64, cs: &Array1<f64>) {
+/// Print the time and current concentration values to a file.
+fn print_vals(file: &mut File, t: f64, cs: &Array1<f64>) {
     write!(file, "{:<24}", format!("{},", t)).expect("Unable to write to file.");
     for c in cs {
         write!(file, "{:<24}", format!("{},", c)).expect("Unable to write to file.");
