@@ -75,15 +75,19 @@ pub fn main() {
     }
     pb.finish_with_message("Kinetics complete.");
 
-    concs[2] += 1.0;
-    concs[4] += 1.0;
-    for _ in 0..params.iterations {
-        kin::run_with_reactor(&params.sett, &reactor, &mut concs);
-        pb.tick();
-        t += params.sett.time();
-        print_vals(&mut file, t, &concs);
-    }
-    pb.finish_with_message("Kinetics complete.");
+    // *concs
+    //     .get_mut(specs.index_of_key(&arc::ord::SpecKey::new("o2")))
+    //     .expect("Invalid index.") += 1.0;
+    // *concs
+    //     .get_mut(specs.index_of_key(&arc::ord::SpecKey::new("udens")))
+    //     .expect("Invalid index.") += 1.0;
+    // for _ in 0..params.iterations {
+    //     kin::run_with_reactor(&params.sett, &reactor, &mut concs);
+    //     pb.tick();
+    //     t += params.sett.time();
+    //     print_vals(&mut file, t, &concs);
+    // }
+    // pb.finish_with_message("Kinetics complete.");
 
     banner::section("Finished");
 }
