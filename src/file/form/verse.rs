@@ -16,41 +16,57 @@ use std::path::Path;
 #[json]
 pub struct Verse {
     /// List of interfaces.
-    inters: Vec<InterKey>,
+    inters: Option<Vec<InterKey>>,
     /// List of regions.
-    regions: Vec<RegionKey>,
+    regions: Option<Vec<RegionKey>>,
     /// List of reactions.
-    reacts: Vec<ReactKey>,
+    reacts: Option<Vec<ReactKey>>,
     /// List of lights.
-    lights: Vec<LightKey>,
+    lights: Option<Vec<LightKey>>,
 }
 
 impl Verse {
-    access!(inters, Vec<InterKey>);
-    access!(regions, Vec<RegionKey>);
-    access!(reacts, Vec<ReactKey>);
-    access!(lights, Vec<LightKey>);
+    access!(inters, Option<Vec<InterKey>>);
+    access!(regions, Option<Vec<RegionKey>>);
+    access!(reacts, Option<Vec<ReactKey>>);
+    access!(lights, Option<Vec<LightKey>>);
 
     /// Form a new instance.
     #[inline]
     #[must_use]
     pub fn form(&self, in_dir: &Path) -> WorldVerse {
-        let mut inter_keys = self.inters.clone();
+        let mut inter_keys = if let Some(keys) = &self.inters {
+            keys.clone()
+        } else {
+            Vec::new()
+        };
         inter_keys.sort();
         inter_keys.dedup();
         let inters: InterSet = Set::load(&in_dir.join("interfaces"), &inter_keys, "json");
 
-        let mut region_keys = self.regions.clone();
+        let mut region_keys = if let Some(keys) = &self.regions {
+            keys.clone()
+        } else {
+            Vec::new()
+        };
         region_keys.sort();
         region_keys.dedup();
         let regions: RegionSet = Set::load(&in_dir.join("regions"), &region_keys, "json");
 
-        let mut react_keys = self.reacts.clone();
+        let mut react_keys = if let Some(keys) = &self.reacts {
+            keys.clone()
+        } else {
+            Vec::new()
+        };
         react_keys.sort();
         react_keys.dedup();
         let reacts: ReactSet = Set::load(&in_dir.join("reactions"), &react_keys, "json");
 
-        let mut light_keys = self.lights.clone();
+        let mut light_keys = if let Some(keys) = &self.lights {
+            keys.clone()
+        } else {
+            Vec::new()
+        };
         light_keys.sort();
         light_keys.dedup();
         let lights: LightSet = Set::load(&in_dir.join("lights"), &light_keys, "json");

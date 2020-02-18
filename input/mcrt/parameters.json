@@ -1,7 +1,9 @@
 {
-    "inters": [
-        "top",
-        "bottom"
-    ],
-    "light": "overhead"
+    "verse": {
+        "inters": [
+            "top",
+            "bottom"
+        ],
+        "light": "overhead"
+    }
 }
