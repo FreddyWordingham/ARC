@@ -24,12 +24,14 @@ pub fn run(sett: &Settings, reacts: &ReactSet, specs: &SpecSet, concs: &mut Arra
 pub fn run_with_reactor(sett: &Settings, reactor: &Reactor, concs: &mut Array1<f64>) {
     let mut t = 0.0;
     while t < sett.time() {
-        let rates = reactor.calc_rates(&concs);
+        let rates = reactor.calc_rates(concs);
+
         let dt = ((&*concs / &rates) * sett.max_conc_frac_delta())
             .mapv(f64::abs)
             .min()
             .expect("Could not determine minimum timestep.")
-            .max(sett.min_timestep());
+            .max(sett.min_timestep())
+            .min(sett.time() - t);
 
         let k1 = &rates * dt;
         let k2 = (&rates + &(&k1 / 2.0)) * dt;

@@ -52,7 +52,6 @@ impl Reactor {
     #[must_use]
     pub fn calc_rates(&self, concs: &Array1<f64>) -> Array1<f64> {
         let rs = self.rates.map(|lambda| lambda.y(concs));
-
         let mut rates = Array1::zeros(concs.len());
 
         for (i, r) in rs.iter().enumerate() {

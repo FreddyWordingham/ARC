@@ -12,13 +12,19 @@ use arc::{
 use attr::form;
 use colog;
 use log::info;
-use std::path::PathBuf;
+use ndarray::Array1;
+use std::{
+    fs::File,
+    io::Write,
+    path::{Path, PathBuf},
+};
 
 #[form]
 struct Parameters {
     reacts: Vec<ReactKey>,
     state: State,
     sett: Settings,
+    iterations: u64,
 }
 
 pub fn main() {
@@ -51,7 +57,21 @@ pub fn main() {
 
     banner::section("Simulation");
     // let reactor = Reactor::new(&reacts, &specs);
-    arc::sim::kin::run(&params.sett, &reacts, &specs, &mut concs);
+    let mut pb = arc::util::ProgressBar::new("Kinetics", params.iterations);
+    let mut t = 0.0;
+
+    let mut file = init_file(&out_dir, &specs);
+
+    print_vals(&mut file, t, &concs);
+    for _ in 0..params.iterations {
+        arc::sim::kin::run(&params.sett, &reacts, &specs, &mut concs);
+        pb.tick();
+        t += params.sett.time();
+        print_vals(&mut file, t, &concs);
+    }
+    pb.finish_with_message("Kinetics complete.");
+
+    banner::section("Finished");
 }
 
 fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
@@ -62,4 +82,25 @@ fn initialisation() -> (PathBuf, PathBuf, PathBuf) {
     let params_path = &in_dir.join(params_name);
 
     (in_dir, out_dir, params_path.to_path_buf())
+}
+
+fn init_file(out_dir: &Path, specs: &SpecSet) -> File {
+    let mut file = std::fs::File::create(&out_dir.join("concs.dat")).expect("Unable to open file.");
+
+    write!(file, "{:>32}", format!("time")).expect("Unable to write to file.");
+    for key in specs.map().keys() {
+        write!(file, ",{:>32}", format!("{}", key)).expect("Unable to write to file.");
+    }
+    writeln!(file).expect("Unable to write to file.");
+
+    file
+}
+
+/// Print the time and current concentration values to a file.
+fn print_vals(file: &mut File, t: f64, cs: &Array1<f64>) {
+    write!(file, "{:>32}", t).expect("Unable to write to file.");
+    for c in cs {
+        write!(file, ",{:>32}", c).expect("Unable to write to file.");
+    }
+    writeln!(file).expect("Unable to write to file.");
 }

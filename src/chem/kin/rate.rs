@@ -25,6 +25,8 @@ pub enum Rate {
 
 impl Rate {
     /// Create a multivariate lambda function to apply the reaction to a concentration array.
+    #[inline]
+    #[must_use]
     pub fn create_lambda(&self, specs: &SpecSet) -> Multivariate {
         match self {
             Self::Zeroth(k) => Multivariate::new_constant(*k),
