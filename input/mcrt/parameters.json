@@ -5,5 +5,10 @@
             "bottom"
         ],
         "light": "overhead"
+    },
+    "sett": {
+        "num_threads": 8,
+        "num_phot": 1000000,
+        "light": "overhead"
     }
 }

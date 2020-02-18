@@ -4,6 +4,7 @@ use arc::{
     args,
     file::{Load, Verse as VerseForm},
     report,
+    sim::mcrt::Settings,
     util::{banner, exec, init},
 };
 use attr::form;
@@ -14,6 +15,7 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     verse: VerseForm,
+    sett: Settings,
 }
 
 pub fn main() {
