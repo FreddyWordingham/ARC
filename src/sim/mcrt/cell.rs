@@ -13,7 +13,7 @@ pub struct Cell<'a> {
     /// Boundary.
     bound: Aabb,
     /// Central material.
-    mat: MatKey,
+    mat: &'a MatKey,
     /// Intersecting interface triangles.
     inter_tris: Vec<((&'a InterKey, &'a Interface), Vec<&'a SmoothTriangle>)>,
 }
@@ -29,7 +29,7 @@ impl<'a> Cell<'a> {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(bound: Aabb, mat: MatKey, inters: &'a InterSet, surfs: &'a SurfSet) -> Self {
+    pub fn new(bound: Aabb, mat: &'a MatKey, inters: &'a InterSet, surfs: &'a SurfSet) -> Self {
         let mut inter_tris = Vec::new();
 
         for (key, inter) in inters.map() {

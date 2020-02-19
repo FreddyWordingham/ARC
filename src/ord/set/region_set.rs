@@ -45,7 +45,7 @@ impl RegionSet {
     /// Determine which state, if any, would be observed with a given ray.
     #[inline]
     #[must_use]
-    pub fn observe_state(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<StateKey> {
+    pub fn observe_state(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<&StateKey> {
         debug_assert!(bound.contains(ray.pos()));
 
         let mut nearest: Option<(&StateKey, f64)> = None;
@@ -79,7 +79,7 @@ impl RegionSet {
                 return None;
             }
 
-            return Some(key.clone());
+            return Some(key);
         }
 
         None

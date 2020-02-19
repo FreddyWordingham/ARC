@@ -38,7 +38,13 @@ pub fn main() {
     let verse = params.verse.form(&in_dir);
 
     info!("Constructing grid...");
-    let grid = diff::Grid::new(params.res, params.bound);
+    let grid = diff::Grid::new(
+        params.res,
+        params.bound,
+        verse.inters(),
+        verse.regions(),
+        verse.surfs(),
+    );
 
     banner::section("Overview");
     verse.overview();

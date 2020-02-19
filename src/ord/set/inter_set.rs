@@ -45,7 +45,7 @@ impl InterSet {
     /// Determine which material, if any, would be observed with a given ray.
     #[inline]
     #[must_use]
-    pub fn observe_mat(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<MatKey> {
+    pub fn observe_mat(&self, surfs: &SurfSet, bound: &Aabb, ray: &Ray) -> Option<&MatKey> {
         debug_assert!(bound.contains(ray.pos()));
 
         let mut nearest: Option<(&MatKey, f64)> = None;
@@ -79,7 +79,7 @@ impl InterSet {
                 return None;
             }
 
-            return Some(key.clone());
+            return Some(key);
         }
 
         None
