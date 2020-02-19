@@ -1,5 +1,9 @@
 {
-    "verse": {},
+    "verse": {
+        "regions": [
+            "drug"
+        ]
+    },
     "res": [
         65,
         65,
