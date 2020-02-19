@@ -180,7 +180,7 @@ impl<'a> Grid<'a> {
     /// Determine the number of intersecting interfaces in each cell.
     #[inline]
     #[must_use]
-    pub fn boundaries(&self) -> Array3<f64> {
+    pub fn interfaces(&self) -> Array3<f64> {
         self.cells().map(|c| c.inter_tris().len() as f64)
     }
 

@@ -2,11 +2,9 @@
 
 use arc::{
     args,
-    file::{Load, Save, Verse as VerseForm},
+    file::{Load, Verse as VerseForm},
     geom::Aabb,
-    ord::LightKey,
     report,
-    sim::mcrt,
     util::{banner, exec, init},
 };
 use attr::form;
@@ -19,8 +17,6 @@ struct Parameters {
     res: [usize; 3],
     bound: Aabb,
     verse: VerseForm,
-    num_phot: f64,
-    light: LightKey,
 }
 
 pub fn main() {
@@ -41,30 +37,22 @@ pub fn main() {
     let verse = params.verse.form(&in_dir);
 
     info!("Constructing grid...");
-    let grid = mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
+    // let grid = arc::sim::mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
 
     banner::section("Overview");
     verse.overview();
 
     banner::section("Pre-Analysis");
-    info!("Saving interface map.");
-    grid.interfaces().save(&out_dir.join("interfaces.nc"));
-    for (key, map) in grid.mat_maps(verse.mats()).map() {
-        info!("Saving {} material map.", key);
-        map.save(&out_dir.join(format!("mat_map_{}.nc", key)));
-    }
+    // info!("Saving region map.");
+    // grid.regions().save(&out_dir.join("regions.nc"));
+    // for (key, map) in grid.state_maps(verse.mats()).map() {
+    //     info!("Saving {} state map.", key);
+    //     map.save(&out_dir.join(format!("state_map_{}.nc", key)));
+    // }
 
     banner::section("Simulation");
-    let lm = mcrt::run(
-        params.num_phot as u64,
-        verse.lights().get(&params.light),
-        &grid,
-        verse.surfs(),
-        verse.mats(),
-    );
 
     banner::section("Post-Analysis");
-    lm.save(&out_dir);
 
     banner::section("Finished");
 }
