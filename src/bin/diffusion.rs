@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::{Load, Verse as VerseForm},
+    file::{Load, Save, Verse as VerseForm},
     geom::Aabb,
     report,
     sim::diff,
@@ -50,12 +50,18 @@ pub fn main() {
     verse.overview();
 
     banner::section("Pre-Analysis");
-    // info!("Saving region map.");
-    // grid.regions().save(&out_dir.join("regions.nc"));
-    // for (key, map) in grid.state_maps(verse.mats()).map() {
-    //     info!("Saving {} state map.", key);
-    //     map.save(&out_dir.join(format!("state_map_{}.nc", key)));
-    // }
+    for key in verse.mats().map().keys() {
+        info!("Saving {} material map.", key);
+        grid.mats()
+            .map(|mat| if mat == &key { 1.0 } else { 0.0 })
+            .save(&out_dir.join(format!("mat_map_{}.nc", key)));
+    }
+    for key in verse.states().map().keys() {
+        info!("Saving {} state map.", key);
+        grid.states()
+            .map(|state| if state == &key { 1.0 } else { 0.0 })
+            .save(&out_dir.join(format!("state_map_{}.nc", key)));
+    }
 
     banner::section("Simulation");
 
