@@ -5,7 +5,7 @@ use crate::{
     geom::{Aabb, Ray},
     list::Cartesian::X,
     math::indexer,
-    ord::{sort, InterSet, MatKey, RegionSet, StateKey, SurfSet},
+    ord::{sort, InterSet, MatKey, MatSet, RegionSet, StateKey, SurfSet},
     util::ParProgressBar,
 };
 use nalgebra::{Point3, Unit, Vector3};
@@ -237,5 +237,10 @@ impl<'a> Grid<'a> {
         }
 
         state_blocks
+    }
+
+    /// Determine the local viscosities within the grid.
+    pub fn visc(&self, mats: &MatSet) -> Array3<Option<f64>> {
+        self.mats.map(|m| *mats.get(m).visc())
     }
 }
