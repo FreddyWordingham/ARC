@@ -4,8 +4,9 @@ use arc::{
     args,
     file::{Load, Save, Verse as VerseForm},
     geom::Aabb,
+    ord::LightKey,
     report,
-    sim::mcrt::Settings,
+    sim::{mcrt, mcrt::Settings},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -16,7 +17,8 @@ use std::path::PathBuf;
 #[form]
 struct Parameters {
     verse: VerseForm,
-    sett: Settings,
+    num_phot: f64,
+    light: LightKey,
     res: [usize; 3],
     bound: Aabb,
 }
@@ -44,7 +46,7 @@ pub fn main() {
     banner::section("Overview");
     verse.overview();
 
-    banner::section("Pre-Flight");
+    banner::section("Pre-Analysis");
     info!("Saving boundary map.");
     grid.boundaries().save(&out_dir.join("boundaries.nc"));
     for (key, map) in grid.mat_maps(verse.mats()).map() {
@@ -53,7 +55,14 @@ pub fn main() {
     }
 
     banner::section("Simulation");
-    let lm = mcrt::run(params.sett);
+    let lm = mcrt::run(
+        params.num_phot as u64,
+        verse.lights().get(&params.light),
+        &grid,
+    );
+
+    banner::section("Post-Analysis");
+    lm.save(&out_dir);
 
     banner::section("Finished");
 }

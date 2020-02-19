@@ -8,23 +8,23 @@ use std::ops::AddAssign;
 #[derive(Debug, Clone)]
 pub struct Record {
     /// Total weight of photon emissions.
-    emissions: f64,
+    emis: f64,
     /// Total weight of scattering events.
-    scatters: f64,
+    scats: f64,
     /// Total weight of absorption events.
-    absorptions: f64,
+    abs: f64,
     /// Total weight of shift events.
     shifts: f64,
     /// Total distance travelled by photons.
-    dist_travelled: f64,
+    dist_trav: f64,
 }
 
 impl Record {
-    clone!(emissions, emissions_mut, f64);
-    clone!(scatters, scatters_mut, f64);
-    clone!(absorptions, absorptions_mut, f64);
+    clone!(emis, emis_mut, f64);
+    clone!(scats, scats_mut, f64);
+    clone!(abs, abs_mut, f64);
     clone!(shifts, shifts_mut, f64);
-    clone!(dist_travelled, dist_travelled_mut, f64);
+    clone!(dist_trav, dist_trav_mut, f64);
 }
 
 impl Default for Record {
@@ -32,11 +32,11 @@ impl Default for Record {
     #[must_use]
     fn default() -> Self {
         Self {
-            emissions: 0.0,
-            scatters: 0.0,
-            absorptions: 0.0,
+            emis: 0.0,
+            scats: 0.0,
+            abs: 0.0,
             shifts: 0.0,
-            dist_travelled: 0.0,
+            dist_trav: 0.0,
         }
     }
 }
@@ -44,10 +44,10 @@ impl Default for Record {
 impl AddAssign<Self> for Record {
     #[inline]
     fn add_assign(&mut self, rhs: Self) {
-        self.emissions += rhs.emissions;
-        self.scatters += rhs.scatters;
-        self.absorptions += rhs.absorptions;
+        self.emis += rhs.emis;
+        self.scats += rhs.scats;
+        self.abs += rhs.abs;
         self.shifts += rhs.shifts;
-        self.dist_travelled += rhs.dist_travelled;
+        self.dist_trav += rhs.dist_trav;
     }
 }

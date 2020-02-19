@@ -2,10 +2,22 @@
 
 use crate::{
     access, clone,
+    file::Save,
     sim::mcrt::{Grid, Record},
 };
 use ndarray::Array3;
-use std::ops::AddAssign;
+use std::{ops::AddAssign, path::Path};
+
+macro_rules! data_dens {
+    ($dens_func: ident, $prop: ident) => {
+        /// Create a density data-cube of the lightmap's records.
+        #[inline]
+        #[must_use]
+        pub fn $dens_func(&self) -> Array3<f64> {
+            self.recs.map(|rec| rec.$prop() / self.cell_vol)
+        }
+    };
+}
 
 /// Light-Map structure implementation.
 /// Stores output data from an MCRT simulation.
@@ -32,6 +44,12 @@ impl LightMap {
             cell_vol,
         }
     }
+
+    data_dens!(emis_dens, emis);
+    data_dens!(scat_dens, scats);
+    data_dens!(abs_dens, abs);
+    data_dens!(shift_dens, shifts);
+    data_dens!(dist_trav_dens, dist_trav);
 }
 
 impl AddAssign<&Self> for LightMap {
@@ -43,16 +61,13 @@ impl AddAssign<&Self> for LightMap {
     }
 }
 
-// impl Save for LightMap {
-//     fn save(&self, path: &Path) {
-//         self.emission_dens()
-//             .save(&path.join("lightmap_emission_dens.nc"));
-//         self.scatter_dens()
-//             .save(&path.join("lightmap_scatter_dens.nc"));
-//         self.absorption_dens()
-//             .save(&path.join("lightmap_absorption_dens.nc"));
-//         self.shift_dens().save(&path.join("lightmap_shift_dens.nc"));
-//         self.dist_travelled_dens()
-//             .save(&path.join("lightmap_dist_travelled_dens.nc"));
-//     }
-// }
+impl Save for LightMap {
+    fn save(&self, path: &Path) {
+        self.emis_dens().save(&path.join("lm_emis_dens.nc"));
+        self.scat_dens().save(&path.join("lm_scat_dens.nc"));
+        self.abs_dens().save(&path.join("lm_abs_dens.nc"));
+        self.shift_dens().save(&path.join("lm_shift_dens.nc"));
+        self.dist_trav_dens()
+            .save(&path.join("lm_dist_trav_dens.nc"));
+    }
+}
