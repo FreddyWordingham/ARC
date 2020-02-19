@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["cell","Grid implementation."],["grid","Grid implementation."]]});

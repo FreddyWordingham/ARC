@@ -42,7 +42,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">access</span>, <span class="ident">clone</span>, <span class="ident">geom</span>::<span class="ident">Ray</span>};
 
 <span class="doccomment">/// Photon structure.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Photon</span> {
     <span class="doccomment">/// Statistical weight.</span>
     <span class="ident">weight</span>: <span class="ident">f64</span>,

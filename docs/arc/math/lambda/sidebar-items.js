@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["formula","Formula implementation."]]});
+initSidebarItems({"mod":[["formula","Formula implementation."],["multivariate","Multivariate implementation."]]});

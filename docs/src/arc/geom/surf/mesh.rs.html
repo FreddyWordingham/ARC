@@ -206,7 +206,7 @@
     <span class="ident">access</span>,
     <span class="ident">file</span>::<span class="ident">Load</span>,
     <span class="ident">geom</span>::{<span class="ident">Aabb</span>, <span class="ident">Collide</span>, <span class="ident">Emit</span>, <span class="ident">Ray</span>, <span class="ident">SmoothTriangle</span>, <span class="ident">Trace</span>, <span class="ident">Transform</span>},
-    <span class="ident">list</span>::<span class="ident">Greek</span>::<span class="ident">Alpha</span>,
+    <span class="ident">list</span>::{<span class="ident">Cartesian</span>::<span class="ident">X</span>, <span class="ident">Greek</span>::<span class="ident">Alpha</span>},
 };
 <span class="kw">use</span> <span class="ident">nalgebra</span>::{<span class="ident">Similarity3</span>, <span class="ident">Unit</span>, <span class="ident">Vector3</span>};
 <span class="kw">use</span> <span class="ident">rand</span>::{<span class="ident">rngs</span>::<span class="ident">ThreadRng</span>, <span class="ident">Rng</span>};
@@ -238,7 +238,7 @@
     <span class="doccomment">/// Initialise the bounding box for the mesh.</span>
     <span class="kw">fn</span> <span class="ident">init_aabb</span>(<span class="ident">tris</span>: <span class="kw-2">&amp;</span>[<span class="ident">SmoothTriangle</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Aabb</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mins</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">tris</span>
-            .<span class="ident">get</span>(<span class="number">0</span>)
+            .<span class="ident">get</span>(<span class="ident">X</span> <span class="kw">as</span> <span class="ident">usize</span>)
             .<span class="ident">expect</span>(<span class="string">&quot;No triangles.&quot;</span>)
             .<span class="ident">tri</span>()
             .<span class="ident">verts</span>()

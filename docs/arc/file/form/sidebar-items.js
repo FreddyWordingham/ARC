@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["grid","Grid implementation."],["verse","Verse implementation."]]});
+initSidebarItems({"mod":[["verse","Verse implementation."]]});

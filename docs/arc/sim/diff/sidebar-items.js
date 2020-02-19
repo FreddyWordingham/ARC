@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["run","Run a diffusion transfer simulation."]]});

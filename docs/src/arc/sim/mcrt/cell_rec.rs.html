@@ -53,8 +53,8 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">access</span>,
-    <span class="ident">sim</span>::{<span class="ident">LightMap</span>, <span class="ident">Record</span>},
-    <span class="ident">world</span>::{<span class="ident">Cell</span>, <span class="ident">Grid</span>},
+    <span class="ident">list</span>::<span class="ident">Cartesian</span>::{<span class="ident">X</span>, <span class="ident">Y</span>, <span class="ident">Z</span>},
+    <span class="ident">sim</span>::<span class="ident">mcrt</span>::{<span class="ident">Cell</span>, <span class="ident">Grid</span>, <span class="ident">LightMap</span>, <span class="ident">Record</span>},
 };
 <span class="kw">use</span> <span class="ident">nalgebra</span>::<span class="ident">Point3</span>;
 
@@ -83,9 +83,9 @@
             .<span class="ident">map</span>(<span class="op">|</span>((<span class="ident">p</span>, (<span class="ident">min</span>, <span class="ident">max</span>)), <span class="ident">n</span>)<span class="op">|</span> (((<span class="ident">p</span> <span class="op">-</span> <span class="ident">min</span>) <span class="op">/</span> (<span class="ident">max</span> <span class="op">-</span> <span class="ident">min</span>)) <span class="op">*</span> <span class="kw-2">*</span><span class="ident">n</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="kw">as</span> <span class="ident">usize</span>)
             .<span class="ident">collect</span>();
         <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> (
-            <span class="kw-2">*</span><span class="ident">id</span>.<span class="ident">get</span>(<span class="number">0</span>).<span class="ident">expect</span>(<span class="string">&quot;Missing index.&quot;</span>),
-            <span class="kw-2">*</span><span class="ident">id</span>.<span class="ident">get</span>(<span class="number">1</span>).<span class="ident">expect</span>(<span class="string">&quot;Missing index.&quot;</span>),
-            <span class="kw-2">*</span><span class="ident">id</span>.<span class="ident">get</span>(<span class="number">2</span>).<span class="ident">expect</span>(<span class="string">&quot;Missing index.&quot;</span>),
+            <span class="kw-2">*</span><span class="ident">id</span>.<span class="ident">get</span>(<span class="ident">X</span> <span class="kw">as</span> <span class="ident">usize</span>).<span class="ident">expect</span>(<span class="string">&quot;Missing index.&quot;</span>),
+            <span class="kw-2">*</span><span class="ident">id</span>.<span class="ident">get</span>(<span class="ident">Y</span> <span class="kw">as</span> <span class="ident">usize</span>).<span class="ident">expect</span>(<span class="string">&quot;Missing index.&quot;</span>),
+            <span class="kw-2">*</span><span class="ident">id</span>.<span class="ident">get</span>(<span class="ident">Z</span> <span class="kw">as</span> <span class="ident">usize</span>).<span class="ident">expect</span>(<span class="string">&quot;Missing index.&quot;</span>),
         );
 
         <span class="kw">let</span> <span class="ident">cell</span> <span class="op">=</span> <span class="ident">grid</span>.<span class="ident">cells</span>().<span class="ident">get</span>(<span class="ident">index</span>).<span class="ident">expect</span>(<span class="string">&quot;Invalid grid index.&quot;</span>);

@@ -213,6 +213,8 @@
 <span id="213">213</span>
 <span id="214">214</span>
 <span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Axis-aligned-bounding-box implementation.</span>
 
@@ -220,12 +222,14 @@
     <span class="ident">access</span>,
     <span class="ident">geom</span>::{<span class="ident">Collide</span>, <span class="ident">Ray</span>, <span class="ident">Trace</span>},
 };
+<span class="kw">use</span> <span class="ident">attr</span>::<span class="ident">json</span>;
 <span class="kw">use</span> <span class="ident">nalgebra</span>::{<span class="ident">Point3</span>, <span class="ident">Unit</span>, <span class="ident">Vector3</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
 
 <span class="doccomment">/// Axis-aligned bounding box geometry.</span>
 <span class="doccomment">/// Used for spatial partitioning.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">json</span>]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Aabb</span> {
     <span class="doccomment">/// Minimum bound.</span>
     <span class="ident">mins</span>: <span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,

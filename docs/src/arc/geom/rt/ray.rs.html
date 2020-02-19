@@ -56,6 +56,8 @@
 <span id="56">56</span>
 <span id="57">57</span>
 <span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Ray implementation.</span>
 
@@ -86,6 +88,8 @@
     <span class="doccomment">/// Move along the direction of travel a given distance.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">travel</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">dist</span>: <span class="ident">f64</span>) {
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">dist</span> <span class="op">&gt;</span> <span class="number">0.0</span>);
+
         <span class="self">self</span>.<span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">dir</span>.<span class="ident">as_ref</span>() <span class="op">*</span> <span class="ident">dist</span>;
     }
 

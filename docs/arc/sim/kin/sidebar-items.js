@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["run","Run a diffusion transfer simulation."],["run_with_reactor","Run a diffusion transfer simulation with an existing reactor."]],"mod":[["reactor","Reactor structure implementation."],["settings","Settings implementation."]]});
