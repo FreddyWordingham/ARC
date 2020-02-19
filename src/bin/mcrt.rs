@@ -1,4 +1,4 @@
-//! Chemical kinetics testing binary.
+//! Monte-Carlo radiative transfer testing binary.
 
 use arc::{
     args,
@@ -16,11 +16,11 @@ use std::path::PathBuf;
 
 #[form]
 struct Parameters {
+    res: [usize; 3],
+    bound: Aabb,
     verse: VerseForm,
     num_phot: f64,
     light: LightKey,
-    res: [usize; 3],
-    bound: Aabb,
 }
 
 pub fn main() {
