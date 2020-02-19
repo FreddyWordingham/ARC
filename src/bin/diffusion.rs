@@ -1,4 +1,4 @@
-//! Monte-Carlo radiative transfer testing binary.
+//! Diffusion testing binary.
 
 use arc::{
     args,
