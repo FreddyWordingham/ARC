@@ -5,6 +5,7 @@ use arc::{
     file::{Load, Verse as VerseForm},
     geom::Aabb,
     report,
+    sim::diff,
     util::{banner, exec, init},
 };
 use attr::form;
@@ -37,7 +38,7 @@ pub fn main() {
     let verse = params.verse.form(&in_dir);
 
     info!("Constructing grid...");
-    // let grid = arc::sim::mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
+    let grid = diff::Grid::new(params.res, params.bound);
 
     banner::section("Overview");
     verse.overview();
