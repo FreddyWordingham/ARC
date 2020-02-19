@@ -1,6 +1,7 @@
 //! Monte-Carlo radiative transfer simulation sub-module.
 
 pub mod cell;
+pub mod cell_rec;
 pub mod grid;
 pub mod hit;
 pub mod light_map;
@@ -8,7 +9,7 @@ pub mod photon_loop;
 pub mod record;
 pub mod settings;
 
-pub use self::{cell::*, grid::*, hit::*, light_map::*, record::*, settings::*};
+pub use self::{cell::*, cell_rec::*, grid::*, hit::*, light_map::*, record::*, settings::*};
 
 use crate::{ord::LightSet, util::ParProgressBar, world::Light};
 use num_cpus;
