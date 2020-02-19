@@ -53,6 +53,7 @@ pub fn main() {
     }
 
     banner::section("Simulation");
+    let lm = mcrt::run(params.sett);
 
     banner::section("Finished");
 }

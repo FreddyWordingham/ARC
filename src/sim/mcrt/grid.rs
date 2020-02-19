@@ -3,7 +3,7 @@
 use crate::{
     access,
     geom::{Aabb, Ray},
-    list::Cartesian::X,
+    list::Cartesian::{X, Y, Z},
     math::{indexer, list},
     ord::{sort, InterSet, MatKey, MatSet, Set, SurfSet},
     sim::mcrt::Cell,
@@ -141,6 +141,19 @@ impl<'a> Grid<'a> {
         }
 
         cell_blocks
+    }
+
+    /// Get the resolution of the grid.
+    #[inline]
+    #[must_use]
+    pub fn res(&self) -> [usize; 3] {
+        let res = self.cells.shape();
+
+        [
+            *res.get(X as usize).expect("Missing resolution index."),
+            *res.get(Y as usize).expect("Missing resolution index."),
+            *res.get(Z as usize).expect("Missing resolution index."),
+        ]
     }
 
     /// Create a map of the material keys.
