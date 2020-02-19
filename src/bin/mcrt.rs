@@ -59,6 +59,8 @@ pub fn main() {
         params.num_phot as u64,
         verse.lights().get(&params.light),
         &grid,
+        verse.surfs(),
+        verse.mats(),
     );
 
     banner::section("Post-Analysis");

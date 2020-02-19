@@ -11,7 +11,11 @@ pub mod settings;
 
 pub use self::{cell::*, cell_rec::*, grid::*, hit::*, light_map::*, record::*, settings::*};
 
-use crate::{ord::LightSet, util::ParProgressBar, world::Light};
+use crate::{
+    ord::{MatSet, SurfSet},
+    util::ParProgressBar,
+    world::Light,
+};
 use num_cpus;
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
@@ -19,7 +23,7 @@ use std::sync::{Arc, Mutex};
 /// Run a MCRT simulation.
 #[inline]
 #[must_use]
-pub fn run(num_phot: u64, light: &Light, grid: &Grid) -> LightMap {
+pub fn run(num_phot: u64, light: &Light, grid: &Grid, surfs: &SurfSet, mats: &MatSet) -> LightMap {
     debug_assert!(num_phot > 0);
 
     let pb = ParProgressBar::new("Photon Loop", num_phot);
@@ -32,8 +36,11 @@ pub fn run(num_phot: u64, light: &Light, grid: &Grid) -> LightMap {
             photon_loop::run_thread(
                 &Arc::clone(&pb),
                 ((num_phot / num_cpus::get() as u64) / 100).max(1) as u64,
+                num_phot,
                 light,
                 grid,
+                surfs,
+                mats,
             )
         })
         .collect();

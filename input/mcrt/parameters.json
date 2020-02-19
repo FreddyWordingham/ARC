@@ -6,11 +6,8 @@
         ],
         "light": "overhead"
     },
-    "sett": {
-        "num_threads": 8,
-        "num_phot": 1000000,
-        "light": "overhead"
-    },
+    "num_phot": 1000000,
+    "light": "overhead",
     "res": [
         65,
         65,
