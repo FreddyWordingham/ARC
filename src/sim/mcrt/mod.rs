@@ -7,9 +7,8 @@ pub mod hit;
 pub mod light_map;
 pub mod photon_loop;
 pub mod record;
-pub mod settings;
 
-pub use self::{cell::*, cell_rec::*, grid::*, hit::*, light_map::*, record::*, settings::*};
+pub use self::{cell::*, cell_rec::*, grid::*, hit::*, light_map::*, record::*};
 
 use crate::{
     ord::{MatSet, SurfSet},
@@ -32,7 +31,7 @@ pub fn run(num_phot: u64, light: &Light, grid: &Grid, surfs: &SurfSet, mats: &Ma
 
     let mut light_maps: Vec<_> = thread_ids
         .par_iter()
-        .map(|id| {
+        .map(|_| {
             photon_loop::run_thread(
                 &Arc::clone(&pb),
                 ((num_phot / num_cpus::get() as u64) / 100).max(1) as u64,

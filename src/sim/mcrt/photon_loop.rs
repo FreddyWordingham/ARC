@@ -5,7 +5,7 @@ use crate::{
     math::distribution,
     ord::{MatSet, SurfSet},
     phys::{Crossing, Environment, Photon},
-    sim::mcrt::{CellRec, Grid, LightMap},
+    sim::mcrt::{CellRec, Grid, Hit, LightMap},
     util::ParProgressBar,
     world::Light,
 };
@@ -68,9 +68,129 @@ pub fn run_thread(
                         MAX_LOOPS
                     );
                 }
+
+                if phot.weight() < ROULETTE {
+                    if rng.gen_range(0.0_f64, 1.0) <= ROULETTE {
+                        *phot.weight_mut() /= ROULETTE;
+                    } else {
+                        break;
+                    }
+                }
+
+                let scat_dist = -(rng.gen_range(0.0_f64, 1.0)).ln() / env.inter_coeff();
+
+                let cell_dist = cr
+                    .cell()
+                    .bound()
+                    .dist(phot.ray())
+                    .expect("Could not determine cell distance.");
+                let inter_dist = cr.cell().inter_dist(phot.ray());
+
+                match Hit::new(scat_dist, cell_dist, inter_dist, bump_dist) {
+                    Hit::Scattering(dist) => {
+                        *cr.rec_mut().dist_trav_mut() += dist;
+                        phot.ray_mut().travel(dist);
+
+                        *cr.rec_mut().scats_mut() += phot.weight();
+                        phot.ray_mut().rotate(
+                            distribution::henyey_greenstein(&mut rng, env.asym()),
+                            rng.gen_range(0.0, 2.0 * PI),
+                        );
+
+                        *cr.rec_mut().abs_mut() += env.albedo() * phot.weight();
+                        *phot.weight_mut() *= env.albedo();
+
+                        if !shifted && rng.gen_range(0.0, 1.0) <= env.shift_prob() {
+                            *cr.rec_mut().shifts_mut() += phot.weight();
+                            shifted = true;
+                        }
+                    }
+                    Hit::Cell(dist) => {
+                        let dist = dist + bump_dist;
+                        *cr.rec_mut().dist_trav_mut() += dist;
+                        phot.ray_mut().travel(dist);
+
+                        if !grid.bound().contains(phot.ray().pos()) {
+                            break;
+                        }
+
+                        cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
+                    }
+                    Hit::Interface(dist) => {
+                        hit_interface(
+                            mats, bump_dist, &mut rng, &mut phot, &mut cr, &mut env, dist,
+                        );
+
+                        if !cr.cell().bound().contains(phot.ray().pos()) {
+                            // TODO: This should be able to be removed.
+                            if !grid.bound().contains(phot.ray().pos()) {
+                                break;
+                            }
+
+                            warn!("Interface crossing caused cell crossing!");
+                            cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
+                        }
+                    }
+                    Hit::InterfaceCell(dist) => {
+                        hit_interface(
+                            mats, bump_dist, &mut rng, &mut phot, &mut cr, &mut env, dist,
+                        );
+
+                        if !grid.bound().contains(phot.ray().pos()) {
+                            break;
+                        }
+
+                        cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
+                    }
+                }
             }
         }
     }
 
     lm
+}
+
+/// Perform an interface hit event.
+#[inline]
+fn hit_interface(
+    mats: &MatSet,
+    bump_dist: f64,
+    rng: &mut ThreadRng,
+    phot: &mut Photon,
+    cr: &mut CellRec,
+    env: &mut Environment,
+    dist: f64,
+) {
+    let (_, inside, norm, inter) = cr
+        .cell()
+        .inter_dist_inside_norm_inter(phot.ray())
+        .expect("Failed to observe interface within cell.");
+
+    let next_mat = if inside {
+        inter.out_mat()
+    } else {
+        inter.in_mat()
+    };
+    let next_env = mats.get(next_mat).optics().env(phot.wavelength());
+
+    let n_curr = env.ref_index();
+    let n_next = next_env.ref_index();
+
+    let crossing = Crossing::new(phot.ray().dir(), &norm, n_curr, n_next);
+
+    if rng.gen_range(0.0, 1.0) <= crossing.ref_prob() {
+        let effective_dist = (dist - bump_dist).max(MIN_POSITIVE);
+        *cr.rec_mut().dist_trav_mut() += effective_dist;
+        phot.ray_mut().travel(effective_dist);
+        *phot.ray_mut().dir_mut() = *crossing.ref_dir();
+    } else {
+        let effective_dist = dist + bump_dist;
+        *cr.rec_mut().dist_trav_mut() += effective_dist;
+        phot.ray_mut().travel(effective_dist);
+        *phot.ray_mut().dir_mut() = crossing
+            .trans_dir()
+            .expect("Failed to determine transmission direction.");
+
+        *env = next_env;
+    }
 }

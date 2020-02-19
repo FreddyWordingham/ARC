@@ -6,7 +6,7 @@ use arc::{
     geom::Aabb,
     ord::LightKey,
     report,
-    sim::{mcrt, mcrt::Settings},
+    sim::mcrt,
     util::{banner, exec, init},
 };
 use attr::form;

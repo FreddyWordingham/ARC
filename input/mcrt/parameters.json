@@ -4,7 +4,9 @@
             "top",
             "bottom"
         ],
-        "light": "overhead"
+        "lights": [
+            "overhead"
+        ]
     },
     "num_phot": 1000000,
     "light": "overhead",
