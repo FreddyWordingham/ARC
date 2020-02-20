@@ -249,13 +249,26 @@ impl<'a> Grid<'a> {
         self.mats.map(|m| *mats.get(m).visc())
     }
 
-    /// Create
+    /// Create concentration arrays.
     #[inline]
     #[must_use]
     pub fn concs(&self, states: &StateSet, specs: &SpecSet) -> Array3<Array1<f64>> {
         let mut state_concs = BTreeMap::new();
         for (key, state) in states.map() {
             state_concs.insert(key.clone(), state.new_conc_arr(specs));
+        }
+
+        self.states
+            .map(|key| state_concs.get(key).expect("Invalid state key.").clone())
+    }
+
+    /// Create source arrays.
+    #[inline]
+    #[must_use]
+    pub fn sources(&self, states: &StateSet, specs: &SpecSet) -> Array3<Array1<f64>> {
+        let mut state_concs = BTreeMap::new();
+        for (key, state) in states.map() {
+            state_concs.insert(key.clone(), state.new_source_arr(specs));
         }
 
         self.states
