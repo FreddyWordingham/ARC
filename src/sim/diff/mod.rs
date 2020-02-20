@@ -47,6 +47,7 @@ pub fn run(
                     None
                 }
             });
+
             if let Some(max_coeff) = coeffs
                 .max()
                 .expect("Could not determine maximum diffusion coefficient.")
@@ -62,7 +63,7 @@ pub fn run(
                 for _ in 0..steps {
                     let rates = diff_rate(&cs, &coeffs, &cell_size);
                     for (c, r) in cs.iter_mut().zip(rates.iter()) {
-                        **c += r;
+                        **c += r * dt;
                     }
                 }
             }

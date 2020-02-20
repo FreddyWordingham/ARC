@@ -64,6 +64,9 @@ pub fn main() {
     }
 
     banner::section("Simulation");
+    let mut concs = grid.concs(verse.states(), verse.specs());
+    let viscs = grid.visc(verse.mats());
+    diff::run(10.0, &grid, verse.specs(), &mut concs, &viscs);
 
     banner::section("Post-Analysis");
 
