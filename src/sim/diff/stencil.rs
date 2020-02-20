@@ -29,7 +29,7 @@ impl Stencil {
     /// Construct a new gradient instance.
     #[inline]
     #[must_use]
-    pub fn new_gradient(index: [usize; 3], concs: &Array3<f64>) -> Self {
+    pub fn new_gradient(index: [usize; 3], concs: &Array3<&mut f64>) -> Self {
         let maxs: Vec<_> = concs.shape().iter().map(|r| r - 1).collect();
         let max_x = *maxs.get(0).expect("Missing index.");
         let max_y = *maxs.get(1).expect("Missing index.");
@@ -37,39 +37,39 @@ impl Stencil {
 
         let [xi, yi, zi] = index;
 
-        let c2 = *concs.get([xi, yi, zi]).expect("Invalid index.") * 2.0;
+        let c2 = **concs.get([xi, yi, zi]).expect("Invalid index.") * 2.0;
 
         let prev_x = if xi == 0 {
-            c2 - *concs.get([xi + 1, yi, zi]).expect("Invalid index.")
+            c2 - **concs.get([xi + 1, yi, zi]).expect("Invalid index.")
         } else {
-            *concs.get([xi - 1, yi, zi]).expect("Invalid index.")
+            **concs.get([xi - 1, yi, zi]).expect("Invalid index.")
         };
         let next_x = if xi == max_x {
-            c2 - *concs.get([xi - 1, yi, zi]).expect("Invalid index.")
+            c2 - **concs.get([xi - 1, yi, zi]).expect("Invalid index.")
         } else {
-            *concs.get([xi + 1, yi, zi]).expect("Invalid index.")
+            **concs.get([xi + 1, yi, zi]).expect("Invalid index.")
         };
 
         let prev_y = if yi == 0 {
-            c2 - *concs.get([xi, yi + 1, zi]).expect("Invalid index.")
+            c2 - **concs.get([xi, yi + 1, zi]).expect("Invalid index.")
         } else {
-            *concs.get([xi, yi - 1, zi]).expect("Invalid index.")
+            **concs.get([xi, yi - 1, zi]).expect("Invalid index.")
         };
         let next_y = if yi == max_y {
-            c2 - *concs.get([xi, yi - 1, zi]).expect("Invalid index.")
+            c2 - **concs.get([xi, yi - 1, zi]).expect("Invalid index.")
         } else {
-            *concs.get([xi, yi + 1, zi]).expect("Invalid index.")
+            **concs.get([xi, yi + 1, zi]).expect("Invalid index.")
         };
 
         let prev_z = if zi == 0 {
-            c2 - *concs.get([xi, yi, zi + 1]).expect("Invalid index.")
+            c2 - **concs.get([xi, yi, zi + 1]).expect("Invalid index.")
         } else {
-            *concs.get([xi, yi, zi - 1]).expect("Invalid index.")
+            **concs.get([xi, yi, zi - 1]).expect("Invalid index.")
         };
         let next_z = if zi == max_z {
-            c2 - *concs.get([xi, yi, zi - 1]).expect("Invalid index.")
+            c2 - **concs.get([xi, yi, zi - 1]).expect("Invalid index.")
         } else {
-            *concs.get([xi, yi, zi + 1]).expect("Invalid index.")
+            **concs.get([xi, yi, zi + 1]).expect("Invalid index.")
         };
 
         Self::Gradient {
