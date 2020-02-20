@@ -5,14 +5,17 @@ use crate::{
     geom::{Aabb, Ray},
     list::Cartesian::X,
     math::indexer,
-    ord::{sort, InterSet, MatKey, MatSet, RegionSet, StateKey, SurfSet},
+    ord::{sort, InterSet, MatKey, MatSet, RegionSet, SpecSet, StateKey, StateSet, SurfSet},
     util::ParProgressBar,
 };
 use nalgebra::{Point3, Unit, Vector3};
-use ndarray::Array3;
+use ndarray::{Array1, Array3};
 use num_cpus;
 use rayon::prelude::*;
-use std::sync::{Arc, Mutex};
+use std::{
+    collections::BTreeMap,
+    sync::{Arc, Mutex},
+};
 
 /// Material detection rays must be aimed at a triangle with at least this deviation from the triangle's plane.
 const HIT_ANGLE_THRESHOLD: f64 = 1.0e-3;
@@ -240,7 +243,22 @@ impl<'a> Grid<'a> {
     }
 
     /// Determine the local viscosities within the grid.
+    #[inline]
+    #[must_use]
     pub fn visc(&self, mats: &MatSet) -> Array3<Option<f64>> {
         self.mats.map(|m| *mats.get(m).visc())
+    }
+
+    /// Create
+    #[inline]
+    #[must_use]
+    pub fn concs(&self, states: &StateSet, specs: &SpecSet) -> Array3<Array1<f64>> {
+        let mut state_concs = BTreeMap::new();
+        for (key, state) in states.map() {
+            state_concs.insert(key.clone(), state.new_conc_arr(specs));
+        }
+
+        self.states
+            .map(|key| state_concs.get(key).expect("Invalid state key.").clone())
     }
 }
