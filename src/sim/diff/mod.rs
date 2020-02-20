@@ -40,6 +40,12 @@ pub fn diff_rate(
 
         if let Some(coeff) = coeffs.get(index).expect("Invalid index.") {
             let stencil = Stencil::new_gradient(index, concs);
+            let r = stencil.rate(*coeff, cell_size);
+            *rate
+                .lock()
+                .expect("Unable to lock rate array.")
+                .get_mut(index)
+                .expect("Invalid index.") = r;
         }
     });
 

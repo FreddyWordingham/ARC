@@ -1,5 +1,6 @@
 //! Stencil-type enumeration.
 
+use nalgebra::Vector3;
 use ndarray::Array3;
 
 /// Stencil enumeration implementation.
@@ -79,6 +80,28 @@ impl Stencil {
             next_y,
             prev_z,
             next_z,
+        }
+    }
+
+    /// Calculate the rate of diffusion.
+    #[inline]
+    #[must_use]
+    pub fn rate(&self, coeff: f64, cell_size: &Vector3<f64>) -> f64 {
+        match self {
+            Self::Gradient {
+                c2,
+                prev_x,
+                next_x,
+                prev_y,
+                next_y,
+                prev_z,
+                next_z,
+            } => {
+                coeff
+                    * (((next_x - c2 + prev_x) / cell_size.x.powi(2))
+                        + ((next_y - c2 + prev_y) / cell_size.y.powi(2))
+                        + ((next_z - c2 + prev_z) / cell_size.z.powi(2)))
+            }
         }
     }
 }
