@@ -6,11 +6,30 @@ pub mod stencil;
 
 pub use self::{grid::*, settings::*, stencil::*};
 
-use crate::list::Cartesian::{X, Y};
+use crate::{
+    list::Cartesian::{X, Y},
+    ord::SpecSet,
+};
 use nalgebra::Vector3;
-use ndarray::Array3;
+use ndarray::{Array1, Array3};
 use rayon::prelude::*;
 use std::sync::Mutex;
+
+/// Diffuse the concentrations forward the given amount of time.
+#[inline]
+#[must_use]
+pub fn run(time: f64, grid: &Grid, specs: &SpecSet, concs: &mut Array3<Array1<f64>>) {
+    let mut cell_size = grid.bound().widths();
+    for (w, n) in cell_size.iter_mut().zip(&grid.res()) {
+        *w /= *n as f64;
+    }
+    let dx = cell_size.min();
+
+    for (i, key) in specs.map().keys().enumerate() {
+        let cs = concs.map_mut(|c| c.get_mut(i).expect("Invalid species index."));
+        // let coeffs =
+    }
+}
 
 /// Calculate the diffusion rates for each cell.
 #[inline]

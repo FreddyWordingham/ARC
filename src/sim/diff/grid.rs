@@ -3,7 +3,7 @@
 use crate::{
     access, clone,
     geom::{Aabb, Ray},
-    list::Cartesian::X,
+    list::Cartesian::{X, Y, Z},
     math::indexer,
     ord::{sort, InterSet, MatKey, MatSet, RegionSet, SpecSet, StateKey, StateSet, SurfSet},
     util::ParProgressBar,
@@ -240,6 +240,19 @@ impl<'a> Grid<'a> {
         }
 
         state_blocks
+    }
+
+    /// Get the resolution of the grid.
+    #[inline]
+    #[must_use]
+    pub fn res(&self) -> [usize; 3] {
+        let res = self.mats.shape();
+
+        [
+            *res.get(X as usize).expect("Missing resolution index."),
+            *res.get(Y as usize).expect("Missing resolution index."),
+            *res.get(Z as usize).expect("Missing resolution index."),
+        ]
     }
 
     /// Determine the local viscosities within the grid.
