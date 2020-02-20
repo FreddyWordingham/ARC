@@ -66,7 +66,18 @@ pub fn main() {
     banner::section("Simulation");
     let mut concs = grid.concs(verse.states(), verse.specs());
     let viscs = grid.visc(verse.mats());
-    diff::run(10.0, &grid, verse.specs(), &mut concs, &viscs);
+    let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("a"));
+    let total_steps = 100;
+    for n in 0..total_steps {
+        println!("n: {}", n);
+        concs
+            .map(|cs| *cs.get(ala_index).expect("Invalid index."))
+            .save(&out_dir.join(format!("a_{}.nc", n)));
+        diff::run(1.0, &grid, verse.specs(), &mut concs, &viscs);
+    }
+    concs
+        .map(|cs| *cs.get(ala_index).expect("Invalid index."))
+        .save(&out_dir.join(format!("ala_{}.nc", total_steps)));
 
     banner::section("Post-Analysis");
 

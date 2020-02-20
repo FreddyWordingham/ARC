@@ -1,6 +1,6 @@
 {
     "mesh": "cube",
     "trans": {
-        "scale": 1.0
+        "scale": 0.5e-3
     }
 }
