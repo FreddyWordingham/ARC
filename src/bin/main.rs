@@ -4,7 +4,7 @@ use arc::{
     args,
     file::{Load, Save, Verse as VerseForm},
     geom::Aabb,
-    ord::LightKey,
+    ord::{LightKey, SpecKey},
     report,
     sim::{diff, mcrt},
     util::{banner, exec, init},
@@ -47,7 +47,7 @@ pub fn main() {
     verse.overview();
 
     banner::section("Diffusion");
-    let concs = {
+    let mut concs = {
         info!("Constructing grid...");
         let diff_grid = diff::Grid::new(
             params.res,
@@ -118,6 +118,10 @@ pub fn main() {
         )
     };
     lm.save(&out_dir);
+
+    banner::section("Kinetics");
+    let udens_index = verse.specs().index_of_key(&SpecKey::new("udens"));
+    concs.map_mut(|cs| *cs.get_mut(udens_index).expect("Invalid index.") += 1.0);
 
     banner::section("Finished");
 }

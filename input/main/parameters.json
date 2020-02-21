@@ -1,8 +1,10 @@
 {
+    "light": "led",
+    "num_phot": 1e6,
     "res": [
-        50,
-        50,
-        26
+        25,
+        25,
+        14
     ],
     "bound": {
         "mins": [
@@ -36,7 +38,7 @@
         ],
         "regions": [
             "cream",
-            // "blood"
+            "blood"
         ]
     }
 }
