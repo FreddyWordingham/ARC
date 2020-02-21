@@ -60,7 +60,7 @@ pub fn run(
                 let steps = (time / dt).ceil() as u64;
                 let dt = time / steps as f64;
 
-                for i in 0..steps {
+                for _ in 0..steps {
                     let rates = diff_rate(&cs, &coeffs, &cell_size);
                     for (c, r) in cs.iter_mut().zip(rates.iter()) {
                         **c += r * dt;

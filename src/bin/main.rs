@@ -4,8 +4,9 @@ use arc::{
     args,
     file::{Load, Save, Verse as VerseForm},
     geom::Aabb,
+    ord::LightKey,
     report,
-    sim::diff,
+    sim::{diff, mcrt},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -16,6 +17,8 @@ struct Parameters {
     verse: VerseForm,
     bound: Aabb,
     res: [usize; 3],
+    num_phot: u64,
+    light: LightKey,
 }
 
 pub fn main() {
@@ -40,52 +43,81 @@ pub fn main() {
     info!("Loading universe files...");
     let verse = params.verse.form(&in_dir);
 
-    info!("Constructing grid...");
-    let grid = diff::Grid::new(
-        params.res,
-        params.bound,
-        verse.inters(),
-        verse.regions(),
-        verse.surfs(),
-    );
-
     banner::section("Overview");
     verse.overview();
 
-    banner::section("Pre-Analysis");
-    for key in verse.mats().map().keys() {
-        info!("Saving {} material map.", key);
-        grid.mats()
-            .map(|mat| if mat == &key { 1.0 } else { 0.0 })
-            .save(&out_dir.join(format!("mat_map_{}.nc", key)));
-    }
-    for key in verse.states().map().keys() {
-        info!("Saving {} state map.", key);
-        grid.states()
-            .map(|state| if state == &key { 1.0 } else { 0.0 })
-            .save(&out_dir.join(format!("state_map_{}.nc", key)));
-    }
+    banner::section("Diffusion");
+    let concs = {
+        info!("Constructing grid...");
+        let diff_grid = diff::Grid::new(
+            params.res,
+            params.bound.clone(),
+            verse.inters(),
+            verse.regions(),
+            verse.surfs(),
+        );
 
-    banner::section("Simulation");
-    let mut concs = grid.concs(verse.states(), verse.specs());
-    let viscs = grid.visc(verse.mats());
-    let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
-    let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
-    let total_steps = 200;
-    for n in 0..total_steps {
-        println!("n: {}/{}", n, total_steps);
+        for key in verse.mats().map().keys() {
+            info!("Saving {} material map.", key);
+            diff_grid
+                .mats()
+                .map(|mat| if mat == &key { 1.0 } else { 0.0 })
+                .save(&out_dir.join(format!("mat_map_{}.nc", key)));
+        }
+        for key in verse.states().map().keys() {
+            info!("Saving {} state map.", key);
+            diff_grid
+                .states()
+                .map(|state| if state == &key { 1.0 } else { 0.0 })
+                .save(&out_dir.join(format!("state_map_{}.nc", key)));
+        }
+
+        let mut concs = diff_grid.concs(verse.states(), verse.specs());
+        let viscs = diff_grid.visc(verse.mats());
+        let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
+        let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
+        let total_steps = 200;
+        for n in 0..total_steps {
+            println!("n: {}/{}", n, total_steps);
+            concs
+                .map(|cs| *cs.get(ala_index).expect("Invalid index."))
+                .save(&out_dir.join(format!("ala_{}.nc", n)));
+            concs
+                .map(|cs| *cs.get(o2_index).expect("Invalid index."))
+                .save(&out_dir.join(format!("o2_{}.nc", n)));
+            diff::run(6.0, &diff_grid, verse.specs(), &mut concs, &viscs);
+        }
         concs
             .map(|cs| *cs.get(ala_index).expect("Invalid index."))
-            .save(&out_dir.join(format!("ala_{}.nc", n)));
+            .save(&out_dir.join(format!("ala_{}.nc", total_steps)));
         concs
-            .map(|cs| *cs.get(o2_index).expect("Invalid index."))
-            .save(&out_dir.join(format!("o2_{}.nc", n)));
-        diff::run(6.0, &grid, verse.specs(), &mut concs, &viscs);
+            .map(|cs| *cs.get(ala_index).expect("Invalid index."))
+            .save(&out_dir.join(format!("o2_{}.nc", total_steps)));
+
+        concs
+    };
+    for (i, key) in verse.specs().map().keys().enumerate() {
+        concs
+            .map(|cs| *cs.get(i).expect("Invalid index."))
+            .save(&out_dir.join(format!("concs_{}.nc", key)));
     }
-    concs
-        .map(|cs| *cs.get(ala_index).expect("Invalid index."))
-        .save(&out_dir.join(format!("ala_{}.nc", total_steps)));
-    concs
-        .map(|cs| *cs.get(ala_index).expect("Invalid index."))
-        .save(&out_dir.join(format!("o2_{}.nc", total_steps)));
+
+    banner::section("MCRT");
+    let lm = {
+        let mcrt_grid = mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
+
+        info!("Saving interface map.");
+        mcrt_grid.interfaces().save(&out_dir.join("interfaces.nc"));
+
+        mcrt::run(
+            params.num_phot as u64,
+            verse.lights().get(&params.light),
+            &mcrt_grid,
+            verse.surfs(),
+            verse.mats(),
+        )
+    };
+    lm.save(&out_dir);
+
+    banner::section("Finished");
 }
