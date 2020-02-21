@@ -6,7 +6,7 @@ use arc::{
     geom::Aabb,
     ord::{LightKey, SpecKey},
     report,
-    sim::{diff, mcrt},
+    sim::{diff, kin, mcrt},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -46,6 +46,28 @@ pub fn main() {
     banner::section("Overview");
     verse.overview();
 
+    banner::section("MCRT");
+    let lm = {
+        let mcrt_grid = mcrt::Grid::new(
+            params.res,
+            params.bound.clone(),
+            verse.inters(),
+            verse.surfs(),
+        );
+
+        info!("Saving interface map.");
+        mcrt_grid.interfaces().save(&out_dir.join("interfaces.nc"));
+
+        mcrt::run(
+            params.num_phot as u64,
+            verse.lights().get(&params.light),
+            &mcrt_grid,
+            verse.surfs(),
+            verse.mats(),
+        )
+    };
+    lm.save(&out_dir);
+
     banner::section("Diffusion");
     let mut concs = {
         info!("Constructing grid...");
@@ -74,54 +96,49 @@ pub fn main() {
 
         let mut concs = diff_grid.concs(verse.states(), verse.specs());
         let viscs = diff_grid.visc(verse.mats());
-        let ala_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("ala"));
-        let o2_index = verse.specs().index_of_key(&arc::ord::SpecKey::new("o2"));
+
         let total_steps = 200;
         for n in 0..total_steps {
             println!("n: {}/{}", n, total_steps);
-            concs
-                .map(|cs| *cs.get(ala_index).expect("Invalid index."))
-                .save(&out_dir.join(format!("ala_{}.nc", n)));
-            concs
-                .map(|cs| *cs.get(o2_index).expect("Invalid index."))
-                .save(&out_dir.join(format!("o2_{}.nc", n)));
             diff::run(6.0, &diff_grid, verse.specs(), &mut concs, &viscs);
+
+            for (i, key) in verse.specs().map().keys().enumerate() {
+                concs
+                    .map(|cs| *cs.get(i).expect("Invalid index."))
+                    .save(&out_dir.join(format!("diff_{}_{}.nc", key, n)));
+            }
         }
-        concs
-            .map(|cs| *cs.get(ala_index).expect("Invalid index."))
-            .save(&out_dir.join(format!("ala_{}.nc", total_steps)));
-        concs
-            .map(|cs| *cs.get(ala_index).expect("Invalid index."))
-            .save(&out_dir.join(format!("o2_{}.nc", total_steps)));
 
         concs
     };
-    for (i, key) in verse.specs().map().keys().enumerate() {
-        concs
-            .map(|cs| *cs.get(i).expect("Invalid index."))
-            .save(&out_dir.join(format!("concs_{}.nc", key)));
+
+    let udens_index = verse.specs().index_of_key(&SpecKey::new("udens"));
+    for (cs, abs_dens) in concs.iter_mut().zip(&lm.abs_dens()) {
+        *cs.get_mut(udens_index).expect("Invalid index.") += abs_dens;
     }
 
-    banner::section("MCRT");
-    let lm = {
-        let mcrt_grid = mcrt::Grid::new(params.res, params.bound, verse.inters(), verse.surfs());
-
-        info!("Saving interface map.");
-        mcrt_grid.interfaces().save(&out_dir.join("interfaces.nc"));
-
-        mcrt::run(
-            params.num_phot as u64,
-            verse.lights().get(&params.light),
-            &mcrt_grid,
-            verse.surfs(),
-            verse.mats(),
-        )
-    };
-    lm.save(&out_dir);
+    for (i, key) in verse.specs().map().keys().enumerate() {
+        concs.map_mut(|cs| *cs.get_mut(i).expect("Invalid index.") += 1.0e-9);
+        let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
+        println!("react {}: {}", key, kns.sum());
+    }
 
     banner::section("Kinetics");
-    let udens_index = verse.specs().index_of_key(&SpecKey::new("udens"));
-    concs.map_mut(|cs| *cs.get_mut(udens_index).expect("Invalid index.") += 1.0);
+    let reactor = kin::Reactor::new(verse.reacts(), verse.specs());
+    let total_steps = 20;
+    for k in 0..total_steps {
+        println!("k: {}/{}", k, total_steps);
+        for mut cs in concs.iter_mut() {
+            kin::run_with_reactor(&kin::Settings::new(6.0, 0.1, 1.0e-3), &reactor, &mut cs);
+        }
+
+        for (i, key) in verse.specs().map().keys().enumerate() {
+            let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
+            println!("key: {}", kns.sum());
+            kns.save(&out_dir.join(format!("kin_{}_{}.nc", key, k)));
+        }
+    }
+    // for concs in concs.iter_mut() {}
 
     banner::section("Finished");
 }
