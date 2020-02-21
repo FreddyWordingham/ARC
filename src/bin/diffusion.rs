@@ -9,7 +9,6 @@ use arc::{
     util::{banner, exec, init},
 };
 use attr::form;
-use colog;
 use log::info;
 use std::path::PathBuf;
 

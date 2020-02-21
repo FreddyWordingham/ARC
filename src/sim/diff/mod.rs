@@ -60,7 +60,7 @@ pub fn run(
                 let steps = (time / dt).ceil() as u64;
                 let dt = time / steps as f64;
 
-                for _ in 0..steps {
+                for i in 0..steps {
                     let rates = diff_rate(&cs, &coeffs, &cell_size);
                     for (c, r) in cs.iter_mut().zip(rates.iter()) {
                         **c += r * dt;
@@ -85,6 +85,11 @@ pub fn diff_rate(
 
     let rate = Array3::zeros(concs.raw_dim());
     let res = concs.shape();
+
+    if concs.map(|x| **x).sum() <= 0.0 {
+        return rate;
+    }
+
     let rate = Mutex::new(rate);
 
     (0..num_cells).into_par_iter().for_each(|n| {
