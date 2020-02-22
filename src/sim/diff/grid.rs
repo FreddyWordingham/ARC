@@ -262,6 +262,19 @@ impl<'a> Grid<'a> {
         self.mats.map(|m| *mats.get(m).visc())
     }
 
+    /// Determine the local reaction multipliers within the grid.
+    #[inline]
+    #[must_use]
+    pub fn react_mults(&self, mats: &MatSet) -> Array3<f64> {
+        self.mats.map(|m| {
+            if let Some(mult) = mats.get(m).reaction_multiplier() {
+                *mult
+            } else {
+                1.0
+            }
+        })
+    }
+
     /// Create concentration arrays.
     #[inline]
     #[must_use]

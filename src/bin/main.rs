@@ -69,7 +69,7 @@ pub fn main() {
     lm.save(&out_dir);
 
     banner::section("Diffusion");
-    let mut concs = {
+    let (mut concs, mults) = {
         info!("Constructing grid...");
         let diff_grid = diff::Grid::new(
             params.res,
@@ -115,7 +115,9 @@ pub fn main() {
             }
         }
 
-        concs
+        let mults = diff_grid.react_mults(verse.mats());
+
+        (concs, mults)
     };
 
     let udens_index = verse.specs().index_of_key(&SpecKey::new("udens"));
@@ -140,10 +142,15 @@ pub fn main() {
     }
     for k in 0..total_steps {
         println!("k: {}/{}", k, total_steps);
-        for mut cs in concs.iter_mut() {
+        for (mut cs, mult) in concs.iter_mut().zip(mults.iter()) {
             if cs.sum() > 0.0 {
                 // println!("cs: {:#?}", cs);
-                kin::run_with_reactor(&kin::Settings::new(0.1, 0.1, 1.0e-6), &reactor, &mut cs);
+                kin::run_with_reactor(
+                    &kin::Settings::new(0.1, 0.1, 1.0e-6),
+                    &reactor,
+                    &mut cs,
+                    *mult,
+                );
             }
         }
 

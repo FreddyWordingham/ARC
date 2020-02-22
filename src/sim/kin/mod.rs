@@ -5,26 +5,20 @@ pub mod settings;
 
 pub use self::{reactor::*, settings::*};
 
-use crate::ord::{ReactSet, SpecSet};
 use ndarray::Array1;
 use ndarray_stats::QuantileExt;
 
-/// Run a diffusion transfer simulation.
+/// Run a kinetics reaction simulation with an existing reactor.
 #[inline]
-pub fn run(sett: &Settings, reacts: &ReactSet, specs: &SpecSet, concs: &mut Array1<f64>) {
-    debug_assert!(specs.map().len() == concs.len());
-
-    let reactor = Reactor::new(reacts, specs);
-
-    run_with_reactor(sett, &reactor, concs);
-}
-
-/// Run a diffusion transfer simulation with an existing reactor.
-#[inline]
-pub fn run_with_reactor(sett: &Settings, reactor: &Reactor, concs: &mut Array1<f64>) {
+pub fn run_with_reactor(
+    sett: &Settings,
+    reactor: &Reactor,
+    concs: &mut Array1<f64>,
+    multiplier: f64,
+) {
     let mut t = 0.0;
     while t < sett.time() {
-        let rates = reactor.calc_rates(concs);
+        let rates = reactor.calc_rates(concs) * multiplier;
         // println!("{}\t{:?}", t, rates);
 
         let dt = ((&*concs / &rates) * sett.max_conc_frac_delta())

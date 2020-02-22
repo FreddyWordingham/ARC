@@ -69,7 +69,7 @@ pub fn main() {
 
     let mut pb = arc::util::ProgressBar::new("Kinetics", params.iterations);
     for _ in 0..params.iterations {
-        kin::run_with_reactor(&params.sett, &reactor, &mut concs);
+        kin::run_with_reactor(&params.sett, &reactor, &mut concs, 1.0);
         pb.tick();
         t += params.sett.time();
         print_vals(&mut file, t, &concs);
