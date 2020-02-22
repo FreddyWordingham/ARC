@@ -14,12 +14,12 @@
             "led"
         ]
     },
-    "num_phot": 1.0e4,
+    "num_phot": 1.0e6,
     "light": "led",
     "res": [
-        64,
-        64,
-        65
+        128,
+        128,
+        144
     ],
     "bound": {
         "mins": [

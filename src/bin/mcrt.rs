@@ -12,7 +12,7 @@ use arc::{
 use attr::form;
 use colog;
 use log::info;
-use std::path::PathBuf;
+use std::{io::Write, path::PathBuf};
 
 #[form]
 struct Parameters {
@@ -93,6 +93,12 @@ pub fn main() {
     report!(num_tumour_cells);
     let tumour_abs_ave = tumour_abs_sum / num_tumour_cells;
     report!(tumour_abs_ave);
+
+    let mut file = std::fs::OpenOptions::new()
+        .append(true)
+        .open(&in_dir.join("results.txt"))
+        .expect("Unable to open results file.");
+    writeln!(file, "tumour_abs_ave:\t{}", tumour_abs_ave).expect("Could not write to file.");
 
     banner::section("Finished");
 }

@@ -1,6 +1,5 @@
 use arc::{
     file::{Load, Save},
-    report,
     util::install,
 };
 
