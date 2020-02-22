@@ -18,7 +18,7 @@ pub struct Surface {
 }
 
 impl Surface {
-    access!(mesh, MeshKey);
+    access!(mesh, mesh_mut, MeshKey);
     access!(trans, Option<FileTransform>);
 
     /// Build a mesh.

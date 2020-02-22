@@ -4,7 +4,7 @@ use arc::{
     args,
     file::{Load, Save, Verse as VerseForm},
     geom::Aabb,
-    ord::LightKey,
+    ord::{LightKey, MatKey},
     report,
     sim::mcrt,
     util::{banner, exec, init},
@@ -65,6 +65,34 @@ pub fn main() {
 
     banner::section("Post-Analysis");
     lm.save(&out_dir);
+
+    let mat_keys = grid.mat_keys();
+    let abs_dens = lm.abs_dens();
+    let ave_abs_dens = abs_dens.sum() / abs_dens.len() as f64;
+    report!(ave_abs_dens);
+    let tumour_abs_sum: f64 = abs_dens
+        .iter()
+        .zip(&mat_keys)
+        .map(|(abs, key)| {
+            if *key == &MatKey::new("tumour") {
+                *abs
+            } else {
+                0.0
+            }
+        })
+        .sum();
+    let num_tumour_cells = mat_keys
+        .map(|key| {
+            if *key == &MatKey::new("tumour") {
+                1.0
+            } else {
+                0.0
+            }
+        })
+        .sum();
+    report!(num_tumour_cells);
+    let tumour_abs_ave = tumour_abs_sum / num_tumour_cells;
+    report!(tumour_abs_ave);
 
     banner::section("Finished");
 }

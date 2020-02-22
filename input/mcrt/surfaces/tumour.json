@@ -1,11 +1,1 @@
-{
-    "mesh": "tumour",
-    "trans": {
-        "scale": 0.5e-3,
-        "trans": [
-            0.0,
-            0.0,
-            -500.0e-6
-        ]
-    }
-}
+{"mesh":"tumour_2000","trans":{"trans":[0.0,0.0,-0.0005],"rot":null,"scale":0.0005}}
