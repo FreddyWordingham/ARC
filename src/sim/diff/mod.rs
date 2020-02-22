@@ -103,7 +103,8 @@ pub fn diff_rate(
         let index = [xi, yi, zi];
 
         if let Some(coeff) = coeffs.get(index).expect("Invalid index.") {
-            let stencil = Stencil::new_gradient(index, concs);
+            // let stencil = Stencil::new_gradient(index, concs);
+            let stencil = Stencil::new_periodic_xy(index, concs);
             let r = stencil.rate(*coeff, cell_size);
             *rate
                 .lock()
