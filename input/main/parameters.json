@@ -1,10 +1,10 @@
 {
     "light": "led",
-    "num_phot": 1e4,
+    "num_phot": 1e6,
     "res": [
-        25,
-        25,
-        14
+        52,
+        52,
+        25
     ],
     "bound": {
         "mins": [

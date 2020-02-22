@@ -97,7 +97,7 @@ pub fn main() {
         let mut concs = diff_grid.concs(verse.states(), verse.specs());
         let viscs = diff_grid.visc(verse.mats());
 
-        let total_steps = 20;
+        let total_steps = 100;
 
         for (i, key) in verse.specs().map().keys().enumerate() {
             concs
@@ -106,7 +106,7 @@ pub fn main() {
         }
         for n in 0..total_steps {
             println!("n: {}/{}", n, total_steps);
-            diff::run(60.0, &diff_grid, verse.specs(), &mut concs, &viscs);
+            diff::run(12.0, &diff_grid, verse.specs(), &mut concs, &viscs);
 
             for (i, key) in verse.specs().map().keys().enumerate() {
                 concs
@@ -138,7 +138,7 @@ pub fn main() {
     for (i, key) in verse.specs().map().keys().enumerate() {
         let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
         println!("key: {}", kns.sum());
-        kns.save(&out_dir.join(format!("kin_{}_{}.nc", key, "pre")));
+        kns.save(&out_dir.join(format!("kin_{}_{}.nc", key, 0)));
     }
     for k in 0..total_steps {
         println!("k: {}/{}", k, total_steps);
@@ -157,7 +157,7 @@ pub fn main() {
         for (i, key) in verse.specs().map().keys().enumerate() {
             let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
             println!("key: {}", kns.sum());
-            kns.save(&out_dir.join(format!("kin_{}_{}.nc", key, k)));
+            kns.save(&out_dir.join(format!("kin_{}_{}.nc", key, k + 1)));
         }
     }
     // for concs in concs.iter_mut() {}
