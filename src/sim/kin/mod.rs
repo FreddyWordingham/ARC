@@ -25,6 +25,7 @@ pub fn run_with_reactor(sett: &Settings, reactor: &Reactor, concs: &mut Array1<f
     let mut t = 0.0;
     while t < sett.time() {
         let rates = reactor.calc_rates(concs);
+        // println!("{}\t{:?}", t, rates);
 
         let dt = ((&*concs / &rates) * sett.max_conc_frac_delta())
             .mapv(f64::abs)

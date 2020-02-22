@@ -1,6 +1,6 @@
 {
     "light": "led",
-    "num_phot": 1e6,
+    "num_phot": 1e4,
     "res": [
         25,
         25,

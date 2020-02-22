@@ -97,15 +97,21 @@ pub fn main() {
         let mut concs = diff_grid.concs(verse.states(), verse.specs());
         let viscs = diff_grid.visc(verse.mats());
 
-        let total_steps = 200;
+        let total_steps = 20;
+
+        for (i, key) in verse.specs().map().keys().enumerate() {
+            concs
+                .map(|cs| *cs.get(i).expect("Invalid index."))
+                .save(&out_dir.join(format!("diff_{}_{}.nc", key, 0)));
+        }
         for n in 0..total_steps {
             println!("n: {}/{}", n, total_steps);
-            diff::run(6.0, &diff_grid, verse.specs(), &mut concs, &viscs);
+            diff::run(60.0, &diff_grid, verse.specs(), &mut concs, &viscs);
 
             for (i, key) in verse.specs().map().keys().enumerate() {
                 concs
                     .map(|cs| *cs.get(i).expect("Invalid index."))
-                    .save(&out_dir.join(format!("diff_{}_{}.nc", key, n)));
+                    .save(&out_dir.join(format!("diff_{}_{}.nc", key, n + 1)));
             }
         }
 
@@ -114,25 +120,30 @@ pub fn main() {
 
     let udens_index = verse.specs().index_of_key(&SpecKey::new("udens"));
     for (cs, abs_dens) in concs.iter_mut().zip(&lm.abs_dens()) {
-        *cs.get_mut(udens_index).expect("Invalid index.") += abs_dens;
+        *cs.get_mut(udens_index).expect("Invalid index.") += abs_dens / 186470120150714370.0;
     }
 
-    for (i, key) in verse.specs().map().keys().enumerate() {
-        concs.map_mut(|cs| *cs.get_mut(i).expect("Invalid index.") += 1.0e-9);
-        let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
-        println!("react {}: {}", key, kns.sum());
-    }
+    // for (i, key) in verse.specs().map().keys().enumerate() {
+    //     concs.map_mut(|cs| *cs.get_mut(i).expect("Invalid index.") += 1.0e-9);
+    //     let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
+    //     println!("react {}: {}", key, kns.sum());
+    // }
 
     banner::section("Kinetics");
     let reactor = kin::Reactor::new(verse.reacts(), verse.specs());
     println!("Reactor: {:#?}", reactor);
-    let total_steps = 2;
+    let total_steps = 100;
+    for (i, key) in verse.specs().map().keys().enumerate() {
+        let kns = concs.map(|cs| *cs.get(i).expect("Invalid index."));
+        println!("key: {}", kns.sum());
+        kns.save(&out_dir.join(format!("kin_{}_{}.nc", key, "pre")));
+    }
     for k in 0..total_steps {
         println!("k: {}/{}", k, total_steps);
         for mut cs in concs.iter_mut() {
             if cs.sum() > 0.0 {
                 // println!("cs: {:#?}", cs);
-                kin::run_with_reactor(&kin::Settings::new(6.0, 0.1, 1.0e-6), &reactor, &mut cs);
+                kin::run_with_reactor(&kin::Settings::new(0.1, 0.1, 1.0e-6), &reactor, &mut cs);
             }
         }
 
