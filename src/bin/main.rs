@@ -125,11 +125,15 @@ pub fn main() {
 
     banner::section("Kinetics");
     let reactor = kin::Reactor::new(verse.reacts(), verse.specs());
-    let total_steps = 20;
+    println!("Reactor: {:#?}", reactor);
+    let total_steps = 2;
     for k in 0..total_steps {
         println!("k: {}/{}", k, total_steps);
         for mut cs in concs.iter_mut() {
-            kin::run_with_reactor(&kin::Settings::new(6.0, 0.1, 1.0e-3), &reactor, &mut cs);
+            if cs.sum() > 0.0 {
+                // println!("cs: {:#?}", cs);
+                kin::run_with_reactor(&kin::Settings::new(6.0, 0.1, 1.0e-6), &reactor, &mut cs);
+            }
         }
 
         for (i, key) in verse.specs().map().keys().enumerate() {

@@ -127,7 +127,7 @@ pub fn run_thread(
                                 break;
                             }
 
-                            warn!("Interface crossing caused cell crossing!");
+                            // warn!("Interface crossing caused cell crossing!");
                             cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
                         }
                     }
