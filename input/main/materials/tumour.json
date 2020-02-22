@@ -27,5 +27,5 @@
         }
     },
     "visc": 0.00089,
-    "reaction_multiplier": 1.0
+    "reaction_multiplier": 10.0
 }
