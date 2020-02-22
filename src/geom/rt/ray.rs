@@ -14,7 +14,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    access!(pos, Point3<f64>);
+    access!(pos, pos_mut, Point3<f64>);
     access!(dir, dir_mut, Unit<Vector3<f64>>);
 
     /// Construct a new instance.

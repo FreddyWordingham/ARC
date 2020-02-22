@@ -10,6 +10,7 @@ use crate::{
     world::Light,
 };
 use log::warn;
+use nalgebra::Point3;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 use std::{
     f64::{consts::PI, MIN_POSITIVE},
@@ -111,7 +112,9 @@ pub fn run_thread(
                         phot.ray_mut().travel(dist);
 
                         if !grid.bound().contains(phot.ray().pos()) {
-                            break;
+                            if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
+                                break;
+                            }
                         }
 
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
@@ -124,7 +127,10 @@ pub fn run_thread(
                         if !cr.cell().bound().contains(phot.ray().pos()) {
                             // TODO: This should be able to be removed.
                             if !grid.bound().contains(phot.ray().pos()) {
-                                break;
+                                if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
+                                {
+                                    break;
+                                }
                             }
 
                             // warn!("Interface crossing caused cell crossing!");
@@ -137,7 +143,9 @@ pub fn run_thread(
                         );
 
                         if !grid.bound().contains(phot.ray().pos()) {
-                            break;
+                            if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
+                                break;
+                            }
                         }
 
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
@@ -148,6 +156,32 @@ pub fn run_thread(
     }
 
     lm
+}
+
+/// Create a periodic-xy boundary condition for the photons.
+fn periodic_xy(phot: &mut Photon, mins: &Point3<f64>, maxs: &Point3<f64>) -> bool {
+    let p = phot.ray_mut().pos_mut();
+    let w = maxs - mins;
+
+    if p.z < mins.z || p.z > maxs.z {
+        return false;
+    }
+
+    while p.x < mins.x {
+        p.x += w.x;
+    }
+    while p.x > maxs.x {
+        p.x -= w.x;
+    }
+
+    while p.y < mins.y {
+        p.y += w.y;
+    }
+    while p.y > maxs.y {
+        p.y -= w.y;
+    }
+
+    true
 }
 
 /// Perform an interface hit event.

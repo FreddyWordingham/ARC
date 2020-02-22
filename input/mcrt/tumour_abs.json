@@ -14,7 +14,7 @@
             "led"
         ]
     },
-    "num_phot": 1.0e6,
+    "num_phot": 1.0e4,
     "light": "led",
     "res": [
         256,
