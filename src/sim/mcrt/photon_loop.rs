@@ -91,6 +91,8 @@ pub fn run_thread(
                     Hit::Scattering(dist) => {
                         *cr.rec_mut().dist_trav_mut() += dist;
                         phot.ray_mut().travel(dist);
+                        *cr.rec_mut().abs_mut() +=
+                            phot.weight() * phot.power() * env.abs_coeff() * dist;
 
                         *cr.rec_mut().scats_mut() += phot.weight();
                         phot.ray_mut().rotate(
@@ -98,7 +100,9 @@ pub fn run_thread(
                             rng.gen_range(0.0, 2.0 * PI),
                         );
 
-                        *cr.rec_mut().abs_mut() += env.albedo() * phot.weight();
+                        // *cr.rec_mut().abs_mut() += env.albedo() * phot.weight();
+                        *cr.rec_mut().abs_mut() +=
+                            phot.weight() * phot.power() * env.abs_coeff() * dist;
                         *phot.weight_mut() *= env.albedo();
 
                         if !shifted && rng.gen_range(0.0, 1.0) <= env.shift_prob() {
@@ -110,6 +114,8 @@ pub fn run_thread(
                         let dist = dist + bump_dist;
                         *cr.rec_mut().dist_trav_mut() += dist;
                         phot.ray_mut().travel(dist);
+                        *cr.rec_mut().abs_mut() +=
+                            phot.weight() * phot.power() * env.abs_coeff() * dist;
 
                         if !grid.bound().contains(phot.ray().pos()) {
                             if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
@@ -216,11 +222,15 @@ fn hit_interface(
         let effective_dist = (dist - bump_dist).max(MIN_POSITIVE);
         *cr.rec_mut().dist_trav_mut() += effective_dist;
         phot.ray_mut().travel(effective_dist);
+        *cr.rec_mut().abs_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
+
         *phot.ray_mut().dir_mut() = *crossing.ref_dir();
     } else {
         let effective_dist = dist + bump_dist;
         *cr.rec_mut().dist_trav_mut() += effective_dist;
         phot.ray_mut().travel(effective_dist);
+        *cr.rec_mut().abs_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
+
         *phot.ray_mut().dir_mut() = crossing
             .trans_dir()
             .expect("Failed to determine transmission direction.");
