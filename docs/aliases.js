@@ -16,6 +16,7 @@ ALIASES["crossbeam_epoch"] = {};
 ALIASES["crossbeam_queue"] = {};
 ALIASES["crossbeam_utils"] = {};
 ALIASES["diffusion"] = {};
+ALIASES["edit"] = {};
 ALIASES["either"] = {};
 ALIASES["env_logger"] = {};
 ALIASES["generic_array"] = {};

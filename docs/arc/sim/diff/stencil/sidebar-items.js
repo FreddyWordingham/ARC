@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Stencil","Stencil enumeration implementation."]]});

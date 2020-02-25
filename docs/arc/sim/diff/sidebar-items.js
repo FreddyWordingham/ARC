@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["diff_rate","Calculate the diffusion rates for each cell."],["run","Diffuse the concentrations forward the given amount of time."]],"mod":[["grid","Grid implementation."],["settings","Settings implementation."],["stencil","Stencil-type enumeration."]]});

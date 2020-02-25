@@ -39,11 +39,6 @@
 <span id="39">39</span>
 <span id="40">40</span>
 <span id="41">41</span>
-<span id="42">42</span>
-<span id="43">43</span>
-<span id="44">44</span>
-<span id="45">45</span>
-<span id="46">46</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Chemical kinetics simulation sub-module.</span>
 
@@ -52,26 +47,21 @@
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::{<span class="ident">reactor</span>::<span class="kw-2">*</span>, <span class="ident">settings</span>::<span class="kw-2">*</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ord</span>::{<span class="ident">ReactSet</span>, <span class="ident">SpecSet</span>};
 <span class="kw">use</span> <span class="ident">ndarray</span>::<span class="ident">Array1</span>;
 <span class="kw">use</span> <span class="ident">ndarray_stats</span>::<span class="ident">QuantileExt</span>;
 
-<span class="doccomment">/// Run a diffusion transfer simulation.</span>
+<span class="doccomment">/// Run a kinetics reaction simulation with an existing reactor.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run</span>(<span class="ident">sett</span>: <span class="kw-2">&amp;</span><span class="ident">Settings</span>, <span class="ident">reacts</span>: <span class="kw-2">&amp;</span><span class="ident">ReactSet</span>, <span class="ident">specs</span>: <span class="kw-2">&amp;</span><span class="ident">SpecSet</span>, <span class="ident">concs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>) {
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">specs</span>.<span class="ident">map</span>().<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">concs</span>.<span class="ident">len</span>());
-
-    <span class="kw">let</span> <span class="ident">reactor</span> <span class="op">=</span> <span class="ident">Reactor</span>::<span class="ident">new</span>(<span class="ident">reacts</span>, <span class="ident">specs</span>);
-
-    <span class="ident">run_with_reactor</span>(<span class="ident">sett</span>, <span class="kw-2">&amp;</span><span class="ident">reactor</span>, <span class="ident">concs</span>);
-}
-
-<span class="doccomment">/// Run a diffusion transfer simulation with an existing reactor.</span>
-<span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_with_reactor</span>(<span class="ident">sett</span>: <span class="kw-2">&amp;</span><span class="ident">Settings</span>, <span class="ident">reactor</span>: <span class="kw-2">&amp;</span><span class="ident">Reactor</span>, <span class="ident">concs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_with_reactor</span>(
+    <span class="ident">sett</span>: <span class="kw-2">&amp;</span><span class="ident">Settings</span>,
+    <span class="ident">reactor</span>: <span class="kw-2">&amp;</span><span class="ident">Reactor</span>,
+    <span class="ident">concs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="ident">multiplier</span>: <span class="ident">f64</span>,
+) {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="number">0.0</span>;
     <span class="kw">while</span> <span class="ident">t</span> <span class="op">&lt;</span> <span class="ident">sett</span>.<span class="ident">time</span>() {
-        <span class="kw">let</span> <span class="ident">rates</span> <span class="op">=</span> <span class="ident">reactor</span>.<span class="ident">calc_rates</span>(<span class="ident">concs</span>);
+        <span class="kw">let</span> <span class="ident">rates</span> <span class="op">=</span> <span class="ident">reactor</span>.<span class="ident">calc_rates</span>(<span class="ident">concs</span>) <span class="op">*</span> <span class="ident">multiplier</span>;
+        <span class="comment">// println!(&quot;{}\t{:?}&quot;, t, rates);</span>
 
         <span class="kw">let</span> <span class="ident">dt</span> <span class="op">=</span> ((<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">concs</span> <span class="op">/</span> <span class="kw-2">&amp;</span><span class="ident">rates</span>) <span class="op">*</span> <span class="ident">sett</span>.<span class="ident">max_conc_frac_delta</span>())
             .<span class="ident">mapv</span>(<span class="ident">f64</span>::<span class="ident">abs</span>)

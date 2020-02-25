@@ -132,7 +132,7 @@
     <span class="doccomment">/// Boundary.</span>
     <span class="ident">bound</span>: <span class="ident">Aabb</span>,
     <span class="doccomment">/// Central material.</span>
-    <span class="ident">mat</span>: <span class="ident">MatKey</span>,
+    <span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">MatKey</span>,
     <span class="doccomment">/// Intersecting interface triangles.</span>
     <span class="ident">inter_tris</span>: <span class="ident">Vec</span><span class="op">&lt;</span>((<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">InterKey</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Interface</span>), <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SmoothTriangle</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
 }
@@ -148,7 +148,7 @@
     <span class="doccomment">/// Construct a new instance.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">bound</span>: <span class="ident">Aabb</span>, <span class="ident">mat</span>: <span class="ident">MatKey</span>, <span class="ident">inters</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">InterSet</span>, <span class="ident">surfs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SurfSet</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">bound</span>: <span class="ident">Aabb</span>, <span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">MatKey</span>, <span class="ident">inters</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">InterSet</span>, <span class="ident">surfs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SurfSet</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inter_tris</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
         <span class="kw">for</span> (<span class="ident">key</span>, <span class="ident">inter</span>) <span class="kw">in</span> <span class="ident">inters</span>.<span class="ident">map</span>() {
