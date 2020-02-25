@@ -1,0 +1,31 @@
+{
+    "optics": {
+        "ref_index": {
+            "Constant": {
+                "c": 1.38
+            }
+        },
+        "scat_coeff": {
+            "Constant": {
+                "c": 30.0e3,
+            }
+        },
+        "abs_coeff": {
+            "Constant": {
+                "c": 0.140e3,
+            }
+        },
+        "shift_coeff": {
+            "Constant": {
+                "c": 0.0
+            }
+        },
+        "asym": {
+            "Constant": {
+                "c": 0.95
+            }
+        }
+    },
+    "visc": 0.00089,
+    "reaction_multiplier": 1.0
+}
