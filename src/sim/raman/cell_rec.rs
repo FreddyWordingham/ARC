@@ -7,7 +7,7 @@ use crate::{
 };
 use nalgebra::Point3;
 
-/// Store a reference to a cell and it's corresponding light-map record.
+/// Store a reference to a cell and its corresponding light-map record.
 pub struct CellRec<'a> {
     /// Reference to the currently occupied cell.
     cell: &'a Cell<'a>,

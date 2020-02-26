@@ -31,6 +31,15 @@ pub enum Formula {
         /// Recovery rate.
         r: f64,
     },
+    /// Bifurcation formula. = x < y ? a : b.
+    Bifurcation {
+        /// Threshold value.
+        t: f64,
+        /// Under value.
+        a: f64,
+        /// Over value.
+        b: f64,
+    },
 }
 
 impl Formula {
@@ -50,6 +59,13 @@ impl Formula {
                 sum
             }
             Self::Recovery { c, r } => (c - x) * r,
+            Self::Bifurcation { t, a, b } => {
+                if x < *t {
+                    *a
+                } else {
+                    *b
+                }
+            }
         }
     }
 }

@@ -1,0 +1,36 @@
+{
+    "reaction_multiplier": 1.0,
+    "optics": {
+        "ref_index": {
+            "Constant": {
+                "c": 1.47
+            }
+        },
+        "scat_coeff": {
+            "Bifurcation": {
+                "t": 900.0e-9,
+                "a": 2740.0,
+                "b": 2360.0
+            }
+        },
+        "abs_coeff": {
+            "Bifurcation": {
+                "t": 900.0e-9,
+                "a": 3.0,
+                "b": 5.0
+            }
+        },
+        "shift_coeff": {
+            "Constant": {
+                "c": 0.0
+            }
+        },
+        "asym": {
+            "Bifurcation": {
+                "t": 900.0e-9,
+                "a": 0.67,
+                "b": 0.64
+            }
+        }
+    }
+}

@@ -2,15 +2,16 @@
 
 use crate::{
     geom::Trace,
+    list::Cartesian::{X, Y, Z},
     math::distribution,
     ord::{MatSet, SurfSet},
     phys::{Crossing, Environment, Photon},
-    sim::raman::{CellRec, Grid, Hit, LightMap},
+    sim::raman::{Cell, CellRec, Grid, Hit, LightMap},
     util::ParProgressBar,
     world::Light,
 };
 use log::warn;
-use nalgebra::Point3;
+use nalgebra::{Point3, Unit};
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 use std::{
     f64::{consts::PI, MIN_POSITIVE},
@@ -39,15 +40,32 @@ pub fn run_thread(
 
     let mut lm = LightMap::new(grid);
     let mut rng = thread_rng();
-
+    let mut extra_phot: Option<Photon> = None;
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
         let b = pb.block(block_size);
         std::mem::drop(pb);
         b
     } {
-        for _ in start..end {
-            let mut phot = light.emit(&mut rng, num_phot, surfs);
+        //for _ in start..end {
+        let mut total = end - start;
+        //println!("Start and end: {}, {}", start, end);
+        //println!("total: {}", total);
+        while total > 0 {
+            let mut shifted = false;
+            let mut phot = if let Some(phot) = extra_phot {
+                total += 1;
+                extra_phot = None;
+                //println!("From Raman: {}", total);
+                phot
+            } else {
+                total -= 1;
+                //if total < 1 {
+                //     println! {"Boom another batch done!: {}", total};
+                // }
+                //println!("From light source: {}", total);
+                light.emit(&mut rng, num_phot, surfs)
+            };
 
             debug_assert!(grid.bound().contains(phot.ray().pos()));
 
@@ -105,9 +123,26 @@ pub fn run_thread(
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
                         *phot.weight_mut() *= env.albedo();
 
-                        if !shifted && rng.gen_range(0.0, 1.0) <= env.shift_prob() {
+                        if !shifted && rng.gen_range(0.0, 1.0) <= 100.0 * env.shift_prob() {
+                            let mut reweight = phot.clone();
+                            *phot.weight_mut() *= 0.01;
+                            *reweight.weight_mut() *= 1.0 - 0.01;
+                            extra_phot = Some(reweight);
                             *cr.rec_mut().shifts_mut() += phot.weight();
+                            *cr.rec_mut().ram_laser_mut() += 1.0;
                             shifted = true;
+                            //println!("Ramanised!");
+                        }
+                        if shifted {
+                            *cr.rec_mut().det_raman_mut() += peel_off(
+                                phot.clone(),
+                                env.clone(),
+                                &grid,
+                                &mats,
+                                &Point3::new(0.0129, 0.0, 0.0),
+                                bump_dist,
+                            )
+                            .unwrap_or(0.0);
                         }
                     }
                     Hit::Cell(dist) => {
@@ -237,4 +272,99 @@ fn hit_interface(
 
         *env = next_env;
     }
+}
+
+/// Perform a peel off event.
+pub fn peel_off(
+    mut phot: Photon,
+    mut env: Environment,
+    grid: &Grid,
+    mats: &MatSet,
+    pos: &Point3<f64>,
+    bump_dist: f64,
+) -> Option<f64> {
+    let g = env.asym();
+    let g2 = g.powi(2);
+
+    let dir = Unit::new_normalize(pos - phot.ray().pos());
+
+    let cos_ang = phot.ray().dir().dot(&dir);
+    let mut prob = phot.weight() * 0.5 * ((1.0 - g2) / (1.0 + g2 - (2.0 * g * cos_ang)).powf(1.5));
+    //if prob < 0.01 {
+    //    return None;
+    //}
+
+    *phot.ray_mut().dir_mut() = dir;
+    let mut cell = get_cell(phot.ray().pos(), &grid);
+
+    loop {
+        //if prob < 0.00001 {
+        //    return None;
+        //}
+
+        let cell_dist = cell.bound().dist(phot.ray()).unwrap();
+        let inter_dist = cell.inter_dist_inside_norm_inter(phot.ray());
+
+        if let Some((dist, inside, _norm, inter)) = inter_dist {
+            if dist < cell_dist {
+                prob *= (-(dist + bump_dist) * env.inter_coeff()).exp();
+                phot.ray_mut().travel(dist + bump_dist);
+
+                if inside {
+                    env = mats
+                        .map()
+                        .get(inter.in_mat())
+                        .unwrap()
+                        .optics()
+                        .env(phot.wavelength());
+                } else {
+                    env = mats
+                        .map()
+                        .get(inter.out_mat())
+                        .unwrap()
+                        .optics()
+                        .env(phot.wavelength());
+                }
+            } else {
+                prob *= (-(cell_dist + bump_dist) * env.inter_coeff()).exp();
+                phot.ray_mut().travel(cell_dist + bump_dist);
+            }
+        } else {
+            prob *= (-(cell_dist + bump_dist) * env.inter_coeff()).exp();
+            phot.ray_mut().travel(cell_dist + bump_dist);
+        }
+
+        if !grid.bound().contains(phot.ray().pos()) {
+            break;
+        }
+
+        cell = get_cell(phot.ray().pos(), &grid);
+    }
+    //report!(prob);
+    Some(prob)
+}
+
+///Get a cell reference
+pub fn get_cell<'a>(pos: &Point3<f64>, grid: &'a &Grid) -> &'a Cell<'a> {
+    let mins = grid.bound().mins();
+    let maxs = grid.bound().maxs();
+    let resolution = grid.res();
+
+    let id: Vec<usize> = pos
+        .iter()
+        .zip(mins.iter().zip(maxs.iter()))
+        .zip(&resolution)
+        .map(|((p, (min, max)), n)| (((p - min) / (max - min)) * *n as f64) as usize)
+        .collect();
+    let index = (
+        *id.get(X as usize).expect("Missing index."),
+        *id.get(Y as usize).expect("Missing index."),
+        *id.get(Z as usize).expect("Missing index."),
+    );
+
+    let cell = grid.cells().get(index).expect("Invalid grid index.");
+
+    debug_assert!(cell.bound().contains(pos));
+
+    cell
 }

@@ -1,5 +1,6 @@
 //! Monte-Carlo radiative transfer testing binary.
 
+use ::std::fs::OpenOptions;
 use arc::{
     args,
     file::{Load, Save, Verse as VerseForm},
@@ -12,6 +13,7 @@ use arc::{
 use attr::form;
 use colog;
 use log::info;
+use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 
 #[form]
@@ -65,6 +67,20 @@ pub fn main() {
 
     banner::section("Post-Analysis");
     lm.save(&out_dir);
+    let total_shifts = lm.recs().map(|r| r.shifts()).sum();
+    let total_det_raman = lm.recs().map(|r| r.det_raman()).sum();
+    let total_ram_laser = lm.recs().map(|r| r.ram_laser()).sum();
+    report!("Total weights of Raman made", total_shifts);
+    report!("Total weights of detected Raman", total_det_raman);
+    report!("Total created Raman", total_ram_laser);
+
+    let mut file = BufWriter::new(
+        OpenOptions::new()
+            .append(true)
+            .open(&out_dir.join("Ramans.txt"))
+            .unwrap(),
+    );
+    writeln!(file, "{}, {}", total_shifts, total_det_raman).unwrap();
 
     banner::section("Finished");
 }
