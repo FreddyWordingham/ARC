@@ -6,7 +6,9 @@
     "state": {
         "concs": {
             "map": {
-                "ala": 1.0
+                "ala": 1.0,
+                "o2": 1.0,
+                "udens": 1.0,
             }
         },
         "sources": {
@@ -18,5 +20,5 @@
         "max_conc_frac_delta": 0.1,
         "min_timestep": 1.0e-6
     },
-    "iterations": 100
+    "iterations": 1000
 }

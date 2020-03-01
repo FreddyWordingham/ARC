@@ -52,7 +52,7 @@ pub fn run_thread(
         //println!("Start and end: {}, {}", start, end);
         //println!("total: {}", total);
         while total > 0 {
-            let mut shifted = false;
+            let _shifted = false;
             let mut phot = if let Some(phot) = extra_phot {
                 total += 1;
                 extra_phot = None;

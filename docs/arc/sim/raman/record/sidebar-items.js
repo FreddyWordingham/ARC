@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Record","Record structure implementation. Stores data about a single cell during an MCRT simulation."]]});
