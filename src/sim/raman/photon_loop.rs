@@ -53,23 +53,22 @@ pub fn run_thread(
         //println!("total: {}", total);
         while total > 0 {
             let mut shifted = false;
-            let mut phot = if let Some(phot) = extra_phot {
+            let mut phot =
+            if let Some(phot) = extra_phot {
                 total += 1;
                 extra_phot = None;
-                //println!("From Raman: {}", total);
+                //println!("From Raman: {}", phot.ray().pos());
                 phot
             } else {
                 total -= 1;
                 //if total < 1 {
                 //     println! {"Boom another batch done!: {}", total};
                 // }
-                //println!("From light source: {}", total);
+                //println!("From light source");
                 light.emit(&mut rng, num_phot, surfs)
             };
-
+            //println!("Main body pos: {}", phot.ray().pos());
             debug_assert!(grid.bound().contains(phot.ray().pos()));
-
-            let mut shifted = false;
 
             let mut cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
             *cr.rec_mut().emis_mut() += phot.weight();
@@ -88,13 +87,13 @@ pub fn run_thread(
                     );
                 }
 
-                if phot.weight() < ROULETTE {
-                    if rng.gen_range(0.0_f64, 1.0) <= ROULETTE {
-                        *phot.weight_mut() /= ROULETTE;
-                    } else {
-                        break;
-                    }
-                }
+                 if phot.weight() < ROULETTE {
+                     if rng.gen_range(0.0_f64, 1.0) <= ROULETTE {
+                     *phot.weight_mut() /= ROULETTE;
+                     } else {
+                         break;
+                     }
+                 }
 
                 let scat_dist = -(rng.gen_range(0.0_f64, 1.0)).ln() / env.inter_coeff();
 
@@ -123,15 +122,15 @@ pub fn run_thread(
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
                         *phot.weight_mut() *= env.albedo();
 
-                        if !shifted && rng.gen_range(0.0, 1.0) <= 100.0 * env.shift_prob() {
+                        if !shifted && rng.gen_range(0.0, 1.0) <= 0.005{
                             let mut reweight = phot.clone();
-                            *phot.weight_mut() *= 0.01;
-                            *reweight.weight_mut() *= 1.0 - 0.01;
+                            *phot.weight_mut() *= env.shift_prob()/0.005;
+                            *reweight.weight_mut() *= 1.0 - env.shift_prob();
                             extra_phot = Some(reweight);
                             *cr.rec_mut().shifts_mut() += phot.weight();
                             *cr.rec_mut().ram_laser_mut() += 1.0;
                             shifted = true;
-                            //println!("Ramanised!");
+                            //println!("Ramanised!: {}", phot.ray().pos());
                         }
                         if shifted {
                             *cr.rec_mut().det_raman_mut() += peel_off(
@@ -153,9 +152,10 @@ pub fn run_thread(
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
 
                         if !grid.bound().contains(phot.ray().pos()) {
-                            if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
-                                break;
-                            }
+                            break;
+                            //if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
+                            //    break;
+                            //}
                         }
 
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
@@ -168,10 +168,11 @@ pub fn run_thread(
                         if !cr.cell().bound().contains(phot.ray().pos()) {
                             // TODO: This should be able to be removed.
                             if !grid.bound().contains(phot.ray().pos()) {
-                                if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
-                                {
-                                    break;
-                                }
+                                break;
+                                // if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
+                                // {
+                                //     break;
+                                // }
                             }
 
                             // warn!("Interface crossing caused cell crossing!");
@@ -184,9 +185,10 @@ pub fn run_thread(
                         );
 
                         if !grid.bound().contains(phot.ray().pos()) {
-                            if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
-                                break;
-                            }
+                            break;
+                            // if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
+                            //     break;
+                            // }
                         }
 
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
