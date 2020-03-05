@@ -2,20 +2,20 @@
     "light": "led",
     "num_phot": 1e6,
     "res": [
-        52,
-        52,
-        25
+        101,
+        101,
+        101
     ],
     "bound": {
         "mins": [
-            -2.0e-3,
-            -2.0e-3,
-            -2.0e-3
+            -5.0e-3,
+            -5.0e-3,
+            -8.0e-3
         ],
         "maxs": [
-            2.0e-3,
-            2.0e-3,
-            0.125e-3
+            5.0e-3,
+            5.0e-3,
+            2.0e-3
         ]
     },
     "verse": {
@@ -25,9 +25,9 @@
             "papillary_dermis",
             "upper_blood_net_dermis",
             "reticular_dermis",
-            "tumour",
             "deep_blood_net_dermis",
-            "subcutaneous_fat"
+            "subcutaneous_fat",
+            "tumour",
         ],
         "reacts": [
             "ppix_synthesis",
