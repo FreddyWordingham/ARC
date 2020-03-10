@@ -238,6 +238,26 @@
 <span id="238">238</span>
 <span id="239">239</span>
 <span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Core MCRT photon loop function.</span>
 
@@ -252,6 +272,7 @@
 };
 <span class="kw">use</span> <span class="ident">log</span>::<span class="ident">warn</span>;
 <span class="kw">use</span> <span class="ident">nalgebra</span>::<span class="ident">Point3</span>;
+<span class="kw">use</span> <span class="ident">physical_constants</span>::<span class="ident">SPEED_OF_LIGHT_IN_VACUUM</span>;
 <span class="kw">use</span> <span class="ident">rand</span>::{<span class="ident">rngs</span>::<span class="ident">ThreadRng</span>, <span class="ident">thread_rng</span>, <span class="ident">Rng</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">f64</span>::{<span class="ident">consts</span>::<span class="ident">PI</span>, <span class="ident">MIN_POSITIVE</span>},
@@ -265,6 +286,7 @@
 <span class="kw">const</span> <span class="ident">ROULETTE</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="number">0.1</span>;
 
 <span class="doccomment">/// Run a single threaded instance of the photon loop.</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">too_many_lines</span>)]</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">must_use</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_thread</span>(
@@ -334,6 +356,12 @@
                         <span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">travel</span>(<span class="ident">dist</span>);
                         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">abs_mut</span>() <span class="op">+</span><span class="op">=</span>
                             <span class="ident">phot</span>.<span class="ident">weight</span>() <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">abs_coeff</span>() <span class="op">*</span> <span class="ident">dist</span>;
+                        <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">shifts_mut</span>() <span class="op">+</span><span class="op">=</span> (<span class="ident">phot</span>.<span class="ident">weight</span>()
+                            <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>()
+                            <span class="op">*</span> <span class="ident">env</span>.<span class="ident">ref_index</span>()
+                            <span class="op">*</span> <span class="ident">env</span>.<span class="ident">scat_coeff</span>()
+                            <span class="op">*</span> <span class="ident">dist</span>)
+                            <span class="op">/</span> <span class="ident">SPEED_OF_LIGHT_IN_VACUUM</span>;
 
                         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">scats_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">phot</span>.<span class="ident">weight</span>();
                         <span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">rotate</span>(
@@ -357,6 +385,12 @@
                         <span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">travel</span>(<span class="ident">dist</span>);
                         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">abs_mut</span>() <span class="op">+</span><span class="op">=</span>
                             <span class="ident">phot</span>.<span class="ident">weight</span>() <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">abs_coeff</span>() <span class="op">*</span> <span class="ident">dist</span>;
+                        <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">shifts_mut</span>() <span class="op">+</span><span class="op">=</span> (<span class="ident">phot</span>.<span class="ident">weight</span>()
+                            <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>()
+                            <span class="op">*</span> <span class="ident">env</span>.<span class="ident">ref_index</span>()
+                            <span class="op">*</span> <span class="ident">env</span>.<span class="ident">scat_coeff</span>()
+                            <span class="op">*</span> <span class="ident">dist</span>)
+                            <span class="op">/</span> <span class="ident">SPEED_OF_LIGHT_IN_VACUUM</span>;
 
                         <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>()) {
                             <span class="kw">if</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>()) {
@@ -464,6 +498,9 @@
         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">dist_trav_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">effective_dist</span>;
         <span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">travel</span>(<span class="ident">effective_dist</span>);
         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">abs_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">phot</span>.<span class="ident">weight</span>() <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">abs_coeff</span>() <span class="op">*</span> <span class="ident">dist</span>;
+        <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">shifts_mut</span>() <span class="op">+</span><span class="op">=</span>
+            (<span class="ident">phot</span>.<span class="ident">weight</span>() <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">ref_index</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">scat_coeff</span>() <span class="op">*</span> <span class="ident">dist</span>)
+                <span class="op">/</span> <span class="ident">SPEED_OF_LIGHT_IN_VACUUM</span>;
 
         <span class="kw-2">*</span><span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">dir_mut</span>() <span class="op">=</span> <span class="kw-2">*</span><span class="ident">crossing</span>.<span class="ident">ref_dir</span>();
     } <span class="kw">else</span> {
@@ -471,6 +508,9 @@
         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">dist_trav_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">effective_dist</span>;
         <span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">travel</span>(<span class="ident">effective_dist</span>);
         <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">abs_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">phot</span>.<span class="ident">weight</span>() <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">abs_coeff</span>() <span class="op">*</span> <span class="ident">dist</span>;
+        <span class="kw-2">*</span><span class="ident">cr</span>.<span class="ident">rec_mut</span>().<span class="ident">shifts_mut</span>() <span class="op">+</span><span class="op">=</span>
+            (<span class="ident">phot</span>.<span class="ident">weight</span>() <span class="op">*</span> <span class="ident">phot</span>.<span class="ident">power</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">ref_index</span>() <span class="op">*</span> <span class="ident">env</span>.<span class="ident">scat_coeff</span>() <span class="op">*</span> <span class="ident">dist</span>)
+                <span class="op">/</span> <span class="ident">SPEED_OF_LIGHT_IN_VACUUM</span>;
 
         <span class="kw-2">*</span><span class="ident">phot</span>.<span class="ident">ray_mut</span>().<span class="ident">dir_mut</span>() <span class="op">=</span> <span class="ident">crossing</span>
             .<span class="ident">trans_dir</span>()

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CellRec","Store a reference to a cell and its corresponding light-map record."]]});

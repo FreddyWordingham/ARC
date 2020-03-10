@@ -17,7 +17,7 @@ pub struct Photon {
 
 impl Photon {
     clone!(weight, weight_mut, f64);
-    clone!(wavelength, f64);
+    clone!(wavelength, wavelength_mut, f64);
     clone!(power, f64);
     access!(ray, ray_mut, Ray);
 

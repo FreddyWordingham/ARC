@@ -2,17 +2,17 @@
     "optics": {
         "ref_index": {
             "Constant": {
-                "c": 1.38
+                "c": 1.0
             }
         },
         "scat_coeff": {
             "Constant": {
-                "c": 30.0e3,
+                "c": 2350.0,
             }
         },
         "abs_coeff": {
             "Constant": {
-                "c": 0.140e3,
+                "c": 4.0,
             }
         },
         "shift_coeff": {
@@ -22,7 +22,7 @@
         },
         "asym": {
             "Constant": {
-                "c": 0.95
+                "c": 0.63
             }
         }
     },

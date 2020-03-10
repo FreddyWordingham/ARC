@@ -1,7 +1,7 @@
 {
     "mesh": "tumour",
     "trans": {
-        "scale": 0.5e-3,
+        "scale": 1.0e-3,
         "trans": [
             0.0,
             0.0,

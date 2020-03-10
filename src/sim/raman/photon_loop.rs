@@ -4,7 +4,7 @@ use crate::{
     geom::Trace,
     list::Cartesian::{X, Y, Z},
     math::distribution,
-    ord::{MatSet, SurfSet},
+    ord::{MatKey, MatSet, SurfSet},
     phys::{Crossing, Environment, Photon},
     sim::raman::{Cell, CellRec, Grid, Hit, LightMap},
     util::ParProgressBar,
@@ -52,12 +52,13 @@ pub fn run_thread(
         //println!("Start and end: {}, {}", start, end);
         //println!("total: {}", total);
         while total > 0 {
-            let mut shifted = false;
-            let mut phot =
-            if let Some(phot) = extra_phot {
+            let _shifted = false;
+            let mut mat = None;
+            let mut phot = if let Some(phot) = extra_phot {
                 total += 1;
                 extra_phot = None;
-                //println!("From Raman: {}", phot.ray().pos());
+                //println!("new phot!");
+                mat = Some(MatKey::new("ptfe"));
                 phot
             } else {
                 total -= 1;
@@ -73,12 +74,16 @@ pub fn run_thread(
             let mut cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
             *cr.rec_mut().emis_mut() += phot.weight();
 
-            let mut env = mats.get(cr.cell().mat()).optics().env(phot.wavelength());
+            let mut env = if let Some(mat) = mat {
+                mats.get(&mat).optics().env(phot.wavelength())
+            } else {
+                mats.get(cr.cell().mat()).optics().env(phot.wavelength())
+            };
 
             let mut num_loops = 0;
             loop {
                 debug_assert!(phot.weight() > 0.0);
-
+                env = mats.get(cr.cell().mat()).optics().env(phot.wavelength());
                 num_loops += 1;
                 if num_loops >= MAX_LOOPS {
                     warn!(
@@ -108,6 +113,10 @@ pub fn run_thread(
                     Hit::Scattering(dist) => {
                         *cr.rec_mut().dist_trav_mut() += dist;
                         phot.ray_mut().travel(dist);
+                        if shifted == true {
+                            //println!("Abs coeff: {}", env.abs_coeff());
+                        };
+
                         *cr.rec_mut().abs_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
 
@@ -121,14 +130,16 @@ pub fn run_thread(
                         *cr.rec_mut().abs_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
                         *phot.weight_mut() *= env.albedo();
+                        let enhanced_prob = 500.0 * env.shift_prob();
 
-                        if !shifted && rng.gen_range(0.0, 1.0) <= 0.005{
+                        if !shifted && rng.gen_range(0.0, 1.0) <= enhanced_prob {
                             let mut reweight = phot.clone();
-                            *phot.weight_mut() *= env.shift_prob()/0.005;
+                            *phot.weight_mut() *= env.shift_prob() / enhanced_prob;
                             *reweight.weight_mut() *= 1.0 - env.shift_prob();
                             extra_phot = Some(reweight);
                             *cr.rec_mut().shifts_mut() += phot.weight();
                             *cr.rec_mut().ram_laser_mut() += 1.0;
+                            *phot.wavelength_mut() = 884.0e-9;
                             shifted = true;
                             //println!("Ramanised!: {}", phot.ray().pos());
                         }
@@ -292,9 +303,9 @@ pub fn peel_off(
 
     let cos_ang = phot.ray().dir().dot(&dir);
     let mut prob = phot.weight() * 0.5 * ((1.0 - g2) / (1.0 + g2 - (2.0 * g * cos_ang)).powf(1.5));
-    //if prob < 0.01 {
-    //    return None;
-    //}
+    if prob < 0.00001 {
+        return None;
+    }
 
     *phot.ray_mut().dir_mut() = dir;
     let mut cell = get_cell(phot.ray().pos(), &grid);

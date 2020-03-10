@@ -60,6 +60,7 @@ ALIASES["proc"] = {};
 ALIASES["proc_macro2"] = {};
 ALIASES["quick_error"] = {};
 ALIASES["quote"] = {};
+ALIASES["raman"] = {};
 ALIASES["rand"] = {};
 ALIASES["rand_chacha"] = {};
 ALIASES["rand_core"] = {};

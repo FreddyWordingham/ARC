@@ -11,6 +11,7 @@ use crate::{
 };
 use log::warn;
 use nalgebra::Point3;
+use physical_constants::SPEED_OF_LIGHT_IN_VACUUM;
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 use std::{
     f64::{consts::PI, MIN_POSITIVE},
@@ -24,6 +25,7 @@ const MAX_LOOPS: u64 = 1_000_000;
 const ROULETTE: f64 = 0.1;
 
 /// Run a single threaded instance of the photon loop.
+#[allow(clippy::too_many_lines)]
 #[inline]
 #[must_use]
 pub fn run_thread(
@@ -93,6 +95,12 @@ pub fn run_thread(
                         phot.ray_mut().travel(dist);
                         *cr.rec_mut().abs_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
+                        *cr.rec_mut().shifts_mut() += (phot.weight()
+                            * phot.power()
+                            * env.ref_index()
+                            * env.scat_coeff()
+                            * dist)
+                            / SPEED_OF_LIGHT_IN_VACUUM;
 
                         *cr.rec_mut().scats_mut() += phot.weight();
                         phot.ray_mut().rotate(
@@ -116,6 +124,12 @@ pub fn run_thread(
                         phot.ray_mut().travel(dist);
                         *cr.rec_mut().abs_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
+                        *cr.rec_mut().shifts_mut() += (phot.weight()
+                            * phot.power()
+                            * env.ref_index()
+                            * env.scat_coeff()
+                            * dist)
+                            / SPEED_OF_LIGHT_IN_VACUUM;
 
                         if !grid.bound().contains(phot.ray().pos()) {
                             if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
@@ -223,6 +237,9 @@ fn hit_interface(
         *cr.rec_mut().dist_trav_mut() += effective_dist;
         phot.ray_mut().travel(effective_dist);
         *cr.rec_mut().abs_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
+        *cr.rec_mut().shifts_mut() +=
+            (phot.weight() * phot.power() * env.ref_index() * env.scat_coeff() * dist)
+                / SPEED_OF_LIGHT_IN_VACUUM;
 
         *phot.ray_mut().dir_mut() = *crossing.ref_dir();
     } else {
@@ -230,6 +247,9 @@ fn hit_interface(
         *cr.rec_mut().dist_trav_mut() += effective_dist;
         phot.ray_mut().travel(effective_dist);
         *cr.rec_mut().abs_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
+        *cr.rec_mut().shifts_mut() +=
+            (phot.weight() * phot.power() * env.ref_index() * env.scat_coeff() * dist)
+                / SPEED_OF_LIGHT_IN_VACUUM;
 
         *phot.ray_mut().dir_mut() = crossing
             .trans_dir()
