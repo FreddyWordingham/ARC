@@ -73,7 +73,7 @@ pub fn main() {
         info!("Constructing grid...");
         let diff_grid = diff::Grid::new(
             params.res,
-            params.bound.clone(),
+            params.bound,
             verse.inters(),
             verse.regions(),
             verse.surfs(),
@@ -122,7 +122,8 @@ pub fn main() {
 
     let udens_index = verse.specs().index_of_key(&SpecKey::new("udens"));
     for (cs, abs_dens) in concs.iter_mut().zip(&lm.abs_dens()) {
-        *cs.get_mut(udens_index).expect("Invalid index.") += abs_dens / 186470120150714370.0;
+        *cs.get_mut(udens_index).expect("Invalid index.") += abs_dens / 186_470_120_150_714_370.0;
+        // Jesus what a gross number - consider replacing with a named constant?
     }
 
     // for (i, key) in verse.specs().map().keys().enumerate() {

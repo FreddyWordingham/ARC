@@ -161,8 +161,7 @@ impl<'a> Grid<'a> {
                 let z = cell_size.z * index[2] as f64;
 
                 let mins = bound.mins() + Vector3::new(x, y, z);
-                let maxs = mins + cell_size;
-                let cell_bound = Aabb::new(mins, maxs);
+                let cell_bound = Aabb::new(mins, mins + cell_size);
 
                 let p = cell_bound.centre();
 

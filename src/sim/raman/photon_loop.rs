@@ -25,6 +25,7 @@ const MAX_LOOPS: u64 = 1_000_000;
 const ROULETTE: f64 = 0.1;
 
 /// Run a single threaded instance of the photon loop.
+#[allow(clippy::too_many_lines)]
 #[inline]
 #[must_use]
 pub fn run_thread(
@@ -52,7 +53,6 @@ pub fn run_thread(
         //println!("Start and end: {}, {}", start, end);
         //println!("total: {}", total);
         while total > 0 {
-            let _shifted = false;
             let mut mat = None;
             let mut phot = if let Some(phot) = extra_phot {
                 total += 1;
@@ -76,6 +76,8 @@ pub fn run_thread(
             let mut cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
             *cr.rec_mut().emis_mut() += phot.weight();
 
+            #[allow(unused_assignments)]
+            // This is here to supress a warning. I think it's a bug though so check it. - Freddy
             let mut env = if let Some(mat) = mat {
                 mats.get(&mat).optics().env(phot.wavelength())
             } else {
@@ -115,9 +117,7 @@ pub fn run_thread(
                     Hit::Scattering(dist) => {
                         *cr.rec_mut().dist_trav_mut() += dist;
                         phot.ray_mut().travel(dist);
-                        if shifted == true {
-                            //println!("Abs coeff: {}", env.abs_coeff());
-                        };
+                        // if shifted { println!("Abs coeff: {}", env.abs_coeff()); };
 
                         *cr.rec_mut().abs_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
@@ -152,8 +152,8 @@ pub fn run_thread(
                             *cr.rec_mut().det_raman_mut() += peel_off(
                                 phot.clone(),
                                 env.clone(),
-                                &grid,
-                                &mats,
+                                grid,
+                                mats,
                                 &Point3::new(0.0129, 0.0, 0.0),
                                 bump_dist,
                             )
@@ -218,7 +218,7 @@ pub fn run_thread(
 }
 
 /// Create a periodic-xy boundary condition for the photons.
-fn periodic_xy(phot: &mut Photon, mins: &Point3<f64>, maxs: &Point3<f64>) -> bool {
+fn _periodic_xy(phot: &mut Photon, mins: &Point3<f64>, maxs: &Point3<f64>) -> bool {
     let p = phot.ray_mut().pos_mut();
     let w = maxs - mins;
 
@@ -293,6 +293,8 @@ fn hit_interface(
 }
 
 /// Perform a peel off event.
+#[inline]
+#[must_use]
 pub fn peel_off(
     mut phot: Photon,
     mut env: Environment,
@@ -320,7 +322,10 @@ pub fn peel_off(
         //    return None;
         //}
 
-        let cell_dist = cell.bound().dist(phot.ray()).unwrap();
+        let cell_dist = cell
+            .bound()
+            .dist(phot.ray())
+            .expect("Unable to determine cell distance.");
         let inter_dist = cell.inter_dist_inside_norm_inter(phot.ray());
 
         if let Some((dist, inside, _norm, inter)) = inter_dist {
@@ -363,6 +368,8 @@ pub fn peel_off(
 }
 
 ///Get a cell reference
+#[inline]
+#[must_use]
 pub fn get_cell<'a>(pos: &Point3<f64>, grid: &'a &Grid) -> &'a Cell<'a> {
     let mins = grid.bound().mins();
     let maxs = grid.bound().maxs();

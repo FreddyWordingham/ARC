@@ -131,10 +131,10 @@ pub fn run_thread(
                             * dist)
                             / SPEED_OF_LIGHT_IN_VACUUM;
 
-                        if !grid.bound().contains(phot.ray().pos()) {
-                            if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
-                                break;
-                            }
+                        if !grid.bound().contains(phot.ray().pos())
+                            && !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
+                        {
+                            break;
                         }
 
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
@@ -146,11 +146,10 @@ pub fn run_thread(
 
                         if !cr.cell().bound().contains(phot.ray().pos()) {
                             // TODO: This should be able to be removed.
-                            if !grid.bound().contains(phot.ray().pos()) {
-                                if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
-                                {
-                                    break;
-                                }
+                            if !grid.bound().contains(phot.ray().pos())
+                                && !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
+                            {
+                                break;
                             }
 
                             // warn!("Interface crossing caused cell crossing!");
@@ -162,10 +161,10 @@ pub fn run_thread(
                             mats, bump_dist, &mut rng, &mut phot, &mut cr, &mut env, dist,
                         );
 
-                        if !grid.bound().contains(phot.ray().pos()) {
-                            if !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs()) {
-                                break;
-                            }
+                        if !grid.bound().contains(phot.ray().pos())
+                            && !periodic_xy(&mut phot, grid.bound().mins(), grid.bound().maxs())
+                        {
+                            break;
                         }
 
                         cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
