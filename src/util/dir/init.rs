@@ -28,15 +28,23 @@ pub fn io_dirs(input: Option<PathBuf>, output: Option<PathBuf>) -> (PathBuf, Pat
 }
 
 /// Initialise the current working directory.
+#[inline]
 #[must_use]
 fn input_dir(dir: &PathBuf) -> PathBuf {
-    set_current_dir(dir).expect("Unable to set the current working directory.");
+    set_current_dir(dir).unwrap_or_else(|_| {
+        panic!(
+            "Unable to set the current working directory to: {}.",
+            dir.display()
+        )
+    });
     current_dir().expect("Unable to determine the current working directory.")
 }
 
 /// Create an output directory.
+#[inline]
 #[must_use]
 fn output_dir(dir: &PathBuf) -> PathBuf {
-    create_dir_all(dir).expect("Unable to create output directory.");
+    create_dir_all(dir)
+        .unwrap_or_else(|_| panic!("Unable to create output directory: {}", dir.display()));
     dir.to_path_buf()
 }
