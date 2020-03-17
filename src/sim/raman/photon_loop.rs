@@ -77,7 +77,7 @@ pub fn run_thread(
             *cr.rec_mut().emis_mut() += phot.weight();
 
             #[allow(unused_assignments)]
-            // This is here to supress a warning. I think it's a bug though so check it. - Freddy
+            // This is here to suppress a warning. I think it's a bug though so check it. - Freddy
             let mut env = if let Some(mat) = mat {
                 mats.get(&mat).optics().env(phot.wavelength())
             } else {

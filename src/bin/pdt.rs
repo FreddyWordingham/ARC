@@ -1,15 +1,22 @@
 //! Photo-dynamic therapy simulation.
 
 use arc::{
-    args, report,
-    util::{banner, exec, init},
+    args,
+    data::Histogram,
+    file::{Load, Save},
+    report,
+    util::{banner, exec, init, ProgressBar},
 };
 use attr::form;
 use log::info;
+use rand::{thread_rng, Rng};
 
 #[form]
 struct Parameters {
+    min: f64,
+    max: f64,
     num_bins: f64,
+    num_samples: f64,
 }
 
 fn main() {
@@ -27,5 +34,28 @@ fn main() {
     report!(out_dir.display(), "output directory");
     report!(params_path.display(), "parameters path");
 
-    info!("Hello world!");
+    banner::section("Loading");
+    info!("Loading parameters file...");
+    let params = Parameters::load(&params_path);
+
+    banner::section("Overview");
+    let min = params.min;
+    let max = params.max;
+    let num_samples = params.num_samples as u64;
+    let num_bins = params.num_bins as u64;
+    info!("Range             : {}\t{}", min, max);
+    info!("Number of bins    : {}", num_bins);
+    info!("Number of samples : {}", num_samples);
+
+    banner::section("Simulation");
+    let mut rng = thread_rng();
+    let mut hist = Histogram::new(min, max, num_bins);
+    let mut bar = ProgressBar::new("Sampling", num_samples);
+    for _ in 0..num_samples {
+        bar.tick();
+        hist.collect(rng.gen());
+    }
+
+    banner::section("Output");
+    hist.save(&out_dir.join("hist.csv"));
 }
