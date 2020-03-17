@@ -1,6 +1,27 @@
 {
-    "min": 60.0,
-    "max": 140.0,
-    "num_bins": 10e2,
-    "num_samples": 1e6,
+    "light": "led",
+    "num_phot": 1e6,
+    "res": [
+        51,
+        51,
+        51
+    ],
+    "bound": {
+        "mins": [
+            -5.0e-3,
+            -5.0e-3,
+            -8.0e-3
+        ],
+        "maxs": [
+            5.0e-3,
+            5.0e-3,
+            2.0e-3
+        ]
+    },
+    "verse": {
+        "inters": [],
+        "reacts": [],
+        "lights": [],
+        "regions": []
+    }
 }
