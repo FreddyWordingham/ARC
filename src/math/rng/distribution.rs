@@ -30,3 +30,10 @@ pub fn normal(rng: &mut ThreadRng) -> f64 {
 
     a * theta.cos()
 }
+
+/// Sample a gaussian distribution.
+#[inline]
+#[must_use]
+pub fn gaussian(rng: &mut ThreadRng, mu: f64, sigma: f64) -> f64 {
+    (normal(rng) * sigma) + mu
+}

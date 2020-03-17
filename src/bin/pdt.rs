@@ -55,7 +55,7 @@ fn main() {
         bar.tick();
 
         // let x = rng.gen();
-        let x = arc::math::distribution::normal(&mut rng);
+        let x = arc::math::distribution::gaussian(&mut rng, 100.0, 15.0);
         hist.try_collect(x);
     }
 
