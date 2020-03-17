@@ -9,7 +9,7 @@ use arc::{
 };
 use attr::form;
 use log::info;
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
 
 #[form]
 struct Parameters {
@@ -53,7 +53,10 @@ fn main() {
     let mut bar = ProgressBar::new("Sampling", num_samples);
     for _ in 0..num_samples {
         bar.tick();
-        hist.collect(rng.gen());
+
+        // let x = rng.gen();
+        let x = arc::math::distribution::normal(&mut rng);
+        hist.try_collect(x);
     }
 
     banner::section("Output");
