@@ -19,10 +19,4 @@ implementors["serde_json"] = [{"text":"impl <a class=\"trait\" href=\"https://do
 implementors["syn"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"struct\" href=\"syn/struct.Error.html\" title=\"struct syn::Error\">Error</a>","synthetic":false,"types":["syn::error::Error"]}];
 implementors["termcolor"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"struct\" href=\"termcolor/struct.ParseColorError.html\" title=\"struct termcolor::ParseColorError\">ParseColorError</a>","synthetic":false,"types":["termcolor::ParseColorError"]}];
 implementors["ucd_trie"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"ucd_trie/enum.Error.html\" title=\"enum ucd_trie::Error\">Error</a>","synthetic":false,"types":["ucd_trie::owned::Error"]}];
-
-            if (window.register_implementors) {
-                window.register_implementors(implementors);
-            } else {
-                window.pending_implementors = implementors;
-            }
-        })()
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
