@@ -1,0 +1,5 @@
+{
+    "surf": "tumour/6_DBND",
+    "in_mat": "tumour",
+    "out_mat": "deep_blood_net_dermis"
+}

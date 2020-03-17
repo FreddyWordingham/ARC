@@ -1,0 +1,5 @@
+{
+    "surf": "tumour/4_UBND",
+    "in_mat": "tumour",
+    "out_mat": "upper_blood_net_dermis"
+}

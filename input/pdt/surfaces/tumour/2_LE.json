@@ -1,0 +1,6 @@
+{
+    "mesh": "tumour/2_LE",
+    "trans": {
+        "scale": 1.0e-3
+    }
+}
