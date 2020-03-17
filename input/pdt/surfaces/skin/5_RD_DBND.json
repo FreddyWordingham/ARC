@@ -1,5 +1,5 @@
 {
-    "mesh": "tumour/5_RD_DBND",
+    "mesh": "skin/5_RD_DBND",
     "trans": {
         "scale": 1.0e-3,
     }

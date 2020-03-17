@@ -2,9 +2,9 @@
     "light": "led",
     "num_phot": 1e6,
     "res": [
-        51,
-        51,
-        51
+        101,
+        101,
+        101
     ],
     "bound": {
         "mins": [
@@ -30,7 +30,14 @@
             "tumour/4_UBND",
             "tumour/5_RD",
             "tumour/6_DBND",
-            "tumour/7_SF"
+            "tumour/7_SF",
+            "skin/0_air_SC",
+            "skin/1_SC_LE",
+            "skin/2_LE_PD",
+            "skin/3_PD_UBND",
+            "skin/4_UBND_RD",
+            "skin/5_RD_DBND",
+            "skin/6_DBND_SF"
         ]
     }
 }

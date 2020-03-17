@@ -1,5 +1,5 @@
 {
-    "mesh": "tumour/3_PD_UBND",
+    "mesh": "skin/3_PD_UBND",
     "trans": {
         "scale": 1.0e-3,
     }
