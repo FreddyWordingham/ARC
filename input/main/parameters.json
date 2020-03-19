@@ -2,9 +2,9 @@
     "light": "led",
     "num_phot": 1e6,
     "res": [
-        101,
-        101,
-        101
+        51,
+        51,
+        51
     ],
     "bound": {
         "mins": [
@@ -21,12 +21,12 @@
     "verse": {
         "inters": [
             "stratum_corneum",
-            "living_epidermis",
-            "papillary_dermis",
-            "upper_blood_net_dermis",
-            "reticular_dermis",
-            "deep_blood_net_dermis",
-            "subcutaneous_fat",
+            // "living_epidermis",
+            // "papillary_dermis",
+            // "upper_blood_net_dermis",
+            // "reticular_dermis",
+            // "deep_blood_net_dermis",
+            // "subcutaneous_fat",
             "tumour",
         ],
         "reacts": [

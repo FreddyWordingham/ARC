@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["henyey_greenstein","Sample the Henyey-Greenstein phase function with a given asymmetry parameter."]]});
+initSidebarItems({"fn":[["gaussian","Sample a gaussian distribution."],["henyey_greenstein","Sample the Henyey-Greenstein phase function with a given asymmetry parameter."],["normal","Sample the normal distribution."]]});

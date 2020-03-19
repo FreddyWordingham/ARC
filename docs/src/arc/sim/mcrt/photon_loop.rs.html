@@ -257,7 +257,6 @@
 <span id="257">257</span>
 <span id="258">258</span>
 <span id="259">259</span>
-<span id="260">260</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Core MCRT photon loop function.</span>
 
@@ -392,10 +391,10 @@
                             <span class="op">*</span> <span class="ident">dist</span>)
                             <span class="op">/</span> <span class="ident">SPEED_OF_LIGHT_IN_VACUUM</span>;
 
-                        <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>()) {
-                            <span class="kw">if</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>()) {
-                                <span class="kw">break</span>;
-                            }
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>())
+                            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>())
+                        {
+                            <span class="kw">break</span>;
                         }
 
                         <span class="ident">cr</span> <span class="op">=</span> <span class="ident">CellRec</span>::<span class="ident">new</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>(), <span class="ident">grid</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">lm</span>);
@@ -407,11 +406,10 @@
 
                         <span class="kw">if</span> <span class="op">!</span><span class="ident">cr</span>.<span class="ident">cell</span>().<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>()) {
                             <span class="comment">// TODO: This should be able to be removed.</span>
-                            <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>()) {
-                                <span class="kw">if</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>())
-                                {
-                                    <span class="kw">break</span>;
-                                }
+                            <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>())
+                                <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>())
+                            {
+                                <span class="kw">break</span>;
                             }
 
                             <span class="comment">// warn!(&quot;Interface crossing caused cell crossing!&quot;);</span>
@@ -423,10 +421,10 @@
                             <span class="ident">mats</span>, <span class="ident">bump_dist</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cr</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">env</span>, <span class="ident">dist</span>,
                         );
 
-                        <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>()) {
-                            <span class="kw">if</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>()) {
-                                <span class="kw">break</span>;
-                            }
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">contains</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>())
+                            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">periodic_xy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">phot</span>, <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">mins</span>(), <span class="ident">grid</span>.<span class="ident">bound</span>().<span class="ident">maxs</span>())
+                        {
+                            <span class="kw">break</span>;
                         }
 
                         <span class="ident">cr</span> <span class="op">=</span> <span class="ident">CellRec</span>::<span class="ident">new</span>(<span class="ident">phot</span>.<span class="ident">ray</span>().<span class="ident">pos</span>(), <span class="ident">grid</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">lm</span>);

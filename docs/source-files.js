@@ -50,6 +50,7 @@ sourcesIndex["num_integer"] = {"name":"","files":["lib.rs","roots.rs"]};
 sourcesIndex["num_rational"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["num_traits"] = {"name":"","dirs":[{"name":"ops","files":["checked.rs","inv.rs","mod.rs","mul_add.rs","saturating.rs","wrapping.rs"]}],"files":["bounds.rs","cast.rs","float.rs","identities.rs","int.rs","lib.rs","macros.rs","pow.rs","real.rs","sign.rs"]};
 sourcesIndex["number_prefix"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["pdt"] = {"name":"","files":["pdt.rs"]};
 sourcesIndex["pest"] = {"name":"","dirs":[{"name":"iterators","files":["flat_pairs.rs","mod.rs","pair.rs","pairs.rs","queueable_token.rs","tokens.rs"]},{"name":"unicode","files":["binary.rs","category.rs","mod.rs"]}],"files":["error.rs","lib.rs","macros.rs","parser.rs","parser_state.rs","position.rs","prec_climber.rs","span.rs","stack.rs","token.rs"]};
 sourcesIndex["pest_derive"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["pest_generator"] = {"name":"","files":["generator.rs","lib.rs","macros.rs"]};

@@ -50,6 +50,7 @@ ALIASES["num_integer"] = {};
 ALIASES["num_rational"] = {};
 ALIASES["num_traits"] = {};
 ALIASES["number_prefix"] = {};
+ALIASES["pdt"] = {};
 ALIASES["pest"] = {};
 ALIASES["pest_derive"] = {};
 ALIASES["pest_generator"] = {};

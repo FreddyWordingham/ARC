@@ -188,11 +188,6 @@
 <span id="188">188</span>
 <span id="189">189</span>
 <span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Stencil-type enumeration.</span>
 
@@ -366,13 +361,8 @@
                 <span class="ident">next_y</span>,
                 <span class="ident">prev_z</span>,
                 <span class="ident">next_z</span>,
-            } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">coeff</span>
-                    <span class="op">*</span> (((<span class="ident">next_x</span> <span class="op">-</span> <span class="ident">c2</span> <span class="op">+</span> <span class="ident">prev_x</span>) <span class="op">/</span> <span class="ident">cell_size</span>.<span class="ident">x</span>.<span class="ident">powi</span>(<span class="number">2</span>))
-                        <span class="op">+</span> ((<span class="ident">next_y</span> <span class="op">-</span> <span class="ident">c2</span> <span class="op">+</span> <span class="ident">prev_y</span>) <span class="op">/</span> <span class="ident">cell_size</span>.<span class="ident">y</span>.<span class="ident">powi</span>(<span class="number">2</span>))
-                        <span class="op">+</span> ((<span class="ident">next_z</span> <span class="op">-</span> <span class="ident">c2</span> <span class="op">+</span> <span class="ident">prev_z</span>) <span class="op">/</span> <span class="ident">cell_size</span>.<span class="ident">z</span>.<span class="ident">powi</span>(<span class="number">2</span>)))
             }
-            <span class="self">Self</span>::<span class="ident">PeriodicXY</span> {
+            <span class="op">|</span> <span class="self">Self</span>::<span class="ident">PeriodicXY</span> {
                 <span class="ident">c2</span>,
                 <span class="ident">prev_x</span>,
                 <span class="ident">next_x</span>,

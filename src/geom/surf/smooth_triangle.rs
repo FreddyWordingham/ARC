@@ -49,11 +49,13 @@ impl SmoothTriangle {
     #[must_use]
     #[allow(clippy::too_many_lines)]
     pub fn load_list(path: &Path) -> Vec<Self> {
-        let vertex_lines: Vec<_> = BufReader::new(File::open(path).expect("Unable to open file!"))
-            .lines()
-            .map(Result::unwrap)
-            .filter(|line| line.starts_with("v "))
-            .collect();
+        let vertex_lines: Vec<_> = BufReader::new(
+            File::open(path).unwrap_or_else(|_| panic!("Unable to open file: {}", path.display())),
+        )
+        .lines()
+        .map(Result::unwrap)
+        .filter(|line| line.starts_with("v "))
+        .collect();
 
         let mut verts = Vec::with_capacity(vertex_lines.len());
         for line in vertex_lines {

@@ -33,6 +33,8 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Settings implementation.</span>
 
@@ -56,6 +58,8 @@
     <span class="macro">clone</span><span class="macro">!</span>(<span class="ident">min_timestep</span>, <span class="ident">f64</span>);
 
     <span class="doccomment">/// Construct a new instance.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">time</span>: <span class="ident">f64</span>, <span class="ident">max_conc_frac_delta</span>: <span class="ident">f64</span>, <span class="ident">min_timestep</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">time</span> <span class="op">&gt;</span> <span class="number">0.0</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">max_conc_frac_delta</span> <span class="op">&gt;</span> <span class="number">0.0</span>);
