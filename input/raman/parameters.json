@@ -1,10 +1,10 @@
 {
-    "num_threads": 32,
+    "num_threads": 1,
     "num_phot": 1e6,
     "res": [
-        61,
-        61,
-        61
+        41,
+        41,
+        41
     ],
     "light": "laser",
     "bound":
