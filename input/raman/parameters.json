@@ -1,6 +1,6 @@
 {
     "num_threads": 1,
-    "num_phot": 1e6,
+    "num_phot": 1e7,
     "res": [
         41,
         41,

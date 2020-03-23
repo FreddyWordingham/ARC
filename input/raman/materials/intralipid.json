@@ -1,33 +1,44 @@
 {
     "reaction_multiplier": 1.0,
-    "optics": {
-        "ref_index": {
-            "Constant": {
+    "optics":
+    {
+        "ref_index":
+        {
+            "Constant":
+            {
                 "c": 1.47
             }
         },
-        "scat_coeff": {
-            "Bifurcation": {
-                "t": 850.0e-9,
-                "a": 685.0,
-                "b": 590.0
+        "scat_coeff":
+        {
+            "Bifurcation":
+            {
+                "t": 8.5e-07,
+                "a": 1200.0,
+                "b": 1150.0
             }
         },
-        "abs_coeff": {
-            "Bifurcation": {
-                "t": 850.0e-9,
+        "abs_coeff":
+        {
+            "Bifurcation":
+            {
+                "t": 8.5e-07,
                 "a": 3.0,
                 "b": 6.0
             }
         },
-        "shift_coeff": {
-            "Constant": {
+        "shift_coeff":
+        {
+            "Constant":
+            {
                 "c": 0.0
             }
         },
-        "asym": {
-            "Bifurcation": {
-                "t": 850.0e-9,
+        "asym":
+        {
+            "Bifurcation":
+            {
+                "t": 8.5e-07,
                 "a": 0.67,
                 "b": 0.64
             }

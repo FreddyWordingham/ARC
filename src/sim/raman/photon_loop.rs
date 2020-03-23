@@ -53,10 +53,7 @@ pub fn run_thread(
         //println!("Start and end: {}, {}", start, end);
         //println!("total: {}", total);
         while total > 0 {
-<<<<<<< Updated upstream
-=======
             let mut _shifted = false;
->>>>>>> Stashed changes
             let mut mat = None;
             let mut phot = if let Some(phot) = extra_phot {
                 total += 1;
@@ -117,13 +114,9 @@ pub fn run_thread(
                     Hit::Scattering(dist) => {
                         *cr.rec_mut().dist_trav_mut() += dist;
                         phot.ray_mut().travel(dist);
-<<<<<<< Updated upstream
-                        // if shifted { println!("Abs coeff: {}", env.abs_coeff()); };
-=======
                         //if shifted == true {
                             //println!("Abs coeff: {}", env.abs_coeff());
                         //};
->>>>>>> Stashed changes
 
                         *cr.rec_mut().abs_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
@@ -209,34 +202,6 @@ pub fn run_thread(
     lm
 }
 
-<<<<<<< Updated upstream
-/// Create a periodic-xy boundary condition for the photons.
-fn _periodic_xy(phot: &mut Photon, mins: &Point3<f64>, maxs: &Point3<f64>) -> bool {
-    let p = phot.ray_mut().pos_mut();
-    let w = maxs - mins;
-
-    if p.z < mins.z || p.z > maxs.z {
-        return false;
-    }
-
-    while p.x < mins.x {
-        p.x += w.x;
-    }
-    while p.x > maxs.x {
-        p.x -= w.x;
-    }
-
-    while p.y < mins.y {
-        p.y += w.y;
-    }
-    while p.y > maxs.y {
-        p.y -= w.y;
-    }
-
-    true
-}
-=======
->>>>>>> Stashed changes
 
 /// Perform an interface hit event.
 #[inline]
