@@ -2,12 +2,17 @@
 
 use arc::{
     args,
-    file::Load,
+    data::Histogram,
+    file::{Load, Save},
     report,
+    util::ParProgressBar,
     util::{banner, exec, init},
 };
 use attr::form;
 use log::info;
+use rand::thread_rng;
+use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
 
 #[form]
 struct Parameters {
@@ -36,6 +41,33 @@ fn main() {
     report!(samples);
 
     banner::section("Simulation");
+    // let data = run_thread(samples);
+
+    let pb = ParProgressBar::new("Sampling", samples);
+    let pb = Arc::new(Mutex::new(pb));
+    let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
+
+    let mut hists: Vec<_> = thread_ids
+        .par_iter()
+        .map(|_| run_thread(&Arc::clone(&pb)))
+        .collect();
+    pb.lock()
+        .expect("Could not lock progress bar.")
+        .finish_with_message("Complete.");
+
+    let mut data = hists.pop().expect("Did not receive any histogram data.");
+    for hist in hists {
+        data += hist;
+    }
 
     banner::section("Output");
+    data.save(&out_dir.join("counts.csv"));
+}
+
+fn run_thread(pb: &Arc<Mutex<ParProgressBar>>) -> Histogram {
+    let _rng = thread_rng();
+
+    let hist = Histogram::new(0.0, 1.0, 100);
+
+    hist
 }
