@@ -49,7 +49,7 @@ fn main() {
 
     let mut hists: Vec<_> = thread_ids
         .par_iter()
-        .map(|_| run_thread(&Arc::clone(&pb)))
+        .map(|_| run_thread(&Arc::clone(&pb), 1000))
         .collect();
     pb.lock()
         .expect("Could not lock progress bar.")
@@ -64,14 +64,21 @@ fn main() {
     data.save(&out_dir.join("counts.csv"));
 }
 
-fn run_thread(pb: &Arc<Mutex<ParProgressBar>>) -> Histogram {
+fn run_thread(pb: &Arc<Mutex<ParProgressBar>>, block_size: u64) -> Histogram {
     let mut rng = thread_rng();
     let mut hist = Histogram::new(0.0, 1.0, 100);
 
-    for _ in 0..100 {
-        let x = rng.gen();
+    while let Some((start, end)) = {
+        let mut pb = pb.lock().expect("Could not lock progress bar.");
+        let b = pb.block(block_size);
+        std::mem::drop(pb);
+        b
+    } {
+        for _ in start..end {
+            let x = rng.gen();
 
-        hist.collect(x);
+            hist.collect(x);
+        }
     }
 
     hist
