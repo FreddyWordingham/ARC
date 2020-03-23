@@ -18,6 +18,9 @@ use std::sync::{Arc, Mutex};
 struct Parameters {
     samples: f64,
     block_size: f64,
+    min: f64,
+    max: f64,
+    num_bins: f64,
 }
 
 fn main() {
@@ -42,6 +45,12 @@ fn main() {
     report!(samples);
     let block_size = params.block_size as u64;
     report!(block_size);
+    let min = params.min;
+    report!(min);
+    let max = params.max;
+    report!(max);
+    let num_bins = params.num_bins as u64;
+    report!(num_bins);
 
     banner::section("Simulation");
     // let data = run_thread(samples);
@@ -52,7 +61,7 @@ fn main() {
 
     let mut hists: Vec<_> = thread_ids
         .par_iter()
-        .map(|_| run_thread(&Arc::clone(&pb), block_size))
+        .map(|_| run_thread(&Arc::clone(&pb), block_size, min, max, num_bins))
         .collect();
     pb.lock()
         .expect("Could not lock progress bar.")
@@ -67,9 +76,15 @@ fn main() {
     data.save(&out_dir.join("counts.csv"));
 }
 
-fn run_thread(pb: &Arc<Mutex<ParProgressBar>>, block_size: u64) -> Histogram {
+fn run_thread(
+    pb: &Arc<Mutex<ParProgressBar>>,
+    block_size: u64,
+    min: f64,
+    max: f64,
+    num_bins: u64,
+) -> Histogram {
     let mut rng = thread_rng();
-    let mut hist = Histogram::new(0.0, 1.0, 100);
+    let mut hist = Histogram::new(min, max, num_bins);
 
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");

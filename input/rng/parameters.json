@@ -1,4 +1,7 @@
 {
     "samples": 1e6,
-    "block_size": 1e3
+    "block_size": 1e3,
+    "min": -1.0,
+    "max": 2.0,
+    "num_bins": 300
 }
