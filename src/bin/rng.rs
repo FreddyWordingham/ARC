@@ -10,7 +10,7 @@ use arc::{
 };
 use attr::form;
 use log::info;
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 
@@ -93,7 +93,9 @@ fn run_thread(
         b
     } {
         for _ in start..end {
-            let x = rng.gen();
+            // let x = rng.gen();
+            let x =
+                arc::math::distribution::henyey_greenstein(&mut rng, 0.5) / std::f64::consts::PI;
 
             hist.collect(x);
         }
