@@ -10,7 +10,7 @@ use arc::{
 };
 use attr::form;
 use log::info;
-use rand::thread_rng;
+use rand::{thread_rng, Rng};
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 
@@ -57,7 +57,7 @@ fn main() {
 
     let mut data = hists.pop().expect("Did not receive any histogram data.");
     for hist in hists {
-        data += hist;
+        data += &hist;
     }
 
     banner::section("Output");
@@ -65,9 +65,14 @@ fn main() {
 }
 
 fn run_thread(pb: &Arc<Mutex<ParProgressBar>>) -> Histogram {
-    let _rng = thread_rng();
+    let mut rng = thread_rng();
+    let mut hist = Histogram::new(0.0, 1.0, 100);
 
-    let hist = Histogram::new(0.0, 1.0, 100);
+    for _ in 0..100 {
+        let x = rng.gen();
+
+        hist.collect(x);
+    }
 
     hist
 }

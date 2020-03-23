@@ -6,7 +6,7 @@ use crate::{
     math::{Binner, Range},
 };
 use ndarray::Array1;
-use std::{fs::File, io::Write, path::Path};
+use std::{fs::File, io::Write, ops::AddAssign, path::Path};
 
 /// Static range, constant bin width, Histogram.
 pub struct Histogram {
@@ -66,6 +66,16 @@ impl Histogram {
         if let Some(index) = self.binner.try_bin(x) {
             *self.counts.get_mut(index).expect("Invalid index.") += weight;
         }
+    }
+}
+
+impl AddAssign<&Self> for Histogram {
+    #[inline]
+    fn add_assign(&mut self, rhs: &Self) {
+        debug_assert!(self.binner == rhs.binner);
+        debug_assert!(self.counts.len() == rhs.counts.len());
+
+        self.counts += &rhs.counts;
     }
 }
 
