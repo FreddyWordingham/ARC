@@ -17,6 +17,7 @@ use std::sync::{Arc, Mutex};
 #[form]
 struct Parameters {
     samples: f64,
+    block_size: f64,
 }
 
 fn main() {
@@ -39,6 +40,8 @@ fn main() {
     let params = Parameters::load(&params_path);
     let samples = params.samples as u64;
     report!(samples);
+    let block_size = params.block_size as u64;
+    report!(block_size);
 
     banner::section("Simulation");
     // let data = run_thread(samples);
@@ -49,7 +52,7 @@ fn main() {
 
     let mut hists: Vec<_> = thread_ids
         .par_iter()
-        .map(|_| run_thread(&Arc::clone(&pb), 1000))
+        .map(|_| run_thread(&Arc::clone(&pb), block_size))
         .collect();
     pb.lock()
         .expect("Could not lock progress bar.")
