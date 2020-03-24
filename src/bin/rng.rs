@@ -2,16 +2,25 @@
 
 use arc::{
     args,
-    file::Load,
+    data::Histogram,
+    file::{Load, Save},
     report,
+    util::ParProgressBar,
     util::{banner, exec, init},
 };
 use attr::form;
 use log::info;
+use rand::thread_rng;
+use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
 
 #[form]
 struct Parameters {
     samples: f64,
+    block_size: f64,
+    min: f64,
+    max: f64,
+    num_bins: f64,
 }
 
 fn main() {
@@ -34,8 +43,63 @@ fn main() {
     let params = Parameters::load(&params_path);
     let samples = params.samples as u64;
     report!(samples);
+    let block_size = params.block_size as u64;
+    report!(block_size);
+    let min = params.min;
+    report!(min);
+    let max = params.max;
+    report!(max);
+    let num_bins = params.num_bins as u64;
+    report!(num_bins);
 
     banner::section("Simulation");
+    // let data = run_thread(samples);
+
+    let pb = ParProgressBar::new("Sampling", samples);
+    let pb = Arc::new(Mutex::new(pb));
+    let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
+
+    let mut hists: Vec<_> = thread_ids
+        .par_iter()
+        .map(|_| run_thread(&Arc::clone(&pb), block_size, min, max, num_bins))
+        .collect();
+    pb.lock()
+        .expect("Could not lock progress bar.")
+        .finish_with_message("Complete.");
+
+    let mut data = hists.pop().expect("Did not receive any histogram data.");
+    for hist in hists {
+        data += &hist;
+    }
 
     banner::section("Output");
+    data.save(&out_dir.join("counts.csv"));
+}
+
+fn run_thread(
+    pb: &Arc<Mutex<ParProgressBar>>,
+    block_size: u64,
+    min: f64,
+    max: f64,
+    num_bins: u64,
+) -> Histogram {
+    let mut rng = thread_rng();
+    let mut hist = Histogram::new(min, max, num_bins);
+
+    while let Some((start, end)) = {
+        let mut pb = pb.lock().expect("Could not lock progress bar.");
+        let b = pb.block(block_size);
+        std::mem::drop(pb);
+        b
+    } {
+        for _ in start..end {
+            // let x = rng.gen();
+            let x =
+                arc::math::distribution::henyey_greenstein(&mut rng, 0.5) / std::f64::consts::PI;
+
+            hist.collect(x);
+        }
+    }
+
+    hist
 }

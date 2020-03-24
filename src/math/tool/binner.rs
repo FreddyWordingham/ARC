@@ -3,7 +3,7 @@
 use crate::{clone, math::Range};
 
 /// One-dimensional binning structure.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Binner {
     /// Range.
     range: Range,

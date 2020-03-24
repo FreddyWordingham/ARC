@@ -6,9 +6,9 @@ use ndarray::Array1;
 /// Mathematical multivariate formulae accepting an array of scalar arguments.
 #[json]
 pub enum Multivariate {
-    /// Sum
+    /// Sum.
     Sum,
-    /// Constant
+    /// Constant.
     Constant {
         /// Constant value.
         c: f64,

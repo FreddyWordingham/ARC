@@ -4,7 +4,7 @@ use crate::clone;
 use std::f64::{INFINITY, NEG_INFINITY};
 
 /// One-dimensional inclusive Range.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Range {
     /// Minimum bound.
     min: f64,
