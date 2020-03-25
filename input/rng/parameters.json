@@ -5,9 +5,9 @@
     "max": 2.0,
     "num_bins": 300,
     "pdf": {
-        "Uniform": {
-            "min": 0.5,
-            "max": 1.5
+        "Gaussian": {
+            "ave": 0.5,
+            "var": 0.25
         }
     }
 }

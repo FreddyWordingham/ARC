@@ -1,5 +1,6 @@
 //! Probability distribution implementation.
 
+use crate::math::distribution;
 use attr::json;
 use rand::{rngs::ThreadRng, Rng};
 
@@ -19,6 +20,13 @@ pub enum Probability {
         /// Maximum value.
         max: f64,
     },
+    /// Gaussian distribution.
+    Gaussian {
+        /// Average value.
+        mu: f64,
+        /// Variance.
+        sigma: f64,
+    },
 }
 
 impl Probability {
@@ -37,6 +45,14 @@ impl Probability {
         Self::Uniform { min, max }
     }
 
+    /// Construct a new gaussian instance.
+    #[inline]
+    #[must_use]
+    pub fn new_gaussian(mu: f64, sigma: f64) -> Self {
+        debug_assert!(sigma > 0.0);
+        Self::Gaussian { mu, sigma }
+    }
+
     /// Generate a random number from the described distribution.
     #[inline]
     #[must_use]
@@ -44,6 +60,7 @@ impl Probability {
         match self {
             Self::Point { c } => *c,
             Self::Uniform { min, max } => rng.gen_range(*min, *max),
+            Self::Gaussian { mu, sigma } => distribution::gaussian(rng, *mu, *sigma),
         }
     }
 }

@@ -18,6 +18,13 @@ pub enum Probability {
         /// Maximum value.
         max: f64,
     },
+    /// Gaussian distribution.
+    Gaussian {
+        /// Average value.
+        ave: f64,
+        /// Variance.
+        var: f64,
+    },
 }
 
 impl Probability {
@@ -28,6 +35,7 @@ impl Probability {
         match self {
             Self::Point { c } => RngProb::new_point(*c),
             Self::Uniform { min, max } => RngProb::new_uniform(*min, *max),
+            Self::Gaussian { ave, var } => RngProb::new_gaussian(*ave, *var),
         }
     }
 }

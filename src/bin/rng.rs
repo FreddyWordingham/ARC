@@ -105,7 +105,7 @@ fn run_thread(
             let x = pdf.gen(&mut rng);
             // arc::math::distribution::henyey_greenstein(&mut rng, 0.5) / std::f64::consts::PI;
 
-            hist.collect(x);
+            hist.try_collect(x);
         }
     }
 
