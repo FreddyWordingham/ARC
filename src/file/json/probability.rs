@@ -11,6 +11,13 @@ pub enum Probability {
         /// Constant value.
         c: f64,
     },
+    /// Uniform range.
+    Uniform {
+        /// Minimum value.
+        min: f64,
+        /// Maximum value.
+        max: f64,
+    },
 }
 
 impl Probability {
@@ -20,6 +27,7 @@ impl Probability {
     pub fn build(&self) -> RngProb {
         match self {
             Self::Point { c } => RngProb::new_point(*c),
+            Self::Uniform { min, max } => RngProb::new_uniform(*min, *max),
         }
     }
 }
