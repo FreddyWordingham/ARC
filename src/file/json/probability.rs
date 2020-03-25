@@ -14,10 +14,12 @@ pub enum Probability {
 }
 
 impl Probability {
-    /// Construct a new point instance.
+    /// Build a random number generator probability distribution.
     #[inline]
     #[must_use]
-    pub fn new_point(c: f64) -> Self {
-        Self::Point { c }
+    pub fn build(&self) -> crate::math::rng::Probability {
+        match self {
+            Self::Point { c } => crate::math::rng::Probability::new_point(*c),
+        }
     }
 }
