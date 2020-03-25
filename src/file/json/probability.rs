@@ -1,7 +1,7 @@
 //! Probability distribution implementation.
 
+use crate::math::rng::Probability as RngProb;
 use attr::json;
-// use ndarray::Array1;
 
 /// Probability distribution formulae.
 #[json]
@@ -17,9 +17,9 @@ impl Probability {
     /// Build a random number generator probability distribution.
     #[inline]
     #[must_use]
-    pub fn build(&self) -> crate::math::rng::Probability {
+    pub fn build(&self) -> RngProb {
         match self {
-            Self::Point { c } => crate::math::rng::Probability::new_point(*c),
+            Self::Point { c } => RngProb::new_point(*c),
         }
     }
 }

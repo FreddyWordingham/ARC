@@ -6,6 +6,7 @@ use rand::rngs::ThreadRng;
 
 /// Probability distribution formulae.
 #[json]
+#[derive(Clone)]
 pub enum Probability {
     /// Point.
     Point {
