@@ -1,7 +1,7 @@
 //! Probability distribution implementation.
 
+use crate::math::rng::Probability as RngProb;
 use attr::json;
-// use ndarray::Array1;
 
 /// Probability distribution formulae.
 #[json]
@@ -11,13 +11,31 @@ pub enum Probability {
         /// Constant value.
         c: f64,
     },
+    /// Uniform range.
+    Uniform {
+        /// Minimum value.
+        min: f64,
+        /// Maximum value.
+        max: f64,
+    },
+    /// Gaussian distribution.
+    Gaussian {
+        /// Average value.
+        ave: f64,
+        /// Variance.
+        var: f64,
+    },
 }
 
 impl Probability {
-    /// Construct a new point instance.
+    /// Build a random number generator probability distribution.
     #[inline]
     #[must_use]
-    pub fn new_point(c: f64) -> Self {
-        Self::Point { c }
+    pub fn build(&self) -> RngProb {
+        match self {
+            Self::Point { c } => RngProb::new_point(*c),
+            Self::Uniform { min, max } => RngProb::new_uniform(*min, *max),
+            Self::Gaussian { ave, var } => RngProb::new_gaussian(*ave, *var),
+        }
     }
 }

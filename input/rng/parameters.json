@@ -3,5 +3,11 @@
     "block_size": 1e3,
     "min": -1.0,
     "max": 2.0,
-    "num_bins": 300
+    "num_bins": 300,
+    "pdf": {
+        "Gaussian": {
+            "ave": 0.5,
+            "var": 0.25
+        }
+    }
 }
