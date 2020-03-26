@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-for y in `seq 900 50 1200`
+for y in `seq 900 10 1200`
     do
         touch output/raman/Ramans.txt
         python scripts/raman/adjust_scatt.py $y
