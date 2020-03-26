@@ -2,6 +2,7 @@
 
 use crate::math::rng::Probability as RngProb;
 use attr::json;
+use ndarray::Array1;
 
 /// Probability distribution formulae.
 #[json]
@@ -10,6 +11,11 @@ pub enum Probability {
     Point {
         /// Constant value.
         c: f64,
+    },
+    /// Points.
+    Points {
+        /// Possible values.
+        cs: Vec<f64>,
     },
     /// Uniform range.
     Uniform {
@@ -25,17 +31,26 @@ pub enum Probability {
         /// Variance.
         var: f64,
     },
+    /// Linear distribution.
+    Linear {
+        /// Gradient.
+        m: f64,
+        /// Constant.
+        c: f64,
+    },
 }
 
 impl Probability {
     /// Build a random number generator probability distribution.
     #[inline]
     #[must_use]
-    pub fn build(&self) -> RngProb {
+    pub fn build(self) -> RngProb {
         match self {
-            Self::Point { c } => RngProb::new_point(*c),
-            Self::Uniform { min, max } => RngProb::new_uniform(*min, *max),
-            Self::Gaussian { ave, var } => RngProb::new_gaussian(*ave, *var),
+            Self::Point { c } => RngProb::new_point(c),
+            Self::Points { cs } => RngProb::new_points(Array1::from(cs)),
+            Self::Uniform { min, max } => RngProb::new_uniform(min, max),
+            Self::Gaussian { ave, var } => RngProb::new_gaussian(ave, var),
+            Self::Linear { m, c } => RngProb::new_linear(m, c),
         }
     }
 }

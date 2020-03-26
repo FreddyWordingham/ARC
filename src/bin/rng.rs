@@ -37,6 +37,11 @@ fn main() {
     report!(out_dir.display(), "output directory");
     report!(params_path.display(), "parameters path");
 
+    // arc::file::json::Probability::Points {
+    //     cs: ndarray::Array1::from_vec(vec![0.0, 0.5, 1.5]),
+    // }
+    // .save(&out_dir.join("points.json"));
+
     banner::section("Loading");
     info!("Loading parameters file...");
     let params = Parameters::load(&params_path);
