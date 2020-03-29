@@ -1,3 +1,19 @@
 {
-    "samples": 1e6
+    "samples": 1e6,
+    "entities": [
+        "path",
+        "sides"
+    ],
+    "camera": {
+        "pos": [
+            0.0,
+            0.0,
+            3.0
+        ],
+        "tar": [
+            10.0,
+            0.0,
+            1.5
+        ]
+    }
 }
