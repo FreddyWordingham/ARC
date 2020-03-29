@@ -105,8 +105,7 @@ impl Probability {
             Self::Point { c } => *c,
             Self::Points { cs } => *cs.get(rng.gen_range(0, cs.len())).expect("Invalid index."),
             Self::WeightedPoints { cs: _, ws: _ } => {
-                panic!("Unfinished!");
-                1.0
+                unimplemented!();
             }
             Self::Uniform { min, max } => rng.gen_range(*min, *max),
             Self::Gaussian { mu, sigma } => distribution::gaussian(rng, *mu, *sigma),
