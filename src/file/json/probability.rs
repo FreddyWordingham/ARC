@@ -17,6 +17,13 @@ pub enum Probability {
         /// Possible values.
         cs: Vec<f64>,
     },
+    /// Weighted points.
+    WeightedPoints {
+        /// Possible values.
+        cs: Vec<f64>,
+        /// Relative weightings values.
+        ws: Vec<f64>,
+    },
     /// Uniform range.
     Uniform {
         /// Minimum value.
@@ -48,6 +55,9 @@ impl Probability {
         match self {
             Self::Point { c } => RngProb::new_point(c),
             Self::Points { cs } => RngProb::new_points(Array1::from(cs)),
+            Self::WeightedPoints { cs, ws } => {
+                RngProb::new_weighted_points(Array1::from(cs), Array1::from(ws))
+            }
             Self::Uniform { min, max } => RngProb::new_uniform(min, max),
             Self::Gaussian { ave, var } => RngProb::new_gaussian(ave, var),
             Self::Linear { m, c } => RngProb::new_linear(m, c),
