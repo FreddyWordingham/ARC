@@ -1,22 +1,32 @@
 {
     "camera": {
         "pos": [
-            2.0,
-            2.0,
-            2.0
+            0.0,
+            0.0,
+            3.0
         ],
         "tar": [
+            -1.0,
             0.0,
-            0.0,
-            0.0
+            3.0
         ],
-        "fov": 45.0,
+        "fov": 90.0,
         "res": [
-            4096,
-            4096
+            2000,
+            2000
         ]
     },
     "entities": [
-        "cube"
+        "path",
+        "fjmw",
+        "klm",
+        "dog",
+        "sides",
+        "floor",
+        "trees",
+        "lamps",
+        "hills",
+        "leaves",
+        "windows",
     ],
 }

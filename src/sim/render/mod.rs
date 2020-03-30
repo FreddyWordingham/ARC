@@ -10,10 +10,14 @@ use crate::{
     util::ParProgressBar,
 };
 use log::warn;
+use nalgebra::{Unit, Vector3};
 use ndarray::Array2;
 use num_cpus;
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
+
+/// Distance to travel away from surfaces.
+const BUMP_DIST: f64 = 0.001;
 
 /// Perform a rendering simulation.
 #[inline]
@@ -22,18 +26,10 @@ pub fn run(cam: &Camera, ents: &MeshSet) -> Vec<(MeshKey, Array2<f64>)> {
     let pb = ParProgressBar::new("Imaging Loop", cam.num_pix() as u64);
     let pb = Arc::new(Mutex::new(pb));
     let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
-    // let thread_ids: Vec<usize> = vec![0];
 
     let num_pix = cam.num_pix();
 
-    let mut prime_stack = vec![
-        (MeshKey::new("road"), Array2::zeros(cam.res())),
-        (MeshKey::new("sides"), Array2::zeros(cam.res())),
-        (MeshKey::new("trees"), Array2::zeros(cam.res())),
-        (MeshKey::new("beans"), Array2::zeros(cam.res())),
-    ];
-
-    let stacks: Vec<_> = thread_ids
+    let mut stacks: Vec<_> = thread_ids
         .par_iter()
         .map(|id| {
             run_thread(
@@ -42,7 +38,6 @@ pub fn run(cam: &Camera, ents: &MeshSet) -> Vec<(MeshKey, Array2<f64>)> {
                 ents,
                 &Arc::clone(&pb),
                 ((num_pix / num_cpus::get()) / 100).max(10),
-                prime_stack.clone(),
             )
         })
         .collect();
@@ -50,6 +45,7 @@ pub fn run(cam: &Camera, ents: &MeshSet) -> Vec<(MeshKey, Array2<f64>)> {
         .expect("Could not lock progress bar.")
         .finish_with_message("Render complete.");
 
+    let mut prime_stack = stacks.pop().expect("Did not receive any images.");
     for stack in stacks {
         for ((prime_key, prime_img), (stack_key, stack_img)) in
             prime_stack.iter_mut().zip(stack.iter())
@@ -71,9 +67,13 @@ fn run_thread(
     ents: &MeshSet,
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: usize,
-    mut stack: Vec<(MeshKey, Array2<f64>)>,
 ) -> Vec<(MeshKey, Array2<f64>)> {
-    let road = &mut stack.get_mut(0).expect("Invalid image index.").1;
+    let mut people = Array2::zeros(cam.res());
+    let mut floor = Array2::zeros(cam.res());
+    let mut path = Array2::zeros(cam.res());
+    let mut trees = Array2::zeros(cam.res());
+    let mut leaves = Array2::zeros(cam.res());
+    let mut hills = Array2::zeros(cam.res());
 
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
@@ -87,17 +87,35 @@ fn run_thread(
 
             let mut ray = cam.gen_ray(xi, yi);
 
-            while let Some((key, dist)) = scan(ents, &ray) {
-                ray.travel(dist);
-
+            while let Some((key, dist, norm)) = scan(ents, &ray) {
                 match key.str() {
-                    "road" | "path" | "sides" => {
-                        *road.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
+                    "fjmw" | "klm" | "dog" => {
+                        *people.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         break;
                     }
-                    "cube" => {
-                        *road.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
+                    "floor" => {
+                        *floor.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         break;
+                    }
+                    "hills" | "sides" => {
+                        *hills.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        break;
+                    }
+                    "leaves" => {
+                        *leaves.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        break;
+                    }
+                    "trees" | "lamps" => {
+                        *trees.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        break;
+                    }
+                    "windows" | "path" => {
+                        ray.travel(dist);
+                        let inc = ray.dir().clone();
+                        *ray.dir_mut() = Unit::new_normalize(
+                            inc.into_inner() - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
+                        );
+                        ray.travel(BUMP_DIST);
                     }
                     _ => {
                         warn!("Do not know how to handle {}.", key);
@@ -108,21 +126,28 @@ fn run_thread(
         }
     }
 
-    stack
+    vec![
+        (MeshKey::new("people"), people),
+        (MeshKey::new("floor"), floor),
+        (MeshKey::new("path"), path),
+        (MeshKey::new("trees"), trees),
+        (MeshKey::new("leaves"), leaves),
+        (MeshKey::new("hills"), hills),
+    ]
 }
 
 /// Scan for what the ray will hit.
-fn scan<'a>(ents: &'a MeshSet, ray: &Ray) -> Option<(&'a MeshKey, f64)> {
+fn scan<'a>(ents: &'a MeshSet, ray: &Ray) -> Option<(&'a MeshKey, f64, Unit<Vector3<f64>>)> {
     let mut hit = None;
 
     for (key, mesh) in ents.map() {
-        if let Some(dist) = mesh.dist(ray) {
-            if let Some((_, d)) = hit {
+        if let Some((dist, norm)) = mesh.dist_norm(ray) {
+            if let Some((_, d, _)) = hit {
                 if dist < d {
-                    hit = Some((key, dist));
+                    hit = Some((key, dist, norm));
                 }
             } else {
-                hit = Some((key, dist));
+                hit = Some((key, dist, norm));
             }
         }
     }
