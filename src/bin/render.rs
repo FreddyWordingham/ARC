@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::{Camera as FileCamera, Load},
+    file::{Camera as FileCamera, Load, Save},
     ord::{key::MeshKey, MeshSet},
     report,
     util::{banner, exec, init},
@@ -41,8 +41,9 @@ fn main() {
     let stack = arc::sim::render::run(&cam);
 
     banner::section("Saving");
-    for (key, _img) in stack {
+    for (key, img) in stack {
         let path = &out_dir.join(format!("{}.nc", key));
-        report!(path.display());
+        info!("Saving {}", path.display());
+        img.save(path);
     }
 }

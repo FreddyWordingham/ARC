@@ -4,9 +4,7 @@ pub mod camera;
 
 pub use self::camera::*;
 
-use crate::ord::MeshKey;
-use crate::report;
-use crate::util::ParProgressBar;
+use crate::{ord::MeshKey, util::ParProgressBar};
 use ndarray::Array2;
 use num_cpus;
 use rayon::prelude::*;
@@ -22,7 +20,13 @@ pub fn run(cam: &Camera) -> Vec<(MeshKey, Array2<f64>)> {
 
     let num_pix = cam.num_pix();
 
-    let imgs: Vec<_> = thread_ids
+    let mut prime_stack = vec![
+        (MeshKey::new("road"), Array2::zeros(cam.res())),
+        (MeshKey::new("sides"), Array2::zeros(cam.res())),
+        (MeshKey::new("trees"), Array2::zeros(cam.res())),
+    ];
+
+    let stacks: Vec<_> = thread_ids
         .par_iter()
         .map(|id| {
             run_thread(
@@ -30,26 +34,36 @@ pub fn run(cam: &Camera) -> Vec<(MeshKey, Array2<f64>)> {
                 cam,
                 &Arc::clone(&pb),
                 (num_pix / num_cpus::get()) / 100,
+                prime_stack.clone(),
             )
         })
         .collect();
-    // pb.lock()
-    //     .expect("Could not lock progress bar.")
-    //     .finish_with_message("Complete.");
+    pb.lock()
+        .expect("Could not lock progress bar.")
+        .finish_with_message("Render complete.");
 
-    vec![]
+    for stack in stacks {
+        for ((prime_key, prime_img), (stack_key, stack_img)) in
+            prime_stack.iter_mut().zip(stack.iter())
+        {
+            debug_assert!(prime_key == stack_key);
+            *prime_img += stack_img;
+        }
+    }
+
+    prime_stack
 }
 
+/// Render using a single thread.
+#[inline]
+#[must_use]
 fn run_thread(
-    id: usize,
+    _id: usize,
     cam: &Camera,
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: usize,
+    stack: Vec<(MeshKey, Array2<f64>)>,
 ) -> Vec<(MeshKey, Array2<f64>)> {
-    report!(id);
-
-    let stack = vec![];
-
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
         let b = pb.block(block_size as u64);
