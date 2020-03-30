@@ -35,10 +35,10 @@ fn main() {
     let params = Parameters::load(&params_path);
     let cam = params.camera.build();
     report!(cam.num_pix());
-    let _ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
+    let ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
 
     banner::section("Rendering");
-    let stack = arc::sim::render::run(&cam);
+    let stack = arc::sim::render::run(&cam, &ents);
 
     banner::section("Saving");
     for (key, img) in stack {
