@@ -3,6 +3,7 @@
 use arc::{
     args,
     file::{Camera as FileCamera, Load},
+    ord::{key::MeshKey, MeshSet},
     report,
     util::{banner, exec, init},
 };
@@ -12,7 +13,7 @@ use log::info;
 #[form]
 struct Parameters {
     camera: FileCamera,
-    entities: Vec<String>,
+    entities: Vec<MeshKey>,
 }
 
 fn main() {
@@ -34,8 +35,5 @@ fn main() {
     let params = Parameters::load(&params_path);
     let cam = params.camera.build();
     report!(cam.num_pix());
-    let ents = params.entities;
-    for ent in ents {
-        info!("Entity: {}", ent);
-    }
+    let _ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
 }
