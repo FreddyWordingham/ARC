@@ -24,6 +24,7 @@ pub fn run(cam: &Camera) -> Vec<(MeshKey, Array2<f64>)> {
         (MeshKey::new("road"), Array2::zeros(cam.res())),
         (MeshKey::new("sides"), Array2::zeros(cam.res())),
         (MeshKey::new("trees"), Array2::zeros(cam.res())),
+        (MeshKey::new("beans"), Array2::zeros(cam.res())),
     ];
 
     let stacks: Vec<_> = thread_ids
@@ -58,12 +59,14 @@ pub fn run(cam: &Camera) -> Vec<(MeshKey, Array2<f64>)> {
 #[inline]
 #[must_use]
 fn run_thread(
-    _id: usize,
+    id: usize,
     cam: &Camera,
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: usize,
-    stack: Vec<(MeshKey, Array2<f64>)>,
+    mut stack: Vec<(MeshKey, Array2<f64>)>,
 ) -> Vec<(MeshKey, Array2<f64>)> {
+    let road = &mut stack.get_mut(0).expect("Invalid image index.").1;
+
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
         let b = pb.block(block_size as u64);
@@ -75,6 +78,8 @@ fn run_thread(
             let yi = n as usize / cam.res().0;
 
             let _ray = cam.gen_ray(xi, yi);
+
+            *road.get_mut((xi, yi)).expect("Invalid pixel index.") += id as f64;
         }
     }
 
