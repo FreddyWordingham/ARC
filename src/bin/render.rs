@@ -38,7 +38,11 @@ fn main() {
     let _ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
 
     banner::section("Rendering");
-    let stack = arc::sim::render::run();
+    let stack = arc::sim::render::run(&cam);
 
     banner::section("Saving");
+    for (key, _img) in stack {
+        let path = &out_dir.join(format!("{}.nc", key));
+        report!(path.display());
+    }
 }
