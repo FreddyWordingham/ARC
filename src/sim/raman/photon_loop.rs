@@ -93,13 +93,13 @@ pub fn run_thread(
                     );
                 }
 
-                 if phot.weight() < ROULETTE {
-                     if rng.gen_range(0.0_f64, 1.0) <= ROULETTE {
-                     *phot.weight_mut() /= ROULETTE;
-                     } else {
-                         break;
-                     }
-                 }
+                if phot.weight() < ROULETTE {
+                    if rng.gen_range(0.0_f64, 1.0) <= ROULETTE {
+                        *phot.weight_mut() /= ROULETTE;
+                    } else {
+                        break;
+                    }
+                }
 
                 let scat_dist = -(rng.gen_range(0.0_f64, 1.0)).ln() / env.inter_coeff();
 
@@ -115,7 +115,7 @@ pub fn run_thread(
                         *cr.rec_mut().dist_trav_mut() += dist;
                         phot.ray_mut().travel(dist);
                         //if shifted == true {
-                            //println!("Abs coeff: {}", env.abs_coeff());
+                        //println!("Abs coeff: {}", env.abs_coeff());
                         //};
 
                         *cr.rec_mut().abs_mut() +=
@@ -141,7 +141,10 @@ pub fn run_thread(
                             *cr.rec_mut().ram_laser_mut() += 1.0;
                             *phot.wavelength_mut() = 884.0e-9;
                             _shifted = true;
-                            env = mats.get(&MatKey::new("ptfe")).optics().env(phot.wavelength());
+                            env = mats
+                                .get(&MatKey::new("ptfe"))
+                                .optics()
+                                .env(phot.wavelength());
                             //println!("Ramanised!: {}", phot.ray().pos());
                         }
                         if _shifted {
@@ -201,7 +204,6 @@ pub fn run_thread(
 
     lm
 }
-
 
 /// Perform an interface hit event.
 #[inline]

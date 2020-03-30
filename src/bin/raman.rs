@@ -13,8 +13,10 @@ use arc::{
 use attr::form;
 use colog;
 use log::info;
-use std::io::{BufWriter, Write};
-use std::path::PathBuf;
+use std::{
+    io::{BufWriter, Write},
+    path::PathBuf,
+};
 
 #[form]
 struct Parameters {
