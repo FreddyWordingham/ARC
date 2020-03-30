@@ -12,6 +12,7 @@ use log::info;
 #[form]
 struct Parameters {
     camera: FileCamera,
+    entities: Vec<String>,
 }
 
 fn main() {
@@ -33,4 +34,8 @@ fn main() {
     let params = Parameters::load(&params_path);
     let cam = params.camera.build();
     report!(cam.num_pix());
+    let ents = params.entities;
+    for ent in ents {
+        info!("Entity: {}", ent);
+    }
 }
