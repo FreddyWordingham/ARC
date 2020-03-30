@@ -36,4 +36,9 @@ fn main() {
     let cam = params.camera.build();
     report!(cam.num_pix());
     let _ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
+
+    banner::section("Rendering");
+    let stack = arc::sim::render::run();
+
+    banner::section("Saving");
 }
