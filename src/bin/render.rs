@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::Load,
+    file::{Camera as FileCamera, Load},
     report,
     util::{banner, exec, init},
 };
@@ -11,7 +11,7 @@ use log::info;
 
 #[form]
 struct Parameters {
-    samples: f64,
+    camera: FileCamera,
 }
 
 fn main() {
@@ -31,6 +31,6 @@ fn main() {
     banner::section("Loading");
     info!("Loading parameters file...");
     let params = Parameters::load(&params_path);
-    let samples = params.samples as u64;
-    report!(samples);
+    let cam = params.camera.build();
+    report!(cam.num_pix());
 }
