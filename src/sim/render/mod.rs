@@ -21,8 +21,8 @@ use std::sync::{Arc, Mutex};
 pub fn run(cam: &Camera, ents: &MeshSet) -> Vec<(MeshKey, Array2<f64>)> {
     let pb = ParProgressBar::new("Imaging Loop", cam.num_pix() as u64);
     let pb = Arc::new(Mutex::new(pb));
-    // let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
-    let thread_ids: Vec<usize> = vec![0];
+    let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
+    // let thread_ids: Vec<usize> = vec![0];
 
     let num_pix = cam.num_pix();
 
