@@ -104,7 +104,10 @@ fn run_thread(
                     if let Some((dist, norm, group)) = cell.observe(&ray) {
                         match group {
                             0 => {
-                                *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                                *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                    norm.dot(&nalgebra::Vector3::y_axis());
+                                // *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+
                                 break 'outer;
                             }
                             1 => {
