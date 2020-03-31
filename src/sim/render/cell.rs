@@ -5,19 +5,6 @@ use crate::geom::{Aabb, Mesh, SmoothTriangle};
 use crate::sim::render::Group;
 use nalgebra::Point3;
 
-// macro_rules! children {
-//     () => {
-//         nnn: Box<Cell<'a>>,
-//         pnn: Box<Cell<'a>>,
-//         npn: Box<Cell<'a>>,
-//         ppn: Box<Cell<'a>>,
-//         nnp: Box<Cell<'a>>,
-//         pnp: Box<Cell<'a>>,
-//         npp: Box<Cell<'a>>,
-//         ppp: Box<Cell<'a>>,
-//     };
-// }
-
 /// Grid cell enumeration.
 ///
 ///         6npp   7ppp
@@ -31,26 +18,14 @@ pub enum Cell<'a> {
         /// Boundary.
         boundary: Aabb,
         /// Children.
-        nnn: Box<Cell<'a>>,
-        pnn: Box<Cell<'a>>,
-        npn: Box<Cell<'a>>,
-        ppn: Box<Cell<'a>>,
-        nnp: Box<Cell<'a>>,
-        pnp: Box<Cell<'a>>,
-        npp: Box<Cell<'a>>,
-        ppp: Box<Cell<'a>>,
+        children: [Box<Cell<'a>>; 8],
     },
     /// Branching cell.
     Branch {
+        /// Boundary.
+        boundary: Aabb,
         /// Children.
-        nnn: Box<Cell<'a>>,
-        pnn: Box<Cell<'a>>,
-        npn: Box<Cell<'a>>,
-        ppn: Box<Cell<'a>>,
-        nnp: Box<Cell<'a>>,
-        pnp: Box<Cell<'a>>,
-        npp: Box<Cell<'a>>,
-        ppp: Box<Cell<'a>>,
+        children: [Box<Cell<'a>>; 8],
     },
     /// Terminal populated cell.
     Leaf {
@@ -70,13 +45,7 @@ impl<'a> Cell<'a> {
     /// Construct a new root cell.
     #[inline]
     #[must_use]
-    pub fn new_root(
-        min_depth: usize,
-        max_depth: usize,
-        tar_tris: usize,
-        meshes: &'a [(Mesh, Group)],
-    ) -> Self {
-        debug_assert!(min_depth <= max_depth);
+    pub fn new_root(max_depth: usize, tar_tris: usize, meshes: &'a [(Mesh, Group)]) -> Self {
         debug_assert!(tar_tris > 1);
 
         let boundary = Self::init_boundary(meshes);
@@ -90,90 +59,9 @@ impl<'a> Cell<'a> {
             }
         }
 
-        let mins = boundary.mins();
-        let min_x = mins.x;
-        let min_y = mins.y;
-        let min_z = mins.z;
+        let children = Self::init_children(0, max_depth, tar_tris, &boundary, &tris);
 
-        let center = boundary.centre();
-        let cen_x = center.x;
-        let cen_y = center.y;
-        let cen_z = center.z;
-
-        let hws = boundary.half_widths();
-        let hw_x = hws.x;
-        let hw_y = hws.y;
-        let hw_z = hws.z;
-
-        let nnn = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x, min_y, min_z),
-                Point3::new(min_x + hw_x, min_y + hw_y, min_z + hw_z),
-            ),
-            &tris,
-        ));
-        let pnn = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x + hw_x, min_y, min_z),
-                Point3::new(cen_z + hw_x, min_y + hw_y, min_z + hw_z),
-            ),
-            &tris,
-        ));
-        let npn = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x, min_y + hw_x, min_z),
-                Point3::new(min_x + hw_x, cen_y + hw_y, min_z + hw_z),
-            ),
-            &tris,
-        ));
-        let ppn = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x + hw_y, min_y + hw_x, min_z),
-                Point3::new(cen_x + hw_x, cen_y + hw_y, min_z + hw_z),
-            ),
-            &tris,
-        ));
-
-        let nnp = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x, min_y, min_z + hw_z),
-                Point3::new(min_x + hw_x, min_y + hw_y, cen_z + hw_z),
-            ),
-            &tris,
-        ));
-        let pnp = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x + hw_x, min_y, min_z + hw_z),
-                Point3::new(cen_z + hw_x, min_y + hw_y, min_z + hw_z),
-            ),
-            &tris,
-        ));
-        let npp = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x, min_y + hw_x, min_z + hw_z),
-                Point3::new(min_x + hw_x, cen_y + hw_y, cen_z + hw_z),
-            ),
-            &tris,
-        ));
-        let ppp = Box::new(Self::init_child(
-            Aabb::new(
-                Point3::new(min_x + hw_y, min_y + hw_x, min_z + hw_z),
-                Point3::new(cen_x + hw_x, cen_y + hw_y, cen_z + hw_z),
-            ),
-            &tris,
-        ));
-
-        Self::Root {
-            boundary,
-            nnn,
-            pnn,
-            npn,
-            ppn,
-            nnp,
-            pnp,
-            npp,
-            ppp,
-        }
+        Self::Root { boundary, children }
     }
 
     /// Initialise the boundary of the root cell.
@@ -206,14 +94,133 @@ impl<'a> Cell<'a> {
         Aabb::new(grid_mins, grid_maxs)
     }
 
+    /// Initialise the children for a parent cell.
+    #[inline]
+    #[must_use]
+    fn init_children(
+        parent_depth: usize,
+        max_depth: usize,
+        tar_tris: usize,
+        parent_boundary: &Aabb,
+        potential_tris: &[(&'a SmoothTriangle, Group)],
+    ) -> [Box<Cell<'a>>; 8] {
+        let mins = parent_boundary.mins();
+        let min_x = mins.x;
+        let min_y = mins.y;
+        let min_z = mins.z;
+
+        let center = parent_boundary.centre();
+        let cen_x = center.x;
+        let cen_y = center.y;
+        let cen_z = center.z;
+
+        let hws = parent_boundary.half_widths();
+        let hw_x = hws.x;
+        let hw_y = hws.y;
+        let hw_z = hws.z;
+
+        let nnn = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x, min_y, min_z),
+                Point3::new(min_x + hw_x, min_y + hw_y, min_z + hw_z),
+            ),
+            potential_tris,
+        ));
+        let pnn = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x + hw_x, min_y, min_z),
+                Point3::new(cen_z + hw_x, min_y + hw_y, min_z + hw_z),
+            ),
+            potential_tris,
+        ));
+        let npn = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x, min_y + hw_x, min_z),
+                Point3::new(min_x + hw_x, cen_y + hw_y, min_z + hw_z),
+            ),
+            potential_tris,
+        ));
+        let ppn = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x + hw_y, min_y + hw_x, min_z),
+                Point3::new(cen_x + hw_x, cen_y + hw_y, min_z + hw_z),
+            ),
+            potential_tris,
+        ));
+
+        let nnp = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x, min_y, min_z + hw_z),
+                Point3::new(min_x + hw_x, min_y + hw_y, cen_z + hw_z),
+            ),
+            potential_tris,
+        ));
+        let pnp = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x + hw_x, min_y, min_z + hw_z),
+                Point3::new(cen_z + hw_x, min_y + hw_y, min_z + hw_z),
+            ),
+            potential_tris,
+        ));
+        let npp = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x, min_y + hw_x, min_z + hw_z),
+                Point3::new(min_x + hw_x, cen_y + hw_y, cen_z + hw_z),
+            ),
+            potential_tris,
+        ));
+        let ppp = Box::new(Self::init_child(
+            parent_depth,
+            max_depth,
+            tar_tris,
+            Aabb::new(
+                Point3::new(min_x + hw_y, min_y + hw_x, min_z + hw_z),
+                Point3::new(cen_x + hw_x, cen_y + hw_y, cen_z + hw_z),
+            ),
+            potential_tris,
+        ));
+
+        [nnn, pnn, npn, ppn, nnp, pnp, npp, ppp]
+    }
+
     /// Initialise the boundary of the root cell.
     #[inline]
     #[must_use]
-    fn init_child(boundary: Aabb, potential_tris: &[(&'a SmoothTriangle, Group)]) -> Self {
+    fn init_child(
+        parent_depth: usize,
+        max_depth: usize,
+        tar_tris: usize,
+        boundary: Aabb,
+        potential_tris: &[(&'a SmoothTriangle, Group)],
+    ) -> Self {
+        debug_assert!(parent_depth < max_depth);
+        let depth = parent_depth + 1;
+
         let mut tris = Vec::new();
         for (tri, group) in potential_tris {
             if tri.overlap(&boundary) {
-                tris.push((tri, *group));
+                tris.push((*tri, *group));
             }
         }
 
@@ -221,6 +228,12 @@ impl<'a> Cell<'a> {
             return Self::Empty { boundary };
         }
 
-        Self::Empty { boundary }
+        if (tris.len() <= tar_tris) || (depth >= max_depth) {
+            return Self::Leaf { boundary, tris };
+        }
+
+        let children = Self::init_children(0, max_depth, tar_tris, &boundary, &tris);
+
+        Self::Root { boundary, children }
     }
 }
