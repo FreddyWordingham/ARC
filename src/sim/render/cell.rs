@@ -325,7 +325,8 @@ impl<'a> Cell<'a> {
                 }
 
                 if let Some((dist, _norm, _group)) = nearest {
-                    if dist > boundary_dist {
+                    if dist >= (boundary_dist + 0.001) {
+                        // TODO: PADDING
                         return None;
                     }
                 }
