@@ -92,6 +92,9 @@ impl<'a> Cell<'a> {
             }
         }
 
+        grid_mins -= Vector3::new(0.1, 0.1, 0.1); // TODO: Neaten.
+        grid_maxs += Vector3::new(0.1, 0.1, 0.1);
+
         Aabb::new(grid_mins, grid_maxs)
     }
 
@@ -304,7 +307,9 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn observe(&self, ray: &Ray) -> Option<(f64, Unit<Vector3<f64>>, Group)> {
         match self {
-            Self::Leaf { tris, .. } => {
+            Self::Leaf { boundary, tris } => {
+                let boundary_dist = boundary.dist(ray).expect("Ray has escaped cell.");
+
                 let mut nearest = None;
 
                 for (tri, group) in tris {
@@ -316,6 +321,12 @@ impl<'a> Cell<'a> {
                         } else {
                             nearest = Some((d, n, *group));
                         }
+                    }
+                }
+
+                if let Some((dist, _norm, _group)) = nearest {
+                    if dist > boundary_dist {
+                        return None;
                     }
                 }
 

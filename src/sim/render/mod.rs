@@ -24,8 +24,8 @@ const BUMP_DIST: f64 = 0.001;
 pub fn run(cam: &Camera, grid: &Cell) -> Vec<Array2<f64>> {
     let pb = ParProgressBar::new("Rendering", cam.num_pix() as u64);
     let pb = Arc::new(Mutex::new(pb));
-    // let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
-    let thread_ids: Vec<usize> = vec![0];
+    let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
+    // let thread_ids: Vec<usize> = vec![0];
 
     let num_pix = cam.num_pix();
 
@@ -98,32 +98,40 @@ fn run_thread(
             }
 
             'outer: while let Some(cell) = grid.find_terminal_cell(ray.pos()) {
-                while let Some((dist, norm, group)) = cell.observe(&ray) {
-                    match group {
-                        0 => {
-                            *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
-                            break 'outer;
+                debug_assert!(cell.boundary().contains(ray.pos()));
+
+                loop {
+                    if let Some((dist, norm, group)) = cell.observe(&ray) {
+                        match group {
+                            0 => {
+                                *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                                break 'outer;
+                            }
+                            1 => {
+                                ray.travel(dist);
+                                let inc = ray.dir().clone();
+                                *ray.dir_mut() = Unit::new_normalize(
+                                    inc.into_inner()
+                                        - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
+                                );
+                                ray.travel(BUMP_DIST);
+                                continue 'outer;
+                            }
+                            _ => {
+                                warn!("Do not know how to handle group {}.", group);
+                                break 'outer;
+                            }
                         }
-                        1 => {
-                            ray.travel(dist);
-                            let inc = ray.dir().clone();
-                            *ray.dir_mut() = Unit::new_normalize(
-                                inc.into_inner() - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
-                            );
-                            ray.travel(BUMP_DIST);
-                        }
-                        _ => {
-                            warn!("Do not know how to handle group {}.", group);
-                            break 'outer;
-                        }
+                    } else if let Some(dist) = cell.boundary().dist(&ray)
+                    // .expect("Could not determine cell boundary distance.")
+                    {
+                        ray.travel(dist + BUMP_DIST);
+                        break;
+                    } else {
+                        warn!("Ray escaped cell.");
+                        break;
                     }
                 }
-
-                let dist = cell
-                    .boundary()
-                    .dist(&ray)
-                    .expect("Could not determine cell boundary distance.");
-                ray.travel(dist + BUMP_DIST);
             }
         }
     }
