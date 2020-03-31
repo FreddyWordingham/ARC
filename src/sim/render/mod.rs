@@ -114,7 +114,7 @@ fn run_thread(
                                     inc.into_inner()
                                         - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
                                 );
-                                // ray.travel(BUMP_DIST);
+                                ray.travel(BUMP_DIST);
                                 continue 'outer;
                             }
                             _ => {
