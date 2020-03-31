@@ -23,6 +23,7 @@
     clippy::missing_const_for_fn,
     clippy::missing_inline_in_public_items,
     clippy::module_name_repetitions,
+    clippy::modulo_arithmetic,
     clippy::multiple_crate_versions,
     clippy::multiple_inherent_impl,
     clippy::option_expect_used,

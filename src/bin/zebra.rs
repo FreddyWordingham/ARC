@@ -2,16 +2,17 @@
 
 use arc::{
     args,
-    file::Camera as FileCamera,
-    ord::key::MeshKey,
+    file::{Camera, Load},
+    ord::{key::MeshKey, MeshSet},
     report,
     util::{banner, exec, init},
 };
 use attr::form;
+use log::info;
 
 #[form]
 struct Parameters {
-    camera: FileCamera,
+    camera: Camera,
     entities: Vec<MeshKey>,
 }
 
@@ -28,4 +29,12 @@ fn main() {
     report!(in_dir.display(), "input directory");
     report!(out_dir.display(), "output directory");
     report!(params_path.display(), "parameters path");
+
+    banner::section("Loading");
+    info!("Loading parameters file...");
+    let params = Parameters::load(&params_path);
+    // report!(params);
+    let cam = params.camera.build();
+    report!(cam.num_pix() as f64 / 100000.0, "Total pixels", "Million");
+    let ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
 }
