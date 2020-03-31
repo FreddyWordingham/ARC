@@ -14,6 +14,13 @@ use nalgebra::{Point3, Unit, Vector3};
 /// | /   0nnn   1pnn
 /// |/__x
 pub enum Cell<'a> {
+    /// Root cell.
+    Root {
+        /// Boundary.
+        boundary: Aabb,
+        /// Children.
+        children: [Box<Cell<'a>>; 8],
+    },
     /// Branching cell.
     Branch {
         /// Boundary.
@@ -55,7 +62,7 @@ impl<'a> Cell<'a> {
 
         let children = Self::init_children(0, max_depth, tar_tris, &boundary, &tris);
 
-        Self::Branch { boundary, children }
+        Self::Root { boundary, children }
     }
 
     /// Initialise the boundary of the root cell.
@@ -236,6 +243,7 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn num_leaves(&self) -> usize {
         match self {
+            Self::Root { children, .. } => children.iter().map(|c| c.num_leaves()).sum(),
             Self::Branch { children, .. } => children.iter().map(|c| c.num_leaves()).sum(),
             Self::Leaf { .. } => 1,
             Self::Empty { .. } => 0,
@@ -247,7 +255,9 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn num_empty(&self) -> usize {
         match self {
-            Self::Branch { children, .. } => children.iter().map(|c| c.num_empty()).sum(),
+            Self::Root { children, .. } | Self::Branch { children, .. } => {
+                children.iter().map(|c| c.num_empty()).sum()
+            }
             Self::Leaf { .. } => 0,
             Self::Empty { .. } => 1,
         }
@@ -258,6 +268,7 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn num_branches(&self) -> usize {
         match self {
+            Self::Root { children, .. } => children.iter().map(|c| c.num_empty()).sum(),
             Self::Branch { children, .. } => {
                 children.iter().map(|c| c.num_empty()).sum::<usize>() + 1
             }
@@ -271,7 +282,7 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn num_cells(&self) -> usize {
         match self {
-            Self::Branch { children, .. } => {
+            Self::Root { children, .. } | Self::Branch { children, .. } => {
                 children.iter().map(|c| c.num_cells()).sum::<usize>() + 1
             }
             Self::Leaf { .. } => 1,
@@ -284,7 +295,9 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn num_tri_refs(&self) -> usize {
         match self {
-            Self::Branch { children, .. } => children.iter().map(|c| c.num_tri_refs()).sum(),
+            Self::Root { children, .. } | Self::Branch { children, .. } => {
+                children.iter().map(|c| c.num_tri_refs()).sum()
+            }
             Self::Leaf { tris, .. } => tris.len(),
             Self::Empty { .. } => 0,
         }
@@ -302,11 +315,58 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn observe(&self, ray: &Ray) -> Option<(f64, Unit<Vector3<f64>>, Group)> {
         match self {
-            Self::Branch { boundary, .. }
-            | Self::Leaf { boundary, .. }
-            | Self::Empty { boundary, .. } => {
-                if boundary.hit(ray) {
-                    Some((1.0, Vector3::x_axis(), 0))
+            Self::Leaf { tris, .. } => {
+                let mut nearest = None;
+
+                for (tri, group) in tris {
+                    if let Some((d, n)) = tri.dist_norm(&ray) {
+                        if let Some((dist, _norm, _group)) = nearest {
+                            if d <= dist {
+                                nearest = Some((d, n, *group));
+                            }
+                        } else {
+                            nearest = Some((d, n, *group));
+                        }
+                    }
+                }
+
+                nearest
+            }
+            Self::Root { .. } | Self::Branch { .. } | Self::Empty { .. } => None,
+        }
+    }
+
+    /// Determine the terminal cell containing the given position.
+    #[inline]
+    #[must_use]
+    pub fn find_terminal_cell(&self, pos: &Point3<f64>) -> Option<&Self> {
+        match self {
+            Self::Leaf { boundary, .. } | Self::Empty { boundary } => {
+                if boundary.contains(pos) {
+                    Some(&self)
+                } else {
+                    None
+                }
+            }
+            Self::Root { boundary, children } | Self::Branch { boundary, children } => {
+                if boundary.contains(pos) {
+                    let mut index = 0;
+                    let c = boundary.centre();
+
+                    if pos.x > c.x {
+                        index += 1;
+                    }
+                    if pos.y > c.y {
+                        index += 2;
+                    }
+                    if pos.z > c.z {
+                        index += 4;
+                    }
+
+                    children
+                        .get(index)
+                        .expect("Invalid index")
+                        .find_terminal_cell(pos)
                 } else {
                     None
                 }
