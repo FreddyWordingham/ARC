@@ -5,7 +5,7 @@ use arc::{
     file::{Camera as FileCamera, Load},
     geom::Mesh,
     report,
-    sim::render::{Camera, Grid, Group},
+    sim::render::{Camera, Cell, Group},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -68,9 +68,9 @@ fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)
 }
 
 /// Build the grid.
-fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Grid {
+fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Cell {
     info!("Building grid");
-    let grid = arc::sim::render::Grid::new_root(2, 6, 5, meshes);
+    let grid = arc::sim::render::Cell::new_root(2, 6, 5, meshes);
 
     grid
 }

@@ -2,12 +2,12 @@
 
 pub mod camera;
 pub mod cell;
-pub mod grid;
+pub mod grid_settings;
 pub mod group;
 
 pub use self::camera::*;
 pub use self::cell::*;
-pub use self::grid::*;
+pub use self::grid_settings::*;
 pub use self::group::*;
 
 use crate::{
