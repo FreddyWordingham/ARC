@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::{Camera as FileCamera, Load},
+    file::{Camera as FileCamera, Load, Save},
     geom::Mesh,
     report,
     sim::render::{Camera, Cell, Group},
@@ -35,9 +35,19 @@ fn main() {
     banner::section("Loading");
     info!("Loading parameters file");
     let params = Parameters::load(&params_path);
-    let _cam = build_camera(&params.camera);
+    let cam = build_camera(&params.camera);
     let meshes = load_meshes(&in_dir, &params.meshes);
-    let _grid = build_grid(&meshes);
+    let grid = build_grid(&meshes);
+
+    banner::section("Rendering");
+    let stack = arc::sim::render::run(&cam, &grid);
+
+    banner::section("Saving");
+    for (index, img) in stack.iter().enumerate() {
+        let path = &out_dir.join(format!("layer_{}.nc", index));
+        info!("Saving {}", path.display());
+        img.save(path);
+    }
 }
 
 /// Build the camera.
