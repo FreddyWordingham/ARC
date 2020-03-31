@@ -110,95 +110,74 @@ impl<'a> Cell<'a> {
         let min_y = mins.y;
         let min_z = mins.z;
 
-        let center = parent_boundary.centre();
-        let cen_x = center.x;
-        let cen_y = center.y;
-        let cen_z = center.z;
-
         let hws = parent_boundary.half_widths();
         let hw_x = hws.x;
         let hw_y = hws.y;
         let hw_z = hws.z;
 
+        let min = Point3::new(min_x, min_y, min_z);
         let nnn = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x, min_y, min_z),
-                Point3::new(min_x + hw_x, min_y + hw_y, min_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
+        let min = Point3::new(min_x + hw_x, min_y, min_z);
         let pnn = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x + hw_x, min_y, min_z),
-                Point3::new(cen_z + hw_x, min_y + hw_y, min_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
+        let min = Point3::new(min_x, min_y + hw_y, min_z);
         let npn = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x, min_y + hw_x, min_z),
-                Point3::new(min_x + hw_x, cen_y + hw_y, min_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
+        let min = Point3::new(min_x + hw_x, min_y + hw_y, min_z);
         let ppn = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x + hw_y, min_y + hw_x, min_z),
-                Point3::new(cen_x + hw_x, cen_y + hw_y, min_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
 
+        let min = Point3::new(min_x, min_y, min_z + hw_z);
         let nnp = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x, min_y, min_z + hw_z),
-                Point3::new(min_x + hw_x, min_y + hw_y, cen_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
+        let min = Point3::new(min_x + hw_x, min_y, min_z + hw_z);
         let pnp = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x + hw_x, min_y, min_z + hw_z),
-                Point3::new(cen_z + hw_x, min_y + hw_y, min_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
+        let min = Point3::new(min_x, min_y + hw_y, min_z + hw_z);
         let npp = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x, min_y + hw_x, min_z + hw_z),
-                Point3::new(min_x + hw_x, cen_y + hw_y, cen_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
+        let min = Point3::new(min_x + hw_x, min_y + hw_y, min_z + hw_z);
         let ppp = Box::new(Self::init_child(
             parent_depth,
             max_depth,
             tar_tris,
-            Aabb::new(
-                Point3::new(min_x + hw_y, min_y + hw_x, min_z + hw_z),
-                Point3::new(cen_x + hw_x, cen_y + hw_y, cen_z + hw_z),
-            ),
+            Aabb::new(min, min + hws),
             potential_tris,
         ));
 
@@ -233,9 +212,19 @@ impl<'a> Cell<'a> {
             return Self::Leaf { boundary, tris };
         }
 
-        let children = Self::init_children(0, max_depth, tar_tris, &boundary, &tris);
+        let children = Self::init_children(depth, max_depth, tar_tris, &boundary, &tris);
 
         Self::Branch { boundary, children }
+    }
+
+    /// Reference the cell's boundary.
+    pub fn boundary(&self) -> &Aabb {
+        match self {
+            Self::Root { boundary, .. }
+            | Self::Branch { boundary, .. }
+            | Self::Leaf { boundary, .. }
+            | Self::Empty { boundary, .. } => boundary,
+        }
     }
 
     /// Determine the number of leaf cells used by the grid.
@@ -332,7 +321,10 @@ impl<'a> Cell<'a> {
 
                 nearest
             }
-            Self::Root { .. } | Self::Branch { .. } | Self::Empty { .. } => None,
+            Self::Empty { .. } => None,
+            Self::Root { .. } | Self::Branch { .. } => {
+                unreachable!("Can't get me!");
+            }
         }
     }
 
@@ -353,16 +345,15 @@ impl<'a> Cell<'a> {
                     let mut index = 0;
                     let c = boundary.centre();
 
-                    if pos.x > c.x {
+                    if pos.x >= c.x {
                         index += 1;
                     }
-                    if pos.y > c.y {
+                    if pos.y >= c.y {
                         index += 2;
                     }
-                    if pos.z > c.z {
+                    if pos.z >= c.z {
                         index += 4;
                     }
-
                     children
                         .get(index)
                         .expect("Invalid index")

@@ -7,7 +7,7 @@ pub mod group;
 
 pub use self::{camera::*, cell::*, grid_settings::*, group::*};
 
-use crate::util::ParProgressBar;
+use crate::{geom::Trace, util::ParProgressBar};
 use log::{info, warn};
 use nalgebra::Unit;
 use ndarray::Array2;
@@ -24,7 +24,8 @@ const BUMP_DIST: f64 = 0.001;
 pub fn run(cam: &Camera, grid: &Cell) -> Vec<Array2<f64>> {
     let pb = ParProgressBar::new("Rendering", cam.num_pix() as u64);
     let pb = Arc::new(Mutex::new(pb));
-    let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
+    // let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
+    let thread_ids: Vec<usize> = vec![0];
 
     let num_pix = cam.num_pix();
 
@@ -65,7 +66,9 @@ fn run_thread(
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: usize,
 ) -> Vec<Array2<f64>> {
-    let mut layer_0 = Array2::zeros(cam.res());
+    let mut grid_misses = Array2::zeros(cam.res());
+    let mut lost_cell = Array2::zeros(cam.res());
+    let mut layer_2 = Array2::zeros(cam.res());
 
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
@@ -79,28 +82,51 @@ fn run_thread(
 
             let mut ray = cam.gen_ray(xi, yi);
 
-            while let Some((dist, norm, group)) = grid.observe(&ray) {
-                match group {
-                    0 => {
-                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
-                        break;
-                    }
-                    1 => {
-                        ray.travel(dist);
-                        let inc = ray.dir().clone();
-                        *ray.dir_mut() = Unit::new_normalize(
-                            inc.into_inner() - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
-                        );
-                        ray.travel(BUMP_DIST);
-                    }
-                    _ => {
-                        warn!("Do not know how to handle group {}.", group);
-                        break;
+            if !grid.boundary().contains(ray.pos()) {
+                if let Some(dist) = grid.boundary().dist(&ray) {
+                    ray.travel(dist + BUMP_DIST);
+                } else {
+                    *grid_misses.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                    // warn!("Observation ray missed grid.");
+                    continue;
+                }
+            }
+
+            if grid.find_terminal_cell(ray.pos()).is_none() {
+                *lost_cell.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                continue;
+            }
+
+            'outer: while let Some(cell) = grid.find_terminal_cell(ray.pos()) {
+                while let Some((dist, norm, group)) = cell.observe(&ray) {
+                    match group {
+                        0 => {
+                            *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                            break 'outer;
+                        }
+                        1 => {
+                            ray.travel(dist);
+                            let inc = ray.dir().clone();
+                            *ray.dir_mut() = Unit::new_normalize(
+                                inc.into_inner() - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
+                            );
+                            ray.travel(BUMP_DIST);
+                        }
+                        _ => {
+                            warn!("Do not know how to handle group {}.", group);
+                            break 'outer;
+                        }
                     }
                 }
+
+                let dist = cell
+                    .boundary()
+                    .dist(&ray)
+                    .expect("Could not determine cell boundary distance.");
+                ray.travel(dist + BUMP_DIST);
             }
         }
     }
 
-    vec![layer_0]
+    vec![grid_misses, lost_cell, layer_2]
 }
