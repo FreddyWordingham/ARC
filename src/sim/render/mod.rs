@@ -114,7 +114,7 @@ fn run_thread(
                                     inc.into_inner()
                                         - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
                                 );
-                                ray.travel(BUMP_DIST);
+                                // ray.travel(BUMP_DIST);
                                 continue 'outer;
                             }
                             _ => {
@@ -126,10 +126,11 @@ fn run_thread(
                     // .expect("Could not determine cell boundary distance.")
                     {
                         ray.travel(dist + BUMP_DIST);
-                        break;
+                        // ray.travel(dist);
+                        continue 'outer;
                     } else {
                         warn!("Ray escaped cell.");
-                        break;
+                        break 'outer;
                     }
                 }
             }
