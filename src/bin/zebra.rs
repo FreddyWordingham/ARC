@@ -3,8 +3,8 @@
 use arc::{
     args,
     file::{Camera, Load},
-    ord::{key::MeshKey, MeshSet},
     report,
+    sim::render::Group,
     util::{banner, exec, init},
 };
 use attr::form;
@@ -13,7 +13,7 @@ use log::info;
 #[form]
 struct Parameters {
     camera: Camera,
-    entities: Vec<MeshKey>,
+    entities: Vec<(String, Group)>,
 }
 
 fn main() {
@@ -31,10 +31,16 @@ fn main() {
     report!(params_path.display(), "parameters path");
 
     banner::section("Loading");
-    info!("Loading parameters file...");
+    info!("Loading parameters file");
     let params = Parameters::load(&params_path);
-    // report!(params);
+    info!("Building camera");
     let cam = params.camera.build();
     report!(cam.num_pix() as f64 / 100000.0, "Total pixels", "Million");
-    let ents = MeshSet::load(&in_dir.join("entities"), &params.entities, "obj");
+    report!(cam.fov().0.to_degrees(), "Horizontal fov", "Degrees");
+    report!(cam.fov().1.to_degrees(), "Vertical fov", "Degrees");
+    info!("Loading meshes");
+    for (key, _group) in params.entities {
+        let path = &in_dir.join(format!("entities/{}.obj", key));
+        info!("Loading: {}", path.display());
+    }
 }

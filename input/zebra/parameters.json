@@ -1,6 +1,9 @@
 {
     "entities": [
-        "path"
+        [
+            "piece",
+            0
+        ]
     ],
     "camera": {
         "pos": [

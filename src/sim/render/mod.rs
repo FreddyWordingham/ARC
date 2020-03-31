@@ -1,8 +1,10 @@
 //! Rendering simulation sub-module.
 
 pub mod camera;
+pub mod group;
 
 pub use self::camera::*;
+pub use self::group::*;
 
 use crate::{
     geom::{Ray, Trace},
