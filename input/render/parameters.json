@@ -8,18 +8,19 @@
         "tar": [
             -1.0,
             0.0,
-            3.0
+            2.75
         ],
-        "fov": 90.0,
+        "fov": 60.0,
         "res": [
-            2000,
-            2000
+            400,
+            400
         ]
     },
     "entities": [
         "path",
         "fjmw",
         "klm",
+        "bushes",
         "dog",
         "sides",
         "floor",

@@ -70,7 +70,7 @@ fn run_thread(
 ) -> Vec<(MeshKey, Array2<f64>)> {
     let mut people = Array2::zeros(cam.res());
     let mut floor = Array2::zeros(cam.res());
-    let mut path = Array2::zeros(cam.res());
+    let path = Array2::zeros(cam.res());
     let mut trees = Array2::zeros(cam.res());
     let mut leaves = Array2::zeros(cam.res());
     let mut hills = Array2::zeros(cam.res());
@@ -101,7 +101,7 @@ fn run_thread(
                         *hills.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         break;
                     }
-                    "leaves" => {
+                    "leaves" | "bushes" => {
                         *leaves.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         break;
                     }
