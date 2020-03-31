@@ -37,7 +37,7 @@ fn main() {
     let params = Parameters::load(&params_path);
     let _cam = build_camera(&params.camera);
     let meshes = load_meshes(&in_dir, &params.meshes);
-    let grid = build_grid(&meshes);
+    let _grid = build_grid(&meshes);
 }
 
 /// Build the camera.
@@ -70,7 +70,7 @@ fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)
 /// Build the grid.
 fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Grid {
     info!("Building grid");
-    let grid = arc::sim::render::Grid::new(meshes);
+    let grid = arc::sim::render::Grid::new(2, 6, 5, meshes);
 
     grid
 }

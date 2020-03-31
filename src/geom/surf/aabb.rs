@@ -41,6 +41,13 @@ impl Aabb {
         Self::new(centre - hws, centre + hws)
     }
 
+    /// Get mins and maxs together.
+    #[inline]
+    #[must_use]
+    pub fn mins_maxs(&self) -> (Point3<f64>, Point3<f64>) {
+        (self.mins, self.maxs)
+    }
+
     /// Calculate the widths.
     #[inline]
     #[must_use]

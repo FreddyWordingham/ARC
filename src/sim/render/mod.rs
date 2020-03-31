@@ -1,10 +1,12 @@
 //! Rendering simulation sub-module.
 
 pub mod camera;
+pub mod cell;
 pub mod grid;
 pub mod group;
 
 pub use self::camera::*;
+pub use self::cell::*;
 pub use self::grid::*;
 pub use self::group::*;
 
