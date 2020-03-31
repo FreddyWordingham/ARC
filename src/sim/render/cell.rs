@@ -1,8 +1,9 @@
 //! Cell implementation.
 
-use crate::geom::surf::collide::Collide;
-use crate::geom::{Aabb, Mesh, Ray, SmoothTriangle, Trace};
-use crate::sim::render::Group;
+use crate::{
+    geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace},
+    sim::render::Group,
+};
 use nalgebra::{Point3, Unit, Vector3};
 
 /// Grid cell enumeration.
