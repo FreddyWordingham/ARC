@@ -1,9 +1,9 @@
 //! Cell implementation.
 
 use crate::geom::surf::collide::Collide;
-use crate::geom::{Aabb, Mesh, SmoothTriangle};
+use crate::geom::{Aabb, Mesh, Ray, SmoothTriangle, Trace};
 use crate::sim::render::Group;
-use nalgebra::Point3;
+use nalgebra::{Point3, Unit, Vector3};
 
 /// Grid cell enumeration.
 ///
@@ -294,5 +294,22 @@ impl<'a> Cell<'a> {
     #[must_use]
     pub fn ave_leaf_tris(&self) -> f64 {
         self.num_tri_refs() as f64 / self.num_leaves() as f64
+    }
+
+    /// Observe a surface with a given ray.
+    #[inline]
+    #[must_use]
+    pub fn observe(&self, ray: &Ray) -> Option<(f64, Unit<Vector3<f64>>, Group)> {
+        match self {
+            Self::Branch { boundary, .. }
+            | Self::Leaf { boundary, .. }
+            | Self::Empty { boundary, .. } => {
+                if boundary.hit(ray) {
+                    Some((1.0, Vector3::x_axis(), 0))
+                } else {
+                    None
+                }
+            }
+        }
     }
 }
