@@ -1,9 +1,11 @@
 //! Rendering simulation sub-module.
 
 pub mod camera;
+pub mod grid;
 pub mod group;
 
 pub use self::camera::*;
+pub use self::grid::*;
 pub use self::group::*;
 
 use crate::{

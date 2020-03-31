@@ -5,7 +5,7 @@ use arc::{
     file::{Camera as FileCamera, Load},
     geom::Mesh,
     report,
-    sim::render::{Camera, Group},
+    sim::render::{Camera, Grid, Group},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -15,7 +15,7 @@ use std::path::Path;
 #[form]
 struct Parameters {
     camera: FileCamera,
-    entities: Vec<(String, Group)>,
+    meshes: Vec<(String, Group)>,
 }
 
 fn main() {
@@ -36,7 +36,8 @@ fn main() {
     info!("Loading parameters file");
     let params = Parameters::load(&params_path);
     let _cam = build_camera(&params.camera);
-    let _meshes = load_meshes(&in_dir, &params.entities);
+    let meshes = load_meshes(&in_dir, &params.meshes);
+    let grid = build_grid(&meshes);
 }
 
 /// Build the camera.
@@ -53,15 +54,23 @@ fn build_camera(camera: &FileCamera) -> Camera {
 }
 
 /// Load in the base meshes.
-fn load_meshes(in_dir: &Path, ents: &Vec<(String, Group)>) -> Vec<(Mesh, Group)> {
+fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)> {
     let mut meshes = vec![];
 
     info!("Loading meshes");
-    for (key, group) in ents {
-        let path = &in_dir.join(format!("entities/{}.obj", key));
+    for (name, group) in names {
+        let path = &in_dir.join(format!("entities/{}.obj", name));
         info!("Loading: {}", path.display());
         meshes.push((Mesh::load(path), *group));
     }
 
     meshes
+}
+
+/// Build the grid.
+fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Grid {
+    info!("Building grid");
+    let grid = arc::sim::render::Grid::new(meshes);
+
+    grid
 }
