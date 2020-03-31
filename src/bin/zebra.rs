@@ -70,7 +70,7 @@ fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)
 /// Build the grid.
 fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Grid {
     info!("Building grid");
-    let grid = arc::sim::render::Grid::new(2, 6, 5, meshes);
+    let grid = arc::sim::render::Grid::new_root(2, 6, 5, meshes);
 
     grid
 }

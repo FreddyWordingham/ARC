@@ -1,20 +1,35 @@
 //! Camera implementation.
 
 use crate::geom::surf::collide::Collide;
-use crate::geom::{Aabb, Mesh};
+use crate::geom::{Aabb, Mesh, Triangle};
 use crate::sim::render::Group;
 
-/// Adaptive partitioning grid.
-pub struct Grid {
-    /// Outer-most boundary of the grid region.
-    boundary: Aabb,
+/// Grid cell enumeration.
+pub enum Grid<'a> {
+    /// Tree root cell.
+    Root {
+        /// Boundary.
+        boundary: Aabb,
+    },
+    /// Terminal populated cell.
+    Leaf {
+        /// Boundary.
+        boundary: Aabb,
+        /// Intersecting triangles.
+        tris: Vec<(Group, &'a Triangle)>,
+    },
+    /// Terminal empty cell.
+    Empty {
+        /// Boundary.
+        boundary: Aabb,
+    },
 }
 
-impl Grid {
+impl<'a> Grid<'a> {
     /// Construct a new grid.
     #[inline]
     #[must_use]
-    pub fn new(
+    pub fn new_root(
         min_depth: usize,
         max_depth: usize,
         tar_tris: usize,
@@ -25,7 +40,7 @@ impl Grid {
 
         let boundary = Self::init_boundary(meshes);
 
-        Self { boundary }
+        Self::Root { boundary }
     }
 
     /// Initialise the boundary of the grid.
