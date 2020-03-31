@@ -70,7 +70,14 @@ fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)
 /// Build the grid.
 fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Cell {
     info!("Building grid");
-    let grid = arc::sim::render::Cell::new_root(6, 5, meshes);
+    let grid = arc::sim::render::Cell::new_root(8, 5, meshes);
+
+    report!(grid.num_leaves());
+    report!(grid.num_empty());
+    report!(grid.num_cells());
+    report!(grid.num_branches());
+    report!(grid.num_tri_refs());
+    report!(grid.ave_leaf_tris());
 
     grid
 }

@@ -13,13 +13,6 @@ use nalgebra::Point3;
 /// | /   0nnn   1pnn
 /// |/__x
 pub enum Cell<'a> {
-    /// Tree root cell.
-    Root {
-        /// Boundary.
-        boundary: Aabb,
-        /// Children.
-        children: [Box<Cell<'a>>; 8],
-    },
     /// Branching cell.
     Branch {
         /// Boundary.
@@ -61,7 +54,7 @@ impl<'a> Cell<'a> {
 
         let children = Self::init_children(0, max_depth, tar_tris, &boundary, &tris);
 
-        Self::Root { boundary, children }
+        Self::Branch { boundary, children }
     }
 
     /// Initialise the boundary of the root cell.
@@ -234,6 +227,72 @@ impl<'a> Cell<'a> {
 
         let children = Self::init_children(0, max_depth, tar_tris, &boundary, &tris);
 
-        Self::Root { boundary, children }
+        Self::Branch { boundary, children }
+    }
+
+    /// Determine the number of leaf cells used by the grid.
+    #[inline]
+    #[must_use]
+    pub fn num_leaves(&self) -> usize {
+        match self {
+            Self::Branch { children, .. } => children.iter().map(|c| c.num_leaves()).sum(),
+            Self::Leaf { .. } => 1,
+            Self::Empty { .. } => 0,
+        }
+    }
+
+    /// Determine the number of leaf cells used by the grid.
+    #[inline]
+    #[must_use]
+    pub fn num_empty(&self) -> usize {
+        match self {
+            Self::Branch { children, .. } => children.iter().map(|c| c.num_empty()).sum(),
+            Self::Leaf { .. } => 0,
+            Self::Empty { .. } => 1,
+        }
+    }
+
+    /// Determine the number of branch cells used by the grid.
+    #[inline]
+    #[must_use]
+    pub fn num_branches(&self) -> usize {
+        match self {
+            Self::Branch { children, .. } => {
+                children.iter().map(|c| c.num_empty()).sum::<usize>() + 1
+            }
+            Self::Leaf { .. } => 0,
+            Self::Empty { .. } => 0,
+        }
+    }
+
+    /// Determine the total number of cells used by the grid.
+    #[inline]
+    #[must_use]
+    pub fn num_cells(&self) -> usize {
+        match self {
+            Self::Branch { children, .. } => {
+                children.iter().map(|c| c.num_cells()).sum::<usize>() + 1
+            }
+            Self::Leaf { .. } => 1,
+            Self::Empty { .. } => 1,
+        }
+    }
+
+    /// Determine the average number of triangles in each leaf cell.
+    #[inline]
+    #[must_use]
+    pub fn num_tri_refs(&self) -> usize {
+        match self {
+            Self::Branch { children, .. } => children.iter().map(|c| c.num_tri_refs()).sum(),
+            Self::Leaf { tris, .. } => tris.len(),
+            Self::Empty { .. } => 0,
+        }
+    }
+
+    /// Determine the average number of triangles in each leaf cell.
+    #[inline]
+    #[must_use]
+    pub fn ave_leaf_tris(&self) -> f64 {
+        self.num_tri_refs() as f64 / self.num_leaves() as f64
     }
 }
