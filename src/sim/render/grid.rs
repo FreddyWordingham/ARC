@@ -6,6 +6,7 @@ use crate::sim::render::Group;
 
 /// Adaptive partitioning grid.
 pub struct Grid {
+    /// Outer-most boundary of the grid region.
     boundary: Aabb,
 }
 
