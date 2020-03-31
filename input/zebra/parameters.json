@@ -7,7 +7,35 @@
         // [
         //     "path",
         //     0
-        // ]
+        // ],
+        [
+            "../../render/entities/trees",
+            0
+        ],
+        [
+            "../../render/entities/hills",
+            0
+        ],
+        [
+            "../../render/entities/bushes",
+            0
+        ],
+        [
+            "../../render/entities/dog",
+            0
+        ],
+        [
+            "../../render/entities/lamps",
+            0
+        ],
+        [
+            "../../render/entities/leaves",
+            0
+        ],
+        [
+            "../../render/entities/windows",
+            0
+        ]
     ],
     "camera": {
         "pos": [
