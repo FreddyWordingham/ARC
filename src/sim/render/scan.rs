@@ -66,8 +66,9 @@ pub fn run_thread(
                         0 => {
                             *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                             *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                norm.dot(ray.dir());
-                            *layer_4.get_mut((xi, yi)).expect("Invalid pixel index.") += total_dist;
+                                norm.dot(ray.dir()).acos();
+                            *layer_4.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                total_dist + dist;
 
                             break 'outer;
                         }

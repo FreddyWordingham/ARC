@@ -1,9 +1,9 @@
 {
-    "max_depth": 3,
+    "max_depth": 8,
     "tar_tris": 10,
     "meshes": [
         [
-            "piece",
+            "high_sphere",
             0
         ],
         // [
