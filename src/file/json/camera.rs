@@ -15,6 +15,8 @@ pub struct Camera {
     fov: f64,
     /// Image resolution.
     res: (usize, usize),
+    /// Super sampling power.
+    ss_power: u64,
 }
 
 impl Camera {
@@ -22,11 +24,18 @@ impl Camera {
     access!(tar, Point3<f64>);
     clone!(fov, f64);
     clone!(res, (usize, usize));
+    clone!(ss_power, u64);
 
     /// Build a simulation camera.
     #[inline]
     #[must_use]
     pub fn build(&self) -> SimCam {
-        SimCam::new(self.pos, self.tar, self.fov.to_radians(), self.res)
+        SimCam::new(
+            self.pos,
+            self.tar,
+            self.fov.to_radians(),
+            self.res,
+            self.ss_power,
+        )
     }
 }
