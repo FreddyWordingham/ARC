@@ -61,6 +61,7 @@ fn build_camera(camera: &FileCamera) -> Camera {
     let cam = camera.build();
 
     report!(cam.num_pix() as f64 / 100000.0, "Total pixels", "Million");
+    report!(cam.ss_power().pow(2), "Samples per pixel");
     report!(cam.fov().0.to_degrees(), "Horizontal fov", "Degrees");
     report!(cam.fov().1.to_degrees(), "Vertical fov", "Degrees");
 
