@@ -1,17 +1,12 @@
 //! Core scanning function.
 
 use crate::{
-    geom::Trace,
     sim::render::{Camera, Cell},
     util::ParProgressBar,
 };
 use log::warn;
-use nalgebra::Unit;
 use ndarray::Array2;
 use std::sync::{Arc, Mutex};
-
-/// Distance to travel away from surfaces.
-const BUMP_DIST: f64 = 1.0e-6;
 
 /// Render using a single thread.
 #[inline]
@@ -23,11 +18,9 @@ pub fn run_thread(
     pb: &Arc<Mutex<ParProgressBar>>,
     block_size: usize,
 ) -> Vec<Array2<f64>> {
-    let mut grid_misses = Array2::zeros(cam.res());
-    let mut lost_cell = Array2::zeros(cam.res());
+    let mut layer_0 = Array2::zeros(cam.res());
+    let mut layer_1 = Array2::zeros(cam.res());
     let mut layer_2 = Array2::zeros(cam.res());
-    let mut layer_3 = Array2::zeros(cam.res());
-    let mut layer_4 = Array2::zeros(cam.res());
 
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
@@ -39,69 +32,29 @@ pub fn run_thread(
             let xi = n as usize % cam.res().0;
             let yi = n as usize / cam.res().0;
 
-            let mut ray = cam.gen_ray(xi, yi);
-            let mut total_dist = 0.0;
+            let ray = cam.gen_ray(xi, yi);
 
-            if !grid.boundary().contains(ray.pos()) {
-                if let Some(dist) = grid.boundary().dist(&ray) {
-                    ray.travel(dist + BUMP_DIST);
-                } else {
-                    *grid_misses.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
-                    // warn!("Observation ray missed grid.");
-                    continue;
-                }
-            }
-
-            if grid.find_terminal_cell(ray.pos()).is_none() {
-                *lost_cell.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
-                continue;
-            }
-
-            'outer: while let Some(cell) = grid.find_terminal_cell(ray.pos()) {
-                debug_assert!(cell.boundary().contains(ray.pos()));
-
-                // loop {
-                if let Some((dist, norm, group)) = cell.observe(&ray) {
-                    match group {
-                        0 => {
-                            *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
-                            *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                norm.dot(ray.dir()).acos();
-                            *layer_4.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                total_dist + dist;
-
-                            break 'outer;
-                        }
-                        1 => {
-                            ray.travel(dist);
-                            let inc = ray.dir().clone();
-                            *ray.dir_mut() = Unit::new_normalize(
-                                inc.into_inner() - (norm.into_inner() * (2.0 * (inc.dot(&norm)))),
-                            );
-                            ray.travel(BUMP_DIST);
-                            total_dist += dist + BUMP_DIST;
-                            continue 'outer;
-                        }
-                        _ => {
-                            warn!("Do not know how to handle group {}.", group);
-                            break 'outer;
-                        }
+            if let Some((ray, dist, norm, group)) = grid.observe(ray) {
+                match group {
+                    0 => {
+                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
+                        *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                            ray.dir().dot(&norm).acos();
                     }
-                } else if let Some(dist) = cell.boundary().dist(&ray)
-                // .expect("Could not determine cell boundary distance.")
-                {
-                    ray.travel(dist + BUMP_DIST);
-                    total_dist += dist + BUMP_DIST;
-                    // ray.travel(dist);
-                    continue 'outer;
-                } else {
-                    warn!("Ray escaped cell.");
-                    break 'outer;
+                    1 => {
+                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += -1.0;
+                        *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") += -dist;
+                        *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                            ray.dir().dot(&norm).asin();
+                    }
+                    _ => {
+                        warn!("Do not know how to handle group {}.", group);
+                    }
                 }
-                // }
             }
         }
     }
 
-    vec![grid_misses, lost_cell, layer_2, layer_3, layer_4]
+    vec![layer_0, layer_1, layer_2]
 }

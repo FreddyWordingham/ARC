@@ -6,6 +6,9 @@ use crate::{
 };
 use nalgebra::{Point3, Unit, Vector3};
 
+/// Distance to travel away from surfaces.
+const BUMP_DIST: f64 = 1.0e-6;
+
 /// Grid cell enumeration.
 ///
 ///         6npp   7ppp
@@ -302,10 +305,10 @@ impl<'a> Cell<'a> {
         self.num_tri_refs() as f64 / self.num_leaves() as f64
     }
 
-    /// Observe a surface with a given ray.
+    /// Scan for triangle hits within a terminal cell.
     #[inline]
     #[must_use]
-    pub fn observe(&self, ray: &Ray) -> Option<(f64, Unit<Vector3<f64>>, Group)> {
+    pub fn hit_scan(&self, ray: &Ray) -> Option<(f64, Unit<Vector3<f64>>, Group)> {
         match self {
             Self::Leaf { boundary, tris } => {
                 let boundary_dist = boundary.dist(ray).expect("Ray has escaped cell.");
@@ -337,6 +340,45 @@ impl<'a> Cell<'a> {
                 unreachable!("Can't get me!");
             }
         }
+    }
+
+    /// Determine what a given ray would observe.
+    #[inline]
+    #[must_use]
+    pub fn observe(&self, mut ray: Ray) -> Option<(Ray, f64, Unit<Vector3<f64>>, Group)> {
+        let mut dist_travelled = 0.0;
+
+        // Move the ray to within the domain of the grid if it isn't already within it.
+        if !self.boundary().contains(ray.pos()) {
+            if let Some(dist) = self.boundary().dist(&ray) {
+                let d = dist + BUMP_DIST;
+                ray.travel(d);
+                dist_travelled += d;
+            } else {
+                // warn!("Observation ray missed grid.");
+                return None;
+            }
+        }
+
+        // Trace forward until leaving the grid or observing something.
+        while let Some(cell) = self.find_terminal_cell(ray.pos()) {
+            debug_assert!(cell.boundary().contains(ray.pos()));
+
+            if let Some((dist, norm, group)) = cell.hit_scan(&ray) {
+                ray.travel(dist);
+                return Some((ray, dist_travelled + dist, norm, group));
+            }
+
+            let bound_dist = cell
+                .boundary()
+                .dist(&ray)
+                .expect("Could not determine cell boundary distance.");
+            let d = bound_dist + BUMP_DIST;
+            ray.travel(d);
+            dist_travelled += d;
+        }
+
+        None
     }
 
     /// Determine the terminal cell containing the given position.
