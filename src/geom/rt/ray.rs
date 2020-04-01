@@ -49,6 +49,13 @@ impl Ray {
         self.dir = roll_rot * pitch_rot * self.dir;
         self.dir.renormalize();
     }
+
+    /// Reflect the ray from a given normal surface.
+    #[inline]
+    pub fn reflect(&mut self, norm: &Unit<Vector3<f64>>) {
+        self.dir =
+            Unit::new_normalize(self.dir.as_ref() + (2.0 * (-self.dir.dot(norm)) * norm.as_ref()));
+    }
 }
 
 impl Emit for Ray {

@@ -32,24 +32,26 @@ pub fn run_thread(
             let xi = n as usize % cam.res().0;
             let yi = n as usize / cam.res().0;
 
-            let ray = cam.gen_ray(xi, yi);
+            let mut ray = cam.gen_ray(xi, yi);
 
-            if let Some((ray, dist, norm, group)) = grid.observe(ray) {
+            while let Some((new_ray, dist, norm, group)) = grid.observe(ray) {
+                ray = new_ray;
+
                 match group {
                     0 => {
                         *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
                         *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                             ray.dir().dot(&norm).acos();
+                        break;
                     }
                     1 => {
-                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += -1.0;
-                        *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") += -dist;
-                        *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                            ray.dir().dot(&norm).asin();
+                        ray.reflect(&norm);
+                        ray.travel(1.0e-6);
                     }
                     _ => {
                         warn!("Do not know how to handle group {}.", group);
+                        break;
                     }
                 }
             }
