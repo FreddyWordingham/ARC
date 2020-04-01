@@ -5,6 +5,7 @@ use crate::{
     util::ParProgressBar,
 };
 use log::warn;
+use nalgebra::{Point3, Unit};
 use ndarray::Array2;
 use std::sync::{Arc, Mutex};
 
@@ -21,6 +22,7 @@ pub fn run_thread(
     let mut layer_0 = Array2::zeros(cam.res());
     let mut layer_1 = Array2::zeros(cam.res());
     let mut layer_2 = Array2::zeros(cam.res());
+    let mut layer_3 = Array2::zeros(cam.res());
 
     while let Some((start, end)) = {
         let mut pb = pb.lock().expect("Could not lock progress bar.");
@@ -38,11 +40,49 @@ pub fn run_thread(
                 ray = new_ray;
 
                 match group {
+                    -1 => {
+                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += -1.0;
+                        *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
+                        *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                            ray.dir().dot(&norm).acos();
+
+                        // {
+                        //     let mut trace = ray.clone();
+                        //     let light_dir =
+                        //         Unit::new_normalize(Point3::new(-10.2, 0.0, 1.2) - trace.pos());
+                        //     *trace.dir_mut() = light_dir;
+                        //     trace.travel(1.0e-6);
+                        //     if let Some((_r, d, n, -1)) = grid.observe(trace) {
+                        //         *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                        //             n.dot(&light_dir).acos() / (d * d);
+                        //     }
+                        // }
+                        break;
+                    }
                     0 => {
                         *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") += dist;
                         *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                             ray.dir().dot(&norm).acos();
+
+                        {
+                            let mut trace = ray.clone();
+                            let light_dir =
+                                Unit::new_normalize(Point3::new(10.0, 3.0, 15.0) - trace.pos());
+                            *trace.dir_mut() = light_dir;
+                            trace.travel(1.0e-6);
+                            match grid.observe(trace) {
+                                None => {
+                                    *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                        norm.dot(&light_dir).max(0.0)
+                                }
+                                Some((_r, _d, _n, 0)) => {
+                                    *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                        0.1 * norm.dot(&light_dir).max(0.0)
+                                }
+                                _ => {}
+                            }
+                        }
                         break;
                     }
                     1 => {
@@ -58,5 +98,5 @@ pub fn run_thread(
         }
     }
 
-    vec![layer_0, layer_1, layer_2]
+    vec![layer_0, layer_1, layer_2, layer_3]
 }

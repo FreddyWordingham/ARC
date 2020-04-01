@@ -2,10 +2,10 @@
     "max_depth": 8,
     "tar_tris": 10,
     "meshes": [
-        // [
-        //     "piece",
-        //     0
-        // ],
+        [
+            "sun",
+            -1
+        ],
         [
             "../../render/entities/dog",
             0
@@ -48,7 +48,7 @@
         ],
         [
             "path",
-            1
+            0
         ],
         [
             "../../render/entities/windows",
