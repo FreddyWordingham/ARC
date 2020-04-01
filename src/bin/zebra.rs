@@ -14,6 +14,8 @@ use std::path::Path;
 
 #[form]
 struct Parameters {
+    max_depth: usize,
+    tar_tris: usize,
     camera: FileCamera,
     meshes: Vec<(String, Group)>,
 }
@@ -35,9 +37,11 @@ fn main() {
     banner::section("Loading");
     info!("Loading parameters file");
     let params = Parameters::load(&params_path);
+    let max_depth = params.max_depth;
+    let tar_tris = params.tar_tris;
     let cam = build_camera(&params.camera);
     let meshes = load_meshes(&in_dir, &params.meshes);
-    let grid = build_grid(&meshes);
+    let grid = build_grid(max_depth, tar_tris, &meshes);
 
     banner::section("Rendering");
     let stack = arc::sim::render::run(&cam, &grid);
@@ -78,9 +82,11 @@ fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)
 }
 
 /// Build the grid.
-fn build_grid(meshes: &Vec<(Mesh, Group)>) -> Cell {
+fn build_grid(max_depth: usize, tar_tris: usize, meshes: &Vec<(Mesh, Group)>) -> Cell {
     info!("Building grid");
-    let grid = arc::sim::render::Cell::new_root(6, 4, meshes);
+    report!(max_depth);
+    report!(tar_tris);
+    let grid = arc::sim::render::Cell::new_root(max_depth, tar_tris, meshes);
 
     report!(grid.num_leaves());
     report!(grid.num_empty());
