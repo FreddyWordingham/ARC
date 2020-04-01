@@ -5,8 +5,9 @@ pub mod cell;
 pub mod group;
 pub mod scan;
 pub mod settings;
+pub mod tracer;
 
-pub use self::{camera::*, cell::*, group::*, settings::*};
+pub use self::{camera::*, cell::*, group::*, settings::*, tracer::*};
 
 use crate::util::ParProgressBar;
 use log::info;
