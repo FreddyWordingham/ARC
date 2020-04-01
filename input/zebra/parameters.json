@@ -5,70 +5,18 @@
         [
             "sun",
             -1
-        ],
-        [
-            "../../render/entities/dog",
-            0
-        ],
-        [
-            "../../render/entities/trees",
-            0
-        ],
-        [
-            "../../render/entities/hills",
-            0
-        ],
-        [
-            "../../render/entities/lamps",
-            0
-        ],
-        [
-            "../../render/entities/leaves",
-            0
-        ],
-        [
-            "../../render/entities/bushes",
-            0
-        ],
-        [
-            "../../render/entities/sides",
-            0
-        ],
-        [
-            "../../render/entities/fjmw",
-            0
-        ],
-        [
-            "../../render/entities/klm",
-            0
-        ],
-        [
-            "../../render/entities/sides",
-            0
-        ],
-        [
-            "path",
-            2
-        ],
-        [
-            "../../render/entities/windows",
-            1
-        ],
-        [
-            "plane",
-            0
-        ],
+        ]
     ],
     "camera": {
         "pos": [
             0.0,
             0.0,
-            3.0
+            0.0
         ],
         "tar": [
             -1.0,
             0.0,
-            3.0,
+            0.0,
         ],
         "fov": 45.0,
         "res": [
