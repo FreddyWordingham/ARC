@@ -98,7 +98,14 @@ pub fn run_thread(
                         }
                         2 => {
                             ray.reflect(&norm);
-                            ray.rotate(0.0, ray.pos().x.sin() / 300.0);
+
+                            let theta =
+                                (ray.pos().x.sin().powi(2) * ray.pos().y.sin().powi(2)) / 6.2;
+                            let rot = nalgebra::Rotation3::from_axis_angle(
+                                &nalgebra::Vector3::y_axis(),
+                                theta,
+                            );
+                            *ray.dir_mut() = Unit::new_normalize(rot * ray.dir().as_ref());
                             ray.travel(1.0e-6);
                         }
                         _ => {
