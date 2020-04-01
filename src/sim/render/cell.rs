@@ -2,7 +2,7 @@
 
 use crate::{
     geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace},
-    sim::render::Group,
+    sim::render::{Group, Tracer},
 };
 use nalgebra::{Point3, Unit, Vector3};
 
@@ -345,14 +345,14 @@ impl<'a> Cell<'a> {
     /// Determine what a given ray would observe.
     #[inline]
     #[must_use]
-    pub fn observe(&self, mut ray: Ray) -> Option<(Ray, f64, Unit<Vector3<f64>>, Group)> {
+    pub fn observe(&self, mut tracer: Tracer) -> Option<(Tracer, f64, Unit<Vector3<f64>>, Group)> {
         let mut dist_travelled = 0.0;
 
-        // Move the ray to within the domain of the grid if it isn't already within it.
-        if !self.boundary().contains(ray.pos()) {
-            if let Some(dist) = self.boundary().dist(&ray) {
+        // Move the tracer to within the domain of the grid if it isn't already within it.
+        if !self.boundary().contains(tracer.ray().pos()) {
+            if let Some(dist) = self.boundary().dist(tracer.ray()) {
                 let d = dist + BUMP_DIST;
-                ray.travel(d);
+                tracer.travel(d);
                 dist_travelled += d;
             } else {
                 // warn!("Observation ray missed grid.");
@@ -361,20 +361,20 @@ impl<'a> Cell<'a> {
         }
 
         // Trace forward until leaving the grid or observing something.
-        while let Some(cell) = self.find_terminal_cell(ray.pos()) {
-            debug_assert!(cell.boundary().contains(ray.pos()));
+        while let Some(cell) = self.find_terminal_cell(tracer.ray().pos()) {
+            debug_assert!(cell.boundary().contains(tracer.ray().pos()));
 
-            if let Some((dist, norm, group)) = cell.hit_scan(&ray) {
-                ray.travel(dist);
-                return Some((ray, dist_travelled + dist, norm, group));
+            if let Some((dist, norm, group)) = cell.hit_scan(tracer.ray()) {
+                tracer.travel(dist);
+                return Some((tracer, dist_travelled + dist, norm, group));
             }
 
             let bound_dist = cell
                 .boundary()
-                .dist(&ray)
+                .dist(tracer.ray())
                 .expect("Could not determine cell boundary distance.");
             let d = bound_dist + BUMP_DIST;
-            ray.travel(d);
+            tracer.travel(d);
             dist_travelled += d;
         }
 
