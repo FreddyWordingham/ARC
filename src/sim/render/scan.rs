@@ -8,6 +8,8 @@ use ndarray::Array2;
 use std::sync::{Arc, Mutex};
 
 /// Render using a single thread.
+#[allow(clippy::never_loop)]
+#[allow(clippy::single_match_else)]
 #[inline]
 #[must_use]
 pub fn run_thread(
