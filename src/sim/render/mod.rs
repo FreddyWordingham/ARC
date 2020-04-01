@@ -4,8 +4,9 @@ pub mod camera;
 pub mod cell;
 pub mod group;
 pub mod scan;
+pub mod settings;
 
-pub use self::{camera::*, cell::*, group::*};
+pub use self::{camera::*, cell::*, group::*, settings::*};
 
 use crate::util::ParProgressBar;
 use log::info;
@@ -17,7 +18,7 @@ use std::sync::{Arc, Mutex};
 /// Perform a rendering simulation.
 #[inline]
 #[must_use]
-pub fn run(cam: &Camera, grid: &Cell) -> Vec<Array2<f64>> {
+pub fn run(cam: &Camera, grid: &Cell, sett: &Settings) -> Vec<Array2<f64>> {
     let pb = ParProgressBar::new("Rendering", cam.num_pix() as u64);
     let pb = Arc::new(Mutex::new(pb));
     let thread_ids: Vec<usize> = (0..num_cpus::get()).collect();
@@ -34,6 +35,7 @@ pub fn run(cam: &Camera, grid: &Cell) -> Vec<Array2<f64>> {
                 grid,
                 &Arc::clone(&pb),
                 ((num_pix / num_cpus::get()) / 100).max(10),
+                sett,
             )
         })
         .collect();

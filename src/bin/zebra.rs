@@ -5,7 +5,7 @@ use arc::{
     file::{Camera as FileCamera, Load, Save},
     geom::Mesh,
     report,
-    sim::render::{Camera, Cell, Group},
+    sim::render::{Camera, Cell, Group, Settings},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -18,6 +18,7 @@ struct Parameters {
     tar_tris: usize,
     camera: FileCamera,
     meshes: Vec<(String, Group)>,
+    sett: Settings,
 }
 
 fn main() {
@@ -42,9 +43,10 @@ fn main() {
     let cam = build_camera(&params.camera);
     let meshes = load_meshes(&in_dir, &params.meshes);
     let grid = build_grid(max_depth, tar_tris, &meshes);
+    let sett = params.sett;
 
     banner::section("Rendering");
-    let stack = arc::sim::render::run(&cam, &grid);
+    let stack = arc::sim::render::run(&cam, &grid, &sett);
 
     banner::section("Saving");
     for (index, img) in stack.iter().enumerate() {
