@@ -71,17 +71,21 @@ pub fn run_thread(
                             {
                                 let mut trace = ray.clone();
                                 let light_dir =
-                                    Unit::new_normalize(Point3::new(10.0, 3.0, 15.0) - trace.pos());
+                                    Unit::new_normalize(Point3::new(9.0, 3.0, 7.0) - trace.pos());
                                 *trace.dir_mut() = light_dir;
                                 trace.travel(1.0e-6);
                                 match grid.observe(trace) {
                                     None => {
-                                        *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                            norm.dot(&light_dir).max(0.0)
+                                        *layer_3
+                                            .get_mut((xi, yi))
+                                            .expect("Invalid pixel index.") +=
+                                            norm.dot(&light_dir).abs();
                                     }
                                     Some((_r, _d, _n, 0)) => {
-                                        *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                            0.1 * norm.dot(&light_dir).max(0.0)
+                                        *layer_3
+                                            .get_mut((xi, yi))
+                                            .expect("Invalid pixel index.") +=
+                                            0.25 * norm.dot(&light_dir).abs();
                                     }
                                     _ => {}
                                 }
@@ -90,6 +94,11 @@ pub fn run_thread(
                         }
                         1 => {
                             ray.reflect(&norm);
+                            ray.travel(1.0e-6);
+                        }
+                        2 => {
+                            ray.reflect(&norm);
+                            ray.rotate(0.0, ray.pos().x.sin() / 300.0);
                             ray.travel(1.0e-6);
                         }
                         _ => {
