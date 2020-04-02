@@ -3,35 +3,19 @@
     "tar_tris": 10,
     "meshes": [
         [
-            0,
-            [
-                "bulbs",
-                "bushes",
-                "dog",
-                "klm",
-                "hills",
-                "underboard",
-                "lamps",
-                "lead",
-                "planet",
-                "trees",
-                "umbrella",
-            ]
-        ],
-        [
-            1,
-            [
-                "windows"
-            ],
-        ],
-        [
-            2,
+            -2,
             [
                 "path"
             ],
         ],
         [
-            3,
+            -1,
+            [
+                "windows"
+            ],
+        ],
+        [
+            0,
             [
                 "leaves_0",
                 "leaves_1",
@@ -39,10 +23,36 @@
             ]
         ],
         [
+            1,
+            [
+                "trees",
+                "lamps",
+                "umbrella",
+            ],
+        ],
+        [
+            2,
+            [
+                "bushes",
+                "hills",
+                "underboard",
+            ],
+        ],
+        [
+            3,
+            [
+                "dog",
+                "klm",
+                "fjmw",
+                "lead",
+            ],
+        ],
+        [
             4,
             [
-                "fjmw",
-            ]
+                "bulbs",
+                "planet",
+            ],
         ],
     ],
     "camera": {

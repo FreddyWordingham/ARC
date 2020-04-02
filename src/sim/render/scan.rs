@@ -26,6 +26,7 @@ pub fn run_thread(
     let mut layer_1 = Array2::zeros(cam.res());
     let mut layer_2 = Array2::zeros(cam.res());
     let mut layer_3 = Array2::zeros(cam.res());
+    let mut layer_4 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -57,6 +58,7 @@ pub fn run_thread(
                                 1 => &mut layer_1,
                                 2 => &mut layer_2,
                                 3 => &mut layer_3,
+                                4 => &mut layer_4,
                                 _ => {
                                     warn!("Do not know how to handle drawing group {}.", group);
                                     break;
@@ -96,7 +98,7 @@ pub fn run_thread(
         }
     }
 
-    vec![layer_0, layer_1, layer_2, layer_3]
+    vec![layer_0, layer_1, layer_2, layer_3, layer_4]
 }
 
 /// Calculate the ambient lighting coefficient.
@@ -145,11 +147,11 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
             0 => {
                 light *= 1.0 - sett.transparency();
             }
-            1..=10 => {
+            -2..=10 => {
                 return sett.shadow();
             }
             _ => {
-                warn!("Do not know how to handle group {}.", group);
+                warn!("Do not know how to handle shadowing group {}.", group);
                 return 0.0;
             }
         }
