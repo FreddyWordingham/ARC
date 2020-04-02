@@ -131,7 +131,7 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
     *tracer.ray_mut().dir_mut() = *norm;
     tracer.travel(1.0e-3);
 
-    *tracer.ray_mut().dir_mut() = Unit::new_normalize(Vector3::new(1.0, 1.0, 1.0));
+    *tracer.ray_mut().dir_mut() = Unit::new_normalize(sett.sun_pos() - tracer.ray().pos());
 
     if let Some((_new_tracer, _dist, _norm, group)) = grid.observe(tracer) {
         match group {
