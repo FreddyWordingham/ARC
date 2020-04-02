@@ -3,13 +3,14 @@
 use crate::{access, geom::Ray};
 
 /// Tracing ray.
+#[derive(Debug, Clone)]
 pub struct Tracer {
     ray: Ray,
     dist_travelled: f64,
 }
 
 impl Tracer {
-    access!(ray, Ray);
+    access!(ray, ray_mut, Ray);
     access!(dist_travelled, f64);
 
     /// Construct a new instance.

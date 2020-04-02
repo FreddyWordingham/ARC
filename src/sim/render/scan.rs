@@ -4,6 +4,7 @@ use crate::{
     sim::render::{Camera, Cell, Settings, Tracer},
     util::ParProgressBar,
 };
+use log::warn;
 use ndarray::Array2;
 use std::sync::{Arc, Mutex};
 
@@ -26,6 +27,7 @@ pub fn run_thread(
     let mut layer_3 = Array2::zeros(cam.res());
     let mut layer_4 = Array2::zeros(cam.res());
     let mut layer_5 = Array2::zeros(cam.res());
+    let mut layer_6 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -51,7 +53,7 @@ pub fn run_thread(
                             *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                 tracer.dist_travelled();
 
-                            let amb = ambient();
+                            let amb = ambient(&sett);
                             *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += amb;
 
                             let diff = diffuse(&tracer, &norm, &sett);
@@ -60,8 +62,11 @@ pub fn run_thread(
                             let spec = specular(&cam, &tracer, &norm, &sett);
                             *layer_4.get_mut((xi, yi)).expect("Invalid pixel index.") += spec;
 
-                            *layer_5.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                amb + diff + spec;
+                            let shadow = shadow(&grid, tracer.clone(), &norm, &sett);
+                            *layer_5.get_mut((xi, yi)).expect("Invalid pixel index.") += shadow;
+
+                            *layer_6.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                (amb + diff + spec) * (1.0 - shadow);
 
                             break;
                         }
@@ -93,12 +98,14 @@ pub fn run_thread(
         }
     }
 
-    vec![layer_0, layer_1, layer_2, layer_3, layer_4, layer_5]
+    vec![
+        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6,
+    ]
 }
 
 /// Calculate the ambient lighting coefficient.
-fn ambient() -> f64 {
-    0.1
+fn ambient(sett: &Settings) -> f64 {
+    sett.ambient()
 }
 
 /// Calculate the diffuse lighting coefficient.
@@ -106,7 +113,7 @@ use nalgebra::{Unit, Vector3};
 fn diffuse(tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
     let light_dir = Unit::new_normalize(sett.sun_pos() - tracer.ray().pos());
 
-    norm.dot(&light_dir).abs()
+    sett.diffuse() * norm.dot(&light_dir).abs()
 }
 
 /// Calculate the specular lighting coefficient.
@@ -116,9 +123,30 @@ fn specular(cam: &Camera, tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
 
     let ref_dir = reflect(&-light_dir, norm);
 
-    view_dir.dot(&ref_dir).max(0.0).powi(32)
+    sett.specular() * view_dir.dot(&ref_dir).max(0.0).powi(sett.specular_pow())
 }
 
+/// Calculate the shadowing factor.
+fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
+    *tracer.ray_mut().dir_mut() = *norm;
+    tracer.travel(1.0e-3);
+
+    *tracer.ray_mut().dir_mut() = Unit::new_normalize(Vector3::new(1.0, 1.0, 1.0));
+
+    if let Some((_new_tracer, _dist, _norm, group)) = grid.observe(tracer) {
+        match group {
+            0 | 1 | 2 => sett.shadow(),
+            _ => {
+                warn!("Do not know how to handle group {}.", group);
+                0.0
+            }
+        }
+    } else {
+        0.0
+    }
+}
+
+/// Calculate the reflection vector for a given input unit vector and surface normal.
 fn reflect(inc: &Unit<Vector3<f64>>, norm: &Unit<Vector3<f64>>) -> Unit<Vector3<f64>> {
     Unit::new_normalize(inc.as_ref() + (2.0 * (-inc.dot(norm)) * norm.as_ref()))
 }
