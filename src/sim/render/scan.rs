@@ -27,6 +27,7 @@ pub fn run_thread(
     let mut layer_2 = Array2::zeros(cam.res());
     let mut layer_3 = Array2::zeros(cam.res());
     let mut layer_4 = Array2::zeros(cam.res());
+    let mut layer_5 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -43,62 +44,67 @@ pub fn run_thread(
             for n in 0..super_samples {
                 let mut tracer = Tracer::new(cam.gen_ss_ray(xi, yi, n));
 
-                while let Some((new_tracer, _dist, norm, group)) = grid.observe(tracer) {
-                    tracer = new_tracer;
+                loop {
+                    if let Some((new_tracer, _dist, norm, group)) = grid.observe(tracer) {
+                        tracer = new_tracer;
 
-                    match group {
-                        0..=10 => {
-                            let amb = ambient(sett);
-                            let diff = diffuse(&tracer, &norm, sett);
-                            let spec = specular(cam, &tracer, &norm, sett);
-                            let shadow = shadow(grid, tracer.clone(), &norm, sett);
+                        match group {
+                            0..=10 => {
+                                let amb = ambient(sett);
+                                let diff = diffuse(&tracer, &norm, sett);
+                                let spec = specular(cam, &tracer, &norm, sett);
+                                let shadow = shadow(grid, tracer.clone(), &norm, sett);
 
-                            *match group {
-                                0 => &mut layer_0,
-                                1 => &mut layer_1,
-                                2 => &mut layer_2,
-                                3 => &mut layer_3,
-                                4 => &mut layer_4,
-                                _ => {
-                                    warn!("Do not know how to handle drawing group {}.", group);
-                                    break;
+                                *match group {
+                                    0 => &mut layer_1,
+                                    1 => &mut layer_2,
+                                    2 => &mut layer_3,
+                                    3 => &mut layer_4,
+                                    4 => &mut layer_5,
+                                    _ => {
+                                        warn!("Do not know how to handle drawing group {}.", group);
+                                        break;
+                                    }
                                 }
+                                .get_mut((xi, yi))
+                                .expect("Invalid pixel index.") +=
+                                    (amb + diff + spec) * (1.0 - shadow);
+
+                                break;
                             }
-                            .get_mut((xi, yi))
-                            .expect("Invalid pixel index.") += (amb + diff + spec) * (1.0 - shadow);
+                            -1 => {
+                                tracer.ray_mut().reflect(&norm);
+                                tracer.travel(1.0e-6);
+                            }
+                            -2 => {
+                                tracer.ray_mut().reflect(&norm);
 
-                            break;
+                                let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
+                                    * (tracer.ray().pos().y * 6.0).sin().powi(2))
+                                    * 1.0e-1;
+                                let rot = nalgebra::Rotation3::from_axis_angle(
+                                    &nalgebra::Vector3::y_axis(),
+                                    theta,
+                                );
+                                *tracer.ray_mut().dir_mut() =
+                                    Unit::new_normalize(rot * tracer.ray().dir().as_ref());
+                                tracer.travel(1.0e-6);
+                            }
+                            _ => {
+                                warn!("Do not know how to handle group {}.", group);
+                                break;
+                            }
                         }
-                        -1 => {
-                            tracer.ray_mut().reflect(&norm);
-                            tracer.travel(1.0e-6);
-                        }
-                        -2 => {
-                            tracer.ray_mut().reflect(&norm);
-
-                            let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
-                                * (tracer.ray().pos().y * 6.0).sin().powi(2))
-                                * 1.0e-1;
-                            let rot = nalgebra::Rotation3::from_axis_angle(
-                                &nalgebra::Vector3::y_axis(),
-                                theta,
-                            );
-                            *tracer.ray_mut().dir_mut() =
-                                Unit::new_normalize(rot * tracer.ray().dir().as_ref());
-                            tracer.travel(1.0e-6);
-                        }
-                        _ => {
-                            *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
-                            warn!("Do not know how to handle group {}.", group);
-                            break;
-                        }
+                    } else {
+                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        break;
                     }
                 }
             }
         }
     }
 
-    vec![layer_0, layer_1, layer_2, layer_3, layer_4]
+    vec![layer_0, layer_1, layer_2, layer_3, layer_4, layer_5]
 }
 
 /// Calculate the ambient lighting coefficient.
