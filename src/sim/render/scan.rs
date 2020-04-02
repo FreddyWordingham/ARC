@@ -48,7 +48,7 @@ pub fn run_thread(
                     tracer = new_tracer;
 
                     match group {
-                        0 => {
+                        -1 | 0 => {
                             *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                             *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                 tracer.dist_travelled();
@@ -133,17 +133,28 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
 
     *tracer.ray_mut().dir_mut() = Unit::new_normalize(sett.sun_pos() - tracer.ray().pos());
 
-    if let Some((_new_tracer, _dist, _norm, group)) = grid.observe(tracer) {
+    let mut light = 1.0;
+
+    while let Some((new_tracer, _dist, _norm, group)) = grid.observe(tracer) {
+        tracer = new_tracer;
+
         match group {
-            0 | 1 | 2 => sett.shadow(),
+            -1 => {
+                light *= 1.0 - sett.transparency();
+            }
+            0 | 1 | 2 => {
+                return sett.shadow();
+            }
             _ => {
                 warn!("Do not know how to handle group {}.", group);
-                0.0
+                return 0.0;
             }
         }
-    } else {
-        0.0
+
+        tracer.travel(1.0e-3);
     }
+
+    sett.shadow() * (1.0 - light)
 }
 
 /// Calculate the reflection vector for a given input unit vector and surface normal.

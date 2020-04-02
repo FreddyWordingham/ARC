@@ -14,12 +14,17 @@
                 "underboard",
                 "lamps",
                 "lead",
-                "leaves_0",
-                "leaves_1",
-                "leaves_2",
                 "planet",
                 "trees",
                 "umbrella",
+            ]
+        ],
+        [
+            -1,
+            [
+                "leaves_0",
+                "leaves_1",
+                "leaves_2",
             ]
         ],
         [
@@ -59,7 +64,8 @@
             150.0,
             250.0
         ],
-        "shadow": 0.25,
+        "shadow": 0.5,
+        "transparency": 0.4,
         "ambient": 1.0,
         "diffuse": 1.0,
         "specular": 1.0,
