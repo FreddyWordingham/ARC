@@ -26,10 +26,6 @@ pub fn run_thread(
     let mut layer_1 = Array2::zeros(cam.res());
     let mut layer_2 = Array2::zeros(cam.res());
     let mut layer_3 = Array2::zeros(cam.res());
-    let mut layer_4 = Array2::zeros(cam.res());
-    let mut layer_5 = Array2::zeros(cam.res());
-    let mut layer_6 = Array2::zeros(cam.res());
-    let mut layer_7 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -50,44 +46,32 @@ pub fn run_thread(
                     tracer = new_tracer;
 
                     match group {
-                        0 | 3 => {
-                            *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
-                            *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                tracer.dist_travelled();
-
-                            let amb = ambient(sett);
-                            *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += amb;
-
-                            let diff = diffuse(&tracer, &norm, sett);
-                            *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") += diff;
-
-                            let spec = specular(cam, &tracer, &norm, sett);
-                            *layer_4.get_mut((xi, yi)).expect("Invalid pixel index.") += spec;
-
-                            let shadow = shadow(grid, tracer.clone(), &norm, sett);
-                            *layer_5.get_mut((xi, yi)).expect("Invalid pixel index.") += shadow;
-
-                            *layer_6.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                (amb + diff + spec) * (1.0 - shadow);
-
-                            break;
-                        }
-                        4 => {
+                        0..=10 => {
                             let amb = ambient(sett);
                             let diff = diffuse(&tracer, &norm, sett);
                             let spec = specular(cam, &tracer, &norm, sett);
                             let shadow = shadow(grid, tracer.clone(), &norm, sett);
 
-                            *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                (amb + diff + spec) * (1.0 - shadow);
+                            *match group {
+                                0 => &mut layer_0,
+                                1 => &mut layer_1,
+                                2 => &mut layer_2,
+                                3 => &mut layer_3,
+                                _ => {
+                                    warn!("Do not know how to handle drawing group {}.", group);
+                                    break;
+                                }
+                            }
+                            .get_mut((xi, yi))
+                            .expect("Invalid pixel index.") += (amb + diff + spec) * (1.0 - shadow);
 
                             break;
                         }
-                        1 => {
+                        -1 => {
                             tracer.ray_mut().reflect(&norm);
                             tracer.travel(1.0e-6);
                         }
-                        2 => {
+                        -2 => {
                             tracer.ray_mut().reflect(&norm);
 
                             let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
@@ -102,7 +86,8 @@ pub fn run_thread(
                             tracer.travel(1.0e-6);
                         }
                         _ => {
-                            // warn!("Do not know how to handle group {}.", group);
+                            *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                            warn!("Do not know how to handle group {}.", group);
                             break;
                         }
                     }
@@ -111,9 +96,7 @@ pub fn run_thread(
         }
     }
 
-    vec![
-        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7,
-    ]
+    vec![layer_0, layer_1, layer_2, layer_3]
 }
 
 /// Calculate the ambient lighting coefficient.
@@ -159,11 +142,11 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
         tracer = new_tracer;
 
         match group {
-            0 | 1 | 2 | 4 => {
-                return sett.shadow();
-            }
-            3 => {
+            0 => {
                 light *= 1.0 - sett.transparency();
+            }
+            1..=10 => {
+                return sett.shadow();
             }
             _ => {
                 warn!("Do not know how to handle group {}.", group);
