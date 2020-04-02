@@ -149,6 +149,7 @@ pub fn run_thread(
                         }
                     } else {
                         *sky.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        *scene.get_mut((xi, yi)).expect("Invalid pixel index.") -= 1.0;
                         break;
                     }
                 }
@@ -157,8 +158,8 @@ pub fn run_thread(
     }
 
     vec![
-        scene, sky, lights, layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7,
-        layer_8, layer_9, layer_10, layer_11, layer_12, layer_13,
+        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7, layer_8, layer_9,
+        layer_10, layer_11, layer_12, layer_13, lights, sky, scene,
     ]
 }
 
