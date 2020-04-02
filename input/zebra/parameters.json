@@ -11,7 +11,7 @@
         [
             -1,
             [
-                "windows"
+                "alt_windows"
             ],
         ],
         [
@@ -66,12 +66,12 @@
             0.0,
             2.65,
         ],
-        "fov": 45.0,
+        "fov": 60.0,
         "res": [
-            4000,
-            4000
+            1000,
+            1000
         ],
-        "ss_power": 16,
+        "ss_power": 1,
     },
     "sett": {
         "sun_pos": [
@@ -84,6 +84,6 @@
         "ambient": 1.0,
         "diffuse": 1.0,
         "specular": 1.0,
-        "specular_pow": 1,
+        "specular_pow": 8,
     }
 }
