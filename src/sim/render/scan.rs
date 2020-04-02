@@ -60,8 +60,8 @@ pub fn run_thread(
                                 let ll = lamp_light(grid, tracer.clone(), &norm, sett);
 
                                 let contribution = (amb + diff + spec)
-                                    * (((1.0 - shadow) * sett.shadow_weight())
-                                        + (ll * sett.light_weight()));
+                                    * (1.0 - shadow)
+                                        .mul_add(sett.shadow_weight(), ll * sett.light_weight());
 
                                 *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                     contribution * 0.1;
@@ -85,7 +85,7 @@ pub fn run_thread(
                                     Unit::new_normalize(rot * tracer.ray().dir().as_ref());
                                 tracer.travel(1.0e-6);
                             }
-                            -3..=10 => {
+                            0..=10 => {
                                 let amb = ambient(sett);
                                 let diff = diffuse(&tracer, &norm, sett);
                                 let spec = specular(cam, &tracer, &norm, sett);
@@ -93,8 +93,8 @@ pub fn run_thread(
                                 let ll = lamp_light(grid, tracer.clone(), &norm, sett);
 
                                 let contribution = (amb + diff + spec)
-                                    * (((1.0 - shadow) * sett.shadow_weight())
-                                        + (ll * sett.light_weight()));
+                                    * (1.0 - shadow)
+                                        .mul_add(sett.shadow_weight(), ll * sett.light_weight());
 
                                 *match group {
                                     0 => &mut layer_1,
@@ -102,6 +102,7 @@ pub fn run_thread(
                                     2 => &mut layer_3,
                                     3 => &mut layer_4,
                                     4 => &mut layer_5,
+                                    5 => &mut layer_6,
                                     _ => {
                                         warn!("Do not know how to handle drawing group {}.", group);
                                         break;
