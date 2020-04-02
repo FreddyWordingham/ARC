@@ -9,6 +9,8 @@ use nalgebra::Point3;
 pub struct Settings {
     /// Overhead sun position.
     sun_pos: Point3<f64>,
+    /// Lamp positions.
+    lamps: Vec<Point3<f64>>,
     /// Shadowing factor. Zero - no shadow, one - complete shadow.
     shadow: f64,
     /// Transparency factor. Zero - completely transparent, one - completely opaque.
@@ -25,6 +27,7 @@ pub struct Settings {
 
 impl Settings {
     access!(sun_pos, Point3<f64>);
+    access!(lamps, Vec<Point3<f64>>);
     clone!(shadow, f64);
     clone!(transparency, f64);
     clone!(ambient, f64);
