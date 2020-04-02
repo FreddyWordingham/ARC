@@ -247,21 +247,25 @@ fn lamp_light(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: 
             match group {
                 0 | 10 | 11 | 12 | 13 => {
                     light *= 1.0 - sett.transparency();
+                    light_tracer.travel(1.0e-3);
                 }
                 -3 => {
                     let dist = light_tracer.dist_travelled();
                     light += 1.0
-                        / (sett.lamp_const()
-                            + (sett.lamp_linear() * dist)
-                            + (sett.lamp_quadratic() * dist.powi(2)));
+                        / sett.lamp_quadratic().mul_add(
+                            dist.powi(2),
+                            sett.lamp_const() + (sett.lamp_linear() * dist),
+                        );
                     break;
+                }
+                -4 => {
+                    light_tracer.ray_mut().refract(&norm, 1.1, 1.0);
+                    light_tracer.travel(1.0e-3);
                 }
                 _ => {
                     break;
                 }
             }
-
-            light_tracer.travel(1.0e-3);
         }
     }
 
