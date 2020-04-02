@@ -52,7 +52,35 @@ pub fn run_thread(
                         tracer = new_tracer;
 
                         match group {
-                            0..=10 => {
+                            -3 => {
+                                let amb = ambient(sett);
+                                let diff = diffuse(&tracer, &norm, sett);
+                                let spec = specular(cam, &tracer, &norm, sett);
+                                let ll = lamp_light(grid, tracer.clone(), &norm, sett);
+
+                                *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                    (amb + diff + spec) * ll * 0.1;
+                                break;
+                            }
+                            -1 => {
+                                tracer.ray_mut().reflect(&norm);
+                                tracer.travel(1.0e-6);
+                            }
+                            -2 => {
+                                tracer.ray_mut().reflect(&norm);
+
+                                let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
+                                    * (tracer.ray().pos().y * 6.0).sin().powi(2))
+                                    * 1.0e-1;
+                                let rot = nalgebra::Rotation3::from_axis_angle(
+                                    &nalgebra::Vector3::y_axis(),
+                                    theta,
+                                );
+                                *tracer.ray_mut().dir_mut() =
+                                    Unit::new_normalize(rot * tracer.ray().dir().as_ref());
+                                tracer.travel(1.0e-6);
+                            }
+                            -3..=10 => {
                                 let amb = ambient(sett);
                                 let diff = diffuse(&tracer, &norm, sett);
                                 let spec = specular(cam, &tracer, &norm, sett);
@@ -79,27 +107,6 @@ pub fn run_thread(
                                 *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                     (amb + diff + spec) * ll;
 
-                                break;
-                            }
-                            -1 => {
-                                tracer.ray_mut().reflect(&norm);
-                                tracer.travel(1.0e-6);
-                            }
-                            -2 => {
-                                tracer.ray_mut().reflect(&norm);
-
-                                let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
-                                    * (tracer.ray().pos().y * 6.0).sin().powi(2))
-                                    * 1.0e-1;
-                                let rot = nalgebra::Rotation3::from_axis_angle(
-                                    &nalgebra::Vector3::y_axis(),
-                                    theta,
-                                );
-                                *tracer.ray_mut().dir_mut() =
-                                    Unit::new_normalize(rot * tracer.ray().dir().as_ref());
-                                tracer.travel(1.0e-6);
-                            }
-                            -3 => {
                                 break;
                             }
                             _ => {
@@ -167,7 +174,7 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
             0 => {
                 light *= 1.0 - sett.transparency();
             }
-            -2..=10 => {
+            -3..=10 => {
                 return sett.shadow();
             }
             _ => {
@@ -193,13 +200,29 @@ fn lamp_light(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: 
 
     for lamp_pos in sett.lamps() {
         let light_dir = Unit::new_normalize(lamp_pos - tracer.ray().pos());
-        let light_tracer = Tracer::new(Ray::new(*tracer.ray().pos(), light_dir));
-        if let Some((new_tracer, _dist, _norm, -3)) = grid.observe(light_tracer) {
-            let dist = new_tracer.dist_travelled();
-            light += 1.0
-                / (sett.lamp_const()
-                    + (sett.lamp_linear() * dist)
-                    + (sett.lamp_quadratic() * dist.powi(2)));
+        let mut light_tracer = Tracer::new(Ray::new(*tracer.ray().pos(), light_dir));
+
+        while let Some((new_tracer, _dist, _norm, group)) = grid.observe(light_tracer) {
+            light_tracer = new_tracer;
+
+            match group {
+                0 => {
+                    light *= 1.0 - sett.transparency();
+                }
+                -3 => {
+                    let dist = light_tracer.dist_travelled();
+                    light += 1.0
+                        / (sett.lamp_const()
+                            + (sett.lamp_linear() * dist)
+                            + (sett.lamp_quadratic() * dist.powi(2)));
+                    break;
+                }
+                _ => {
+                    break;
+                }
+            }
+
+            light_tracer.travel(1.0e-3);
         }
     }
 
