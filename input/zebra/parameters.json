@@ -1,5 +1,5 @@
 {
-    "max_depth": 8,
+    "max_depth": 10,
     "tar_tris": 10,
     "meshes": [
         [
@@ -61,7 +61,7 @@
             800,
             800
         ],
-        "ss_power": 4,
+        "ss_power": 1,
     },
     "sett": {
         "sun_pos": [
