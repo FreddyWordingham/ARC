@@ -32,6 +32,11 @@ pub fn run_thread(
     let mut layer_5 = Array2::zeros(cam.res());
     let mut layer_6 = Array2::zeros(cam.res());
     let mut layer_7 = Array2::zeros(cam.res());
+    let mut layer_8 = Array2::zeros(cam.res());
+    let mut layer_9 = Array2::zeros(cam.res());
+    let mut sky = Array2::zeros(cam.res());
+    let mut lights = Array2::zeros(cam.res());
+    let mut scene = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -64,7 +69,9 @@ pub fn run_thread(
                                     * (1.0 - shadow)
                                         .mul_add(sett.shadow_weight(), ll * sett.light_weight());
 
-                                *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                *scene.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                    contribution * 0.1;
+                                *lights.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                     contribution * 0.1;
                                 break;
                             }
@@ -103,12 +110,16 @@ pub fn run_thread(
                                         .mul_add(sett.shadow_weight(), ll * sett.light_weight());
 
                                 *match group {
-                                    0 => &mut layer_1,
-                                    1 => &mut layer_2,
-                                    2 => &mut layer_3,
-                                    3 => &mut layer_4,
-                                    4 => &mut layer_5,
-                                    5 => &mut layer_6,
+                                    0 => &mut layer_0,
+                                    1 => &mut layer_1,
+                                    2 => &mut layer_2,
+                                    3 => &mut layer_3,
+                                    4 => &mut layer_4,
+                                    5 => &mut layer_5,
+                                    6 => &mut layer_6,
+                                    7 => &mut layer_7,
+                                    8 => &mut layer_8,
+                                    9 => &mut layer_9,
                                     _ => {
                                         warn!("Do not know how to handle drawing group {}.", group);
                                         break;
@@ -117,7 +128,7 @@ pub fn run_thread(
                                 .get_mut((xi, yi))
                                 .expect("Invalid pixel index.") += contribution;
 
-                                *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                *scene.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                     contribution;
 
                                 break;
@@ -128,7 +139,7 @@ pub fn run_thread(
                             }
                         }
                     } else {
-                        *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
+                        *sky.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                         break;
                     }
                 }
@@ -137,7 +148,8 @@ pub fn run_thread(
     }
 
     vec![
-        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7,
+        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7, layer_8, layer_9,
+        sky, lights, scene,
     ]
 }
 
