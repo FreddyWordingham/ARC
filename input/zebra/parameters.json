@@ -28,10 +28,26 @@
             ],
         ],
         [
-            0,
+            10,
+            [
+                "bushes",
+            ]
+        ],
+        [
+            11,
             [
                 "leaves_0",
+            ]
+        ],
+        [
+            12,
+            [
                 "leaves_1",
+            ]
+        ],
+        [
+            13,
+            [
                 "leaves_2",
             ]
         ],
@@ -39,32 +55,55 @@
             1,
             [
                 "sides",
-                "trees",
-                "lamps",
-                "umbrella",
             ],
         ],
         [
             2,
             [
-                "bushes",
-                "hills",
-                "underboard",
+                "trees",
             ],
         ],
         [
             3,
             [
-                "dog",
-                "klm",
-                "fjmw",
-                "lead",
+                "lamps",
             ],
         ],
         [
             4,
             [
-                "planet",
+                "umbrella",
+            ],
+        ],
+        [
+            5,
+            [
+                "hills",
+                "underboard",
+            ],
+        ],
+        [
+            6,
+            [
+                "dog",
+            ],
+        ],
+        [
+            7,
+            [
+                "dog",
+            ],
+        ],
+        [
+            8,
+            [
+                "klm",
+            ],
+        ],
+        [
+            9,
+            [
+                "fjmw",
             ],
         ],
     ],
@@ -83,10 +122,10 @@
         "res": [
             // 1920,
             // 1080,
-            1000,
-            1000,
+            8000,
+            8000,
         ],
-        "ss_power": 1,
+        "ss_power": 4,
     },
     "sett": {
         "lamps": [
@@ -130,7 +169,7 @@
         "lamp_const": 1.0,
         "lamp_linear": 0.09,
         "lamp_quadratic": 0.032,
-        "light_weight": 0.75,
-        "shadow_weight": 0.25,
+        "light_weight": 0.85,
+        "shadow_weight": 0.15,
     }
 }

@@ -34,6 +34,9 @@ pub fn run_thread(
     let mut layer_7 = Array2::zeros(cam.res());
     let mut layer_8 = Array2::zeros(cam.res());
     let mut layer_9 = Array2::zeros(cam.res());
+    let mut layer_10 = Array2::zeros(cam.res());
+    let mut layer_11 = Array2::zeros(cam.res());
+    let mut layer_12 = Array2::zeros(cam.res());
     let mut sky = Array2::zeros(cam.res());
     let mut lights = Array2::zeros(cam.res());
     let mut scene = Array2::zeros(cam.res());
@@ -98,7 +101,7 @@ pub fn run_thread(
                                     Unit::new_normalize(rot * tracer.ray().dir().as_ref());
                                 tracer.travel(1.0e-6);
                             }
-                            0..=10 => {
+                            0..=20 => {
                                 let amb = ambient(sett);
                                 let diff = diffuse(&tracer, &norm, sett);
                                 let spec = specular(cam, &tracer, &norm, sett);
@@ -120,6 +123,9 @@ pub fn run_thread(
                                     7 => &mut layer_7,
                                     8 => &mut layer_8,
                                     9 => &mut layer_9,
+                                    10 => &mut layer_10,
+                                    11 => &mut layer_11,
+                                    12 => &mut layer_12,
                                     _ => {
                                         warn!("Do not know how to handle drawing group {}.", group);
                                         break;
@@ -149,7 +155,7 @@ pub fn run_thread(
 
     vec![
         layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7, layer_8, layer_9,
-        sky, lights, scene,
+        layer_10, layer_11, layer_12, sky, lights, scene,
     ]
 }
 
@@ -200,10 +206,10 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
                 tracer.travel(1.0e-3);
                 continue;
             }
-            0 => {
+            0 | 10 | 11 | 12 | 13 => {
                 light *= 1.0 - sett.transparency();
             }
-            -3..=10 => {
+            -3..=20 => {
                 return sett.shadow();
             }
             _ => {
@@ -235,7 +241,7 @@ fn lamp_light(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: 
             light_tracer = new_tracer;
 
             match group {
-                0 => {
+                0 | 10 | 11 | 12 | 13 => {
                     light *= 1.0 - sett.transparency();
                 }
                 -3 => {
