@@ -17,7 +17,7 @@ struct Parameters {
     max_depth: usize,
     tar_tris: usize,
     camera: FileCamera,
-    meshes: Vec<(String, Group)>,
+    meshes: Vec<(Group, Vec<String>)>,
     sett: Settings,
 }
 
@@ -71,14 +71,16 @@ fn build_camera(camera: &FileCamera) -> Camera {
 }
 
 /// Load in the base meshes.
-fn load_meshes(in_dir: &Path, names: &Vec<(String, Group)>) -> Vec<(Mesh, Group)> {
+fn load_meshes(in_dir: &Path, names: &Vec<(Group, Vec<String>)>) -> Vec<(Mesh, Group)> {
     let mut meshes = vec![];
 
     info!("Loading meshes");
-    for (name, group) in names {
-        let path = &in_dir.join(format!("entities/{}.obj", name));
-        info!("Loading: {}", path.display());
-        meshes.push((Mesh::load(path), *group));
+    for (group, list) in names {
+        for name in list {
+            let path = &in_dir.join(format!("entities/{}.obj", name));
+            info!("Loading: {}", path.display());
+            meshes.push((Mesh::load(path), *group));
+        }
     }
 
     meshes
