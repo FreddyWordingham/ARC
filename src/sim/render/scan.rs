@@ -65,8 +65,24 @@ pub fn run_thread(
 
                             break;
                         }
-                        // 1 => {}
-                        // 2 => {}
+                        1 => {
+                            tracer.ray_mut().reflect(&norm);
+                            tracer.travel(1.0e-6);
+                        }
+                        2 => {
+                            tracer.ray_mut().reflect(&norm);
+
+                            let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
+                                * (tracer.ray().pos().y * 6.0).sin().powi(2))
+                                * 1.0e-1;
+                            let rot = nalgebra::Rotation3::from_axis_angle(
+                                &nalgebra::Vector3::y_axis(),
+                                theta,
+                            );
+                            *tracer.ray_mut().dir_mut() =
+                                Unit::new_normalize(rot * tracer.ray().dir().as_ref());
+                            tracer.travel(1.0e-6);
+                        }
                         _ => {
                             // warn!("Do not know how to handle group {}.", group);
                             break;
@@ -100,7 +116,7 @@ fn specular(cam: &Camera, tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
 
     let ref_dir = reflect(&-light_dir, norm);
 
-    view_dir.dot(&ref_dir).abs().powi(32)
+    view_dir.dot(&ref_dir).max(0.0).powi(32)
 }
 
 fn reflect(inc: &Unit<Vector3<f64>>, norm: &Unit<Vector3<f64>>) -> Unit<Vector3<f64>> {
