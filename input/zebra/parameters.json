@@ -3,10 +3,15 @@
     "tar_tris": 10,
     "meshes": [
         [
+            -4,
+            [
+                "rain"
+            ],
+        ],
+        [
             -3,
             [
                 "bulbs",
-                // "single_bulb",
                 "shades"
             ],
         ],
@@ -19,11 +24,11 @@
         [
             -1,
             [
-                "alt_windows"
+                "alt_windows",
             ],
         ],
         [
-            1,
+            0,
             [
                 "leaves_0",
                 "leaves_1",
@@ -33,6 +38,7 @@
         [
             1,
             [
+                "sides",
                 "trees",
                 "lamps",
                 "umbrella",
@@ -77,8 +83,8 @@
         "res": [
             // 1920,
             // 1080,
-            500,
-            500,
+            1000,
+            1000,
         ],
         "ss_power": 1,
     },

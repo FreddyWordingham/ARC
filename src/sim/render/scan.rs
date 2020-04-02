@@ -13,6 +13,7 @@ use std::sync::{Arc, Mutex};
 /// Render using a single thread.
 #[allow(clippy::never_loop)]
 #[allow(clippy::single_match_else)]
+#[allow(clippy::too_many_lines)]
 #[inline]
 #[must_use]
 pub fn run_thread(
@@ -66,6 +67,11 @@ pub fn run_thread(
                                 *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                     contribution * 0.1;
                                 break;
+                            }
+                            -4 => {
+                                tracer.ray_mut().refract(&norm, 1.0, 1.1);
+                                tracer.travel(1.0e-6);
+                                // break;
                             }
                             -1 => {
                                 tracer.ray_mut().reflect(&norm);
@@ -178,6 +184,10 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
         tracer = new_tracer;
 
         match group {
+            -4 => {
+                tracer.travel(1.0e-3);
+                continue;
+            }
             0 => {
                 light *= 1.0 - sett.transparency();
             }

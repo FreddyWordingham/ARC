@@ -56,6 +56,21 @@ impl Ray {
         self.dir =
             Unit::new_normalize(self.dir.as_ref() + (2.0 * (-self.dir.dot(norm)) * norm.as_ref()));
     }
+
+    /// Refract the ray from a given normal surface from a given refracting index to another.
+    #[inline]
+    pub fn refract(&mut self, norm: &Unit<Vector3<f64>>, n0: f64, n1: f64) {
+        // TODO: Check for critical angle.
+        let inc = self.dir();
+        let ci = -inc.dot(&norm);
+
+        let n = n0 / n1;
+        let s2t = n.powi(2) * (1.0 - ci.powi(2));
+        let ct = (1.0 - s2t).sqrt();
+
+        self.dir =
+            Unit::new_unchecked((n * inc.into_inner()) + ((n * ci) - ct) * norm.into_inner());
+    }
 }
 
 impl Emit for Ray {
