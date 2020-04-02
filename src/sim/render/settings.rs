@@ -11,6 +11,12 @@ pub struct Settings {
     sun_pos: Point3<f64>,
     /// Lamp positions.
     lamps: Vec<Point3<f64>>,
+    /// Lamp lighting const component.
+    lamp_const: f64,
+    /// Lamp lighting linear component.
+    lamp_linear: f64,
+    /// Lamp lighting quadratic component.
+    lamp_quadratic: f64,
     /// Shadowing factor. Zero - no shadow, one - complete shadow.
     shadow: f64,
     /// Transparency factor. Zero - completely transparent, one - completely opaque.
@@ -28,6 +34,9 @@ pub struct Settings {
 impl Settings {
     access!(sun_pos, Point3<f64>);
     access!(lamps, Vec<Point3<f64>>);
+    clone!(lamp_const, f64);
+    clone!(lamp_linear, f64);
+    clone!(lamp_quadratic, f64);
     clone!(shadow, f64);
     clone!(transparency, f64);
     clone!(ambient, f64);

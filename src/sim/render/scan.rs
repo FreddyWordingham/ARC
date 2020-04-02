@@ -1,6 +1,7 @@
 //! Core scanning function.
 
 use crate::{
+    geom::Ray,
     sim::render::{Camera, Cell, Settings, Tracer},
     util::ParProgressBar,
 };
@@ -28,6 +29,8 @@ pub fn run_thread(
     let mut layer_3 = Array2::zeros(cam.res());
     let mut layer_4 = Array2::zeros(cam.res());
     let mut layer_5 = Array2::zeros(cam.res());
+    let mut layer_6 = Array2::zeros(cam.res());
+    let mut layer_7 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -54,6 +57,7 @@ pub fn run_thread(
                                 let diff = diffuse(&tracer, &norm, sett);
                                 let spec = specular(cam, &tracer, &norm, sett);
                                 let shadow = shadow(grid, tracer.clone(), &norm, sett);
+                                let ll = lamp_light(grid, tracer.clone(), &norm, sett);
 
                                 *match group {
                                     0 => &mut layer_1,
@@ -67,8 +71,13 @@ pub fn run_thread(
                                     }
                                 }
                                 .get_mut((xi, yi))
-                                .expect("Invalid pixel index.") +=
+                                .expect("Invalid pixel index.") += 1.0;
+
+                                *layer_6.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                     (amb + diff + spec) * (1.0 - shadow);
+
+                                *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                    (amb + diff + spec) * ll;
 
                                 break;
                             }
@@ -90,6 +99,9 @@ pub fn run_thread(
                                     Unit::new_normalize(rot * tracer.ray().dir().as_ref());
                                 tracer.travel(1.0e-6);
                             }
+                            -3 => {
+                                break;
+                            }
                             _ => {
                                 warn!("Do not know how to handle group {}.", group);
                                 break;
@@ -104,7 +116,9 @@ pub fn run_thread(
         }
     }
 
-    vec![layer_0, layer_1, layer_2, layer_3, layer_4, layer_5]
+    vec![
+        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7,
+    ]
 }
 
 /// Calculate the ambient lighting coefficient.
@@ -166,6 +180,30 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
     }
 
     sett.shadow() * (1.0 - light)
+}
+
+/// Calculate the lamp lighting factor.
+#[inline]
+#[must_use]
+fn lamp_light(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
+    let mut light = 0.0;
+
+    *tracer.ray_mut().dir_mut() = *norm;
+    tracer.travel(1.0e-3);
+
+    for lamp_pos in sett.lamps() {
+        let light_dir = Unit::new_normalize(lamp_pos - tracer.ray().pos());
+        let light_tracer = Tracer::new(Ray::new(*tracer.ray().pos(), light_dir));
+        if let Some((new_tracer, _dist, _norm, -3)) = grid.observe(light_tracer) {
+            let dist = new_tracer.dist_travelled();
+            light += 1.0
+                / (sett.lamp_const()
+                    + (sett.lamp_linear() * dist)
+                    + (sett.lamp_quadratic() * dist.powi(2)));
+        }
+    }
+
+    light
 }
 
 /// Calculate the reflection vector for a given input unit vector and surface normal.
