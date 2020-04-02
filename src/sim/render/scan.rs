@@ -5,6 +5,7 @@ use crate::{
     util::ParProgressBar,
 };
 use log::warn;
+use nalgebra::{Unit, Vector3};
 use ndarray::Array2;
 use std::sync::{Arc, Mutex};
 
@@ -28,6 +29,7 @@ pub fn run_thread(
     let mut layer_4 = Array2::zeros(cam.res());
     let mut layer_5 = Array2::zeros(cam.res());
     let mut layer_6 = Array2::zeros(cam.res());
+    let mut layer_7 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -48,24 +50,34 @@ pub fn run_thread(
                     tracer = new_tracer;
 
                     match group {
-                        -1 | 0 => {
+                        0 | 3 => {
                             *layer_0.get_mut((xi, yi)).expect("Invalid pixel index.") += 1.0;
                             *layer_1.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                 tracer.dist_travelled();
 
-                            let amb = ambient(&sett);
+                            let amb = ambient(sett);
                             *layer_2.get_mut((xi, yi)).expect("Invalid pixel index.") += amb;
 
-                            let diff = diffuse(&tracer, &norm, &sett);
+                            let diff = diffuse(&tracer, &norm, sett);
                             *layer_3.get_mut((xi, yi)).expect("Invalid pixel index.") += diff;
 
-                            let spec = specular(&cam, &tracer, &norm, &sett);
+                            let spec = specular(cam, &tracer, &norm, sett);
                             *layer_4.get_mut((xi, yi)).expect("Invalid pixel index.") += spec;
 
-                            let shadow = shadow(&grid, tracer.clone(), &norm, &sett);
+                            let shadow = shadow(grid, tracer.clone(), &norm, sett);
                             *layer_5.get_mut((xi, yi)).expect("Invalid pixel index.") += shadow;
 
                             *layer_6.get_mut((xi, yi)).expect("Invalid pixel index.") +=
+                                (amb + diff + spec) * (1.0 - shadow);
+
+                            break;
+                        }
+                        4 => {
+                            let amb = ambient(sett);
+                            let diff = diffuse(&tracer, &norm, sett);
+                            let spec = specular(cam, &tracer, &norm, sett);
+                            let shadow = shadow(grid, tracer.clone(), &norm, sett);
+                            *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
                                 (amb + diff + spec) * (1.0 - shadow);
 
                             break;
@@ -99,17 +111,20 @@ pub fn run_thread(
     }
 
     vec![
-        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6,
+        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7,
     ]
 }
 
 /// Calculate the ambient lighting coefficient.
+#[inline]
+#[must_use]
 fn ambient(sett: &Settings) -> f64 {
     sett.ambient()
 }
 
 /// Calculate the diffuse lighting coefficient.
-use nalgebra::{Unit, Vector3};
+#[inline]
+#[must_use]
 fn diffuse(tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
     let light_dir = Unit::new_normalize(sett.sun_pos() - tracer.ray().pos());
 
@@ -117,6 +132,8 @@ fn diffuse(tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
 }
 
 /// Calculate the specular lighting coefficient.
+#[inline]
+#[must_use]
 fn specular(cam: &Camera, tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
     let light_dir = Unit::new_normalize(sett.sun_pos() - tracer.ray().pos());
     let view_dir = Unit::new_normalize(cam.forward().pos() - tracer.ray().pos());
@@ -127,6 +144,8 @@ fn specular(cam: &Camera, tracer: &Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
 }
 
 /// Calculate the shadowing factor.
+#[inline]
+#[must_use]
 fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Settings) -> f64 {
     *tracer.ray_mut().dir_mut() = *norm;
     tracer.travel(1.0e-3);
@@ -139,11 +158,11 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
         tracer = new_tracer;
 
         match group {
-            -1 => {
-                light *= 1.0 - sett.transparency();
-            }
-            0 | 1 | 2 => {
+            0 | 1 | 2 | 4 => {
                 return sett.shadow();
+            }
+            3 => {
+                light *= 1.0 - sett.transparency();
             }
             _ => {
                 warn!("Do not know how to handle group {}.", group);
@@ -158,6 +177,8 @@ fn shadow(grid: &Cell, mut tracer: Tracer, norm: &Unit<Vector3<f64>>, sett: &Set
 }
 
 /// Calculate the reflection vector for a given input unit vector and surface normal.
+#[inline]
+#[must_use]
 fn reflect(inc: &Unit<Vector3<f64>>, norm: &Unit<Vector3<f64>>) -> Unit<Vector3<f64>> {
     Unit::new_normalize(inc.as_ref() + (2.0 * (-inc.dot(norm)) * norm.as_ref()))
 }

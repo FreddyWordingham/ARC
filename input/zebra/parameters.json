@@ -8,7 +8,6 @@
                 "bulbs",
                 "bushes",
                 "dog",
-                "fjmw",
                 "klm",
                 "hills",
                 "underboard",
@@ -17,14 +16,6 @@
                 "planet",
                 "trees",
                 "umbrella",
-            ]
-        ],
-        [
-            -1,
-            [
-                "leaves_0",
-                "leaves_1",
-                "leaves_2",
             ]
         ],
         [
@@ -38,6 +29,20 @@
             [
                 "path"
             ],
+        ],
+        [
+            3,
+            [
+                "leaves_0",
+                "leaves_1",
+                "leaves_2",
+            ]
+        ],
+        [
+            4,
+            [
+                "fjmw",
+            ]
         ],
     ],
     "camera": {
@@ -56,7 +61,7 @@
             800,
             800
         ],
-        "ss_power": 1,
+        "ss_power": 4,
     },
     "sett": {
         "sun_pos": [
