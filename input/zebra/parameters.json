@@ -77,10 +77,10 @@
         "res": [
             // 1920,
             // 1080,
-            1000,
-            1000,
+            500,
+            500,
         ],
-        "ss_power": 4,
+        "ss_power": 1,
     },
     "sett": {
         "lamps": [
@@ -116,7 +116,7 @@
             250.0
         ],
         "shadow": 0.5,
-        "transparency": 0.4,
+        "transparency": 0.75,
         "ambient": 1.0,
         "diffuse": 1.0,
         "specular": 1.0,
@@ -124,5 +124,7 @@
         "lamp_const": 1.0,
         "lamp_linear": 0.09,
         "lamp_quadratic": 0.032,
+        "light_weight": 0.8,
+        "shadow_weight": 0.2,
     }
 }

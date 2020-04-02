@@ -13,6 +13,10 @@ pub struct Settings {
     lamps: Vec<Point3<f64>>,
     /// Lamp lighting const component.
     lamp_const: f64,
+    /// Light weighting.
+    light_weight: f64,
+    /// Shadow weighting.
+    shadow_weight: f64,
     /// Lamp lighting linear component.
     lamp_linear: f64,
     /// Lamp lighting quadratic component.
@@ -35,6 +39,8 @@ impl Settings {
     access!(sun_pos, Point3<f64>);
     access!(lamps, Vec<Point3<f64>>);
     clone!(lamp_const, f64);
+    clone!(light_weight, f64);
+    clone!(shadow_weight, f64);
     clone!(lamp_linear, f64);
     clone!(lamp_quadratic, f64);
     clone!(shadow, f64);

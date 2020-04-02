@@ -56,10 +56,15 @@ pub fn run_thread(
                                 let amb = ambient(sett);
                                 let diff = diffuse(&tracer, &norm, sett);
                                 let spec = specular(cam, &tracer, &norm, sett);
+                                let shadow = shadow(grid, tracer.clone(), &norm, sett);
                                 let ll = lamp_light(grid, tracer.clone(), &norm, sett);
 
+                                let contribution = (amb + diff + spec)
+                                    * (((1.0 - shadow) * sett.shadow_weight())
+                                        + (ll * sett.light_weight()));
+
                                 *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                    (amb + diff + spec) * ll * 0.1;
+                                    contribution * 0.1;
                                 break;
                             }
                             -1 => {
@@ -87,6 +92,10 @@ pub fn run_thread(
                                 let shadow = shadow(grid, tracer.clone(), &norm, sett);
                                 let ll = lamp_light(grid, tracer.clone(), &norm, sett);
 
+                                let contribution = (amb + diff + spec)
+                                    * (((1.0 - shadow) * sett.shadow_weight())
+                                        + (ll * sett.light_weight()));
+
                                 *match group {
                                     0 => &mut layer_1,
                                     1 => &mut layer_2,
@@ -99,13 +108,10 @@ pub fn run_thread(
                                     }
                                 }
                                 .get_mut((xi, yi))
-                                .expect("Invalid pixel index.") += 1.0;
-
-                                *layer_6.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                    (amb + diff + spec) * (1.0 - shadow);
+                                .expect("Invalid pixel index.") += contribution;
 
                                 *layer_7.get_mut((xi, yi)).expect("Invalid pixel index.") +=
-                                    (amb + diff + spec) * ll;
+                                    contribution;
 
                                 break;
                             }
