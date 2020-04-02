@@ -130,7 +130,7 @@
         "lamp_const": 1.0,
         "lamp_linear": 0.09,
         "lamp_quadratic": 0.032,
-        "light_weight": 0.8,
-        "shadow_weight": 0.2,
+        "light_weight": 0.75,
+        "shadow_weight": 0.25,
     }
 }

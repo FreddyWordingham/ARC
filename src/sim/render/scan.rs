@@ -82,7 +82,7 @@ pub fn run_thread(
 
                                 let theta = ((tracer.ray().pos().x * 6.0).sin().powi(2)
                                     * (tracer.ray().pos().y * 6.0).sin().powi(2))
-                                    * 1.0e-1;
+                                    * 0.5e-1;
                                 let rot = nalgebra::Rotation3::from_axis_angle(
                                     &nalgebra::Vector3::y_axis(),
                                     theta,
