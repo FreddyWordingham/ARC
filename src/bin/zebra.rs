@@ -46,9 +46,21 @@ fn main() {
     let sett = params.sett;
 
     banner::section("Rendering");
-    let stack = arc::sim::render::run(&cam, &grid, &sett);
+    let mut stack = arc::sim::render::run(&cam, &grid, &sett);
 
     banner::section("Saving");
+    let path = &out_dir.join("scene.nc");
+    info!("Saving {}", path.display());
+    stack.pop().expect("Missing scene image.").save(path);
+
+    let path = &out_dir.join("sky.nc");
+    info!("Saving {}", path.display());
+    stack.pop().expect("Missing sky image.").save(path);
+
+    let path = &out_dir.join("lights.nc");
+    info!("Saving {}", path.display());
+    stack.pop().expect("Missing lights image.").save(path);
+
     for (index, img) in stack.iter().enumerate() {
         let path = &out_dir.join(format!("layer_{}.nc", index));
         info!("Saving {}", path.display());

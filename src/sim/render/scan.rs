@@ -24,6 +24,10 @@ pub fn run_thread(
     block_size: usize,
     sett: &Settings,
 ) -> Vec<Array2<f64>> {
+    let mut scene = Array2::zeros(cam.res());
+    let mut sky = Array2::zeros(cam.res());
+    let mut lights = Array2::zeros(cam.res());
+
     let mut layer_0 = Array2::zeros(cam.res());
     let mut layer_1 = Array2::zeros(cam.res());
     let mut layer_2 = Array2::zeros(cam.res());
@@ -37,9 +41,7 @@ pub fn run_thread(
     let mut layer_10 = Array2::zeros(cam.res());
     let mut layer_11 = Array2::zeros(cam.res());
     let mut layer_12 = Array2::zeros(cam.res());
-    let mut sky = Array2::zeros(cam.res());
-    let mut lights = Array2::zeros(cam.res());
-    let mut scene = Array2::zeros(cam.res());
+    let mut layer_13 = Array2::zeros(cam.res());
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -126,6 +128,7 @@ pub fn run_thread(
                                     10 => &mut layer_10,
                                     11 => &mut layer_11,
                                     12 => &mut layer_12,
+                                    13 => &mut layer_13,
                                     _ => {
                                         warn!("Do not know how to handle drawing group {}.", group);
                                         break;
@@ -154,8 +157,8 @@ pub fn run_thread(
     }
 
     vec![
-        layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7, layer_8, layer_9,
-        layer_10, layer_11, layer_12, sky, lights, scene,
+        scene, sky, lights, layer_0, layer_1, layer_2, layer_3, layer_4, layer_5, layer_6, layer_7,
+        layer_8, layer_9, layer_10, layer_11, layer_12, layer_13,
     ]
 }
 
