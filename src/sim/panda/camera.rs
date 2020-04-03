@@ -17,6 +17,8 @@ pub struct Camera {
     res: (usize, usize),
     /// Scanning deltas.
     delta: (f64, f64),
+    /// Sub-sampling deltas.
+    sub_delta: (f64, f64),
     /// Super sampling power.
     ss_power: u64,
 }
@@ -28,6 +30,7 @@ impl Camera {
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
     clone!(delta, (f64, f64));
+    clone!(sub_delta, (f64, f64));
     clone!(ss_power, u64);
 
     /// Construct a new instance.
@@ -47,6 +50,7 @@ impl Camera {
 
         let fov = (fov_x, fov_x * (res.1 as f64 / res.0 as f64));
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
+        let sub_delta = (delta.0 / ss_power as f64, delta.1 / ss_power as f64);
 
         let forward = Ray::new(pos, Unit::new_normalize(tar - pos));
         let up = Vector3::z_axis();
@@ -59,6 +63,7 @@ impl Camera {
             fov,
             res,
             delta,
+            sub_delta,
             ss_power,
         }
     }
@@ -97,13 +102,13 @@ impl Camera {
         debug_assert!(yi < self.res.1);
         debug_assert!(sample < self.ss_power.pow(2));
 
-        let mut theta = (xi as f64 * self.delta.0) - (self.fov.0 / 2.0);
-        let mut phi = (yi as f64 * self.delta.1) - (self.fov.1 / 2.0);
+        let mut theta = (xi as f64 * self.delta.0) - (self.fov.0 * 0.5);
+        let mut phi = (yi as f64 * self.delta.1) - (self.fov.1 * 0.5);
 
         let sx = (sample % self.ss_power) as f64 + 0.5;
         let sy = (sample / self.ss_power) as f64 + 0.5;
-        theta += (sx as f64 * (self.delta.0 / self.ss_power as f64)) - (self.delta.0 / 2.0);
-        phi += (sy as f64 * (self.delta.1 / self.ss_power as f64)) - (self.delta.1 / 2.0);
+        theta += (sx * self.sub_delta.0) - (self.delta.0 * 0.5);
+        phi += (sy * self.sub_delta.1) - (self.delta.1 * 0.5);
 
         let mut ray = self.forward.clone();
 
@@ -114,4 +119,3 @@ impl Camera {
         ray
     }
 }
-
