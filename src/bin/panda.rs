@@ -4,7 +4,7 @@ use arc::{
     args,
     file::Load,
     report,
-    sim::panda::ShaderSettings,
+    sim::panda::{GridSettings, ShaderSettings},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -13,6 +13,8 @@ use std::path::Path;
 
 #[form]
 struct Parameters {
+    /// Grid setup information.
+    grid_settings: GridSettings,
     /// Shader information.
     shader_settings: ShaderSettings,
 }
@@ -42,6 +44,7 @@ fn load_parameters(path: &Path) -> Parameters {
     info!("Loading parameters file");
     let params = Parameters::load(&path);
 
+    report!(&params.grid_settings, "Grid settings");
     report!(&params.shader_settings, "Shader settings");
 
     params

@@ -1,5 +1,5 @@
 {
-    "grid": {
+    "grid_settings": {
         "max_depth": 6,
         "tar_tris": 10
     },
