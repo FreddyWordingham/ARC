@@ -44,14 +44,14 @@ impl Camera {
 impl Display for Camera {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         writeln!(fmt, "")?;
-        writeln!(fmt, "\tposition                   : {}", self.pos)?;
-        writeln!(fmt, "\ttarget                     : {}", self.tar)?;
-        writeln!(fmt, "\tfield of view              : {} [deg]", self.fov)?;
+        writeln!(fmt, "{:>30} : {}", "position", self.pos)?;
+        writeln!(fmt, "{:>30} : {}", "target", self.tar)?;
+        writeln!(fmt, "{:>30} : {} [deg]", "field of view", self.fov)?;
         writeln!(
             fmt,
-            "\tresolution                 : {} x {}",
-            self.res.0, self.res.1
+            "{:>30} : {} x {}",
+            "image resolution", self.res.0, self.res.1
         )?;
-        write!(fmt, "\tsupersampling power        : {}", self.ss_power)
+        writeln!(fmt, "{:>30} : {}", "super sampling power", self.ss_power)
     }
 }
