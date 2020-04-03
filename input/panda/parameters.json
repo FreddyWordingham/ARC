@@ -4,9 +4,14 @@
         "tar_tris": 10
     },
     "surfaces": [
-        [1, [
-            ["piece", {}]
-        ]]
+        [
+            0, [
+                ["cube", null]
+            ],
+            1, [
+                ["torus", null]
+            ]
+        ]
     ],
     "shader_settings": {
         "sun_pos": [-100, 100, 200],
@@ -23,7 +28,7 @@
             "tar": [0, 0, 0],
             "fov": 45,
             "res": [480, 480],
-            "ss_power": 1
+            "ss_power": 3
         },
         "img_1": {
             "pos": [1, 2, 2],

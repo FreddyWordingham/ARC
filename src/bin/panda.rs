@@ -2,9 +2,10 @@
 
 use arc::{
     args,
-    file::{Camera, Load, Transform},
+    file::{Camera, Load, Transform as FileTransform},
+    geom::Mesh,
     report,
-    sim::panda::{GridSettings, ShaderSettings},
+    sim::panda::{GridSettings, Group, ShaderSettings},
     util::{banner, exec, init},
 };
 use attr::form;
@@ -18,7 +19,7 @@ struct Parameters {
     /// Shader information.
     shader_settings: ShaderSettings,
     /// Traceable surfaces.
-    surfaces: Vec<(i32, Vec<(String, Option<Transform>)>)>,
+    surfaces: Vec<(Group, Vec<(String, Option<FileTransform>)>)>,
     /// Cameras to take images with.
     cameras: BTreeMap<String, Camera>,
 }
@@ -26,7 +27,7 @@ struct Parameters {
 fn main() {
     colog::init();
     banner::title(&exec::name());
-    banner::section("initialisation");
+    banner::section("Initialisation");
     args!(_bin_path: String;
         params_name: String);
 
@@ -37,13 +38,21 @@ fn main() {
     report!(out_dir.display(), "output directory");
     report!(params_path.display(), "parameters path");
 
-    banner::section("Loading");
+    banner::section("Input");
     let params = load_parameters(params_path);
+
+    banner::section("Loading");
+    info!("Loading surfaces");
+    let surfs = load_surfs(&in_dir, &params.surfaces);
+
+    banner::section("Building");
+    let _grid = build_grid(&surfs);
 
     banner::section("Rendering");
     for (name, cam) in params.cameras {
         info!("Rendering image: {}", name);
 
+        info!("Building camera...");
         let cam = cam.build();
         report!(cam, "Camera");
     }
@@ -53,7 +62,7 @@ fn main() {
 #[inline]
 #[must_use]
 fn load_parameters(path: &Path) -> Parameters {
-    info!("Loading parameters file");
+    info!("Loading parameters...");
     let params = Parameters::load(&path);
 
     report!(&params.grid_settings, "Grid settings");
@@ -65,4 +74,52 @@ fn load_parameters(path: &Path) -> Parameters {
     }
 
     params
+}
+
+/// Load the base meshes and transform them into their final surfaces.
+use arc::geom::surf::transform::Transform;
+fn load_surfs(
+    in_dir: &Path,
+    list: &[(Group, Vec<(String, Option<FileTransform>)>)],
+) -> Vec<(Group, Vec<Mesh>)> {
+    info!("Loading surfaces...");
+    let mut surfs: BTreeMap<Group, Vec<_>> = BTreeMap::new();
+
+    for (group, meshes) in list {
+        for (name, transform) in meshes {
+            let path = &in_dir.join(format!("surfaces/{}.obj", name));
+            info!("Loading {}", path.display());
+            let mut mesh = Mesh::load(path);
+
+            if let Some(trans) = transform {
+                info!("applying transformation");
+                mesh.transform(&trans.build());
+            }
+
+            if let Some(entry) = surfs.get_mut(group) {
+                entry.push(mesh);
+            } else {
+                surfs.insert(*group, vec![mesh]);
+            }
+        }
+    }
+
+    let mut surfaces = Vec::with_capacity(surfs.len());
+    for (group, meshes) in surfs {
+        let mut ms = Vec::with_capacity(meshes.len());
+        for mesh in meshes {
+            ms.push(mesh);
+        }
+        surfaces.push((group, ms));
+    }
+
+    surfaces
+}
+
+/// Build the world grid.
+fn build_grid(_surfaces: &[(Group, Vec<Mesh>)]) -> () {
+    info!("Building grid...");
+    let grid = ();
+
+    grid
 }
