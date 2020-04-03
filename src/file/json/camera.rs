@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone, sim::render::Camera as SimCam};
+use crate::{access, clone};
 use attr::json;
 use nalgebra::Point3;
 use std::fmt::{Display, Formatter, Result};
@@ -27,11 +27,24 @@ impl Camera {
     clone!(res, (usize, usize));
     clone!(ss_power, u64);
 
-    /// Build a simulation camera.
+    /// Build a panda simulation camera.
     #[inline]
     #[must_use]
-    pub fn build(&self) -> SimCam {
-        SimCam::new(
+    pub fn build(&self) -> crate::sim::panda::Camera {
+        crate::sim::panda::Camera::new(
+            self.pos,
+            self.tar,
+            self.fov.to_radians(),
+            self.res,
+            self.ss_power,
+        )
+    }
+
+    /// Build a zebra simulation camera.
+    #[inline]
+    #[must_use]
+    pub fn build_zebra_cam(&self) -> crate::sim::render::Camera {
+        crate::sim::render::Camera::new(
             self.pos,
             self.tar,
             self.fov.to_radians(),

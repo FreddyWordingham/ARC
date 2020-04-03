@@ -72,7 +72,7 @@ fn main() {
 fn build_camera(camera: &FileCamera) -> Camera {
     info!("Building camera");
 
-    let cam = camera.build();
+    let cam = camera.build_zebra_cam();
 
     report!(cam.num_pix() as f64 / 100000.0, "Total pixels", "Million");
     report!(cam.ss_power().pow(2), "Samples per pixel");
