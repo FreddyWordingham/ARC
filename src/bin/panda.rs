@@ -57,12 +57,7 @@ fn main() {
         let cam = cam.build();
         info!("{} camera{}", name, cam);
 
-        let mut img: Array2<_> =
-            Array2::from_elem((40, 30), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
-        for n in 0..10 {
-            img[[2 * n, 10]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        }
-
+        let img = arc::sim::panda::run(&cam, &grid);
         save_image(&out_dir, &name, img);
     }
 

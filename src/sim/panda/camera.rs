@@ -16,6 +16,8 @@ pub struct Camera {
     fov: (f64, f64),
     /// Image resolution.
     res: (usize, usize),
+    /// Sub-image resolution.
+    sub_res: (usize, usize),
     /// Scanning deltas.
     delta: (f64, f64),
     /// Sub-sampling deltas.
@@ -30,6 +32,7 @@ impl Camera {
     access!(right, Vector3<f64>);
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
+    clone!(sub_res, (usize, usize));
     clone!(delta, (f64, f64));
     clone!(sub_delta, (f64, f64));
     clone!(ss_power, usize);
@@ -42,12 +45,17 @@ impl Camera {
         tar: Point3<f64>,
         fov_x: f64,
         res: (usize, usize),
+        sub_res: (usize, usize),
         ss_power: usize,
     ) -> Self {
         debug_assert!(fov_x > 0.0);
         debug_assert!(res.0 > 1);
         debug_assert!(res.1 > 1);
         debug_assert!(ss_power > 0);
+        debug_assert!(res.0 / sub_res.0 >= 8);
+        debug_assert!(res.1 / sub_res.1 >= 8);
+        debug_assert!(res.0 % sub_res.0 == 0);
+        debug_assert!(res.1 % sub_res.1 == 0);
 
         let fov = (fov_x, fov_x * (res.1 as f64 / res.0 as f64));
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
@@ -63,6 +71,7 @@ impl Camera {
             right,
             fov,
             res,
+            sub_res,
             delta,
             sub_delta,
             ss_power,

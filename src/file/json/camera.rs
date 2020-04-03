@@ -16,6 +16,8 @@ pub struct Camera {
     fov: f64,
     /// Image resolution.
     res: (usize, usize),
+    /// Sub-image resolution.
+    sub_res: (usize, usize),
     /// Super sampling power.
     ss_power: usize,
 }
@@ -25,6 +27,7 @@ impl Camera {
     access!(tar, Point3<f64>);
     clone!(fov, f64);
     clone!(res, (usize, usize));
+    clone!(sub_res, (usize, usize));
     clone!(ss_power, usize);
 
     /// Build a panda simulation camera.
@@ -36,6 +39,7 @@ impl Camera {
             self.tar,
             self.fov.to_radians(),
             self.res,
+            self.sub_res,
             self.ss_power,
         )
     }
