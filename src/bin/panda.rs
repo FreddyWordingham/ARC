@@ -1,5 +1,6 @@
 //! Panda rendering engine!
 
+use ::slice_of_array::prelude::*;
 use arc::{
     args,
     file::{Camera, Load, Transform as FileTransform},
@@ -10,7 +11,10 @@ use arc::{
 };
 use attr::form;
 use log::info;
-use std::{collections::BTreeMap, path::Path};
+use ndarray::Array2;
+use palette::{LinSrgba, Pixel, Srgba};
+use png::{BitDepth, ColorType, Encoder};
+use std::{collections::BTreeMap, fs::File, io::BufWriter, path::Path};
 
 #[form]
 struct Parameters {
@@ -52,7 +56,13 @@ fn main() {
     for (name, cam) in params.cameras {
         let cam = cam.build();
         info!("{} camera{}", name, cam);
+
+        let img: Array2<_> =
+            Array2::from_elem((40, 20), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
+        save_image(&out_dir, &name, img);
     }
+
+    banner::section("Finished");
 }
 
 /// Load the parameters file and report the settings.
@@ -130,4 +140,30 @@ fn build_grid<'a>(grid_settings: &GridSettings, surfaces: &'a [(Group, Vec<Mesh>
     let grid = Cell::new_root(grid_settings, surfaces);
 
     grid
+}
+
+/// Save an array's colour data as an image.
+#[inline]
+pub fn save_image(in_dir: &Path, name: &str, img: Array2<LinSrgba>) {
+    info!("Saving camera image: {}", name);
+
+    let path = &in_dir.join(format!("{}.png", name));
+    let file = File::create(path).unwrap();
+    let ref mut w = BufWriter::new(file);
+
+    let mut encoder = Encoder::new(w, img.shape()[0] as u32, img.shape()[1] as u32);
+    encoder.set_color(ColorType::RGBA);
+    encoder.set_depth(BitDepth::Eight);
+    let mut writer = encoder
+        .write_header()
+        .expect("Could not build image writer.");
+
+    let data: Vec<[u8; 4]> = img
+        .mapv(|col| Srgba::from_linear(col).into_format().into_raw())
+        .into_raw_vec();
+    writer
+        .write_image_data(data.flat())
+        .expect("Failed to save png.");
+
+    info!("Image saved at: {}\n", path.display());
 }

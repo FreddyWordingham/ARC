@@ -1,7 +1,9 @@
 //! Cell implementation.
 
-use crate::geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace};
-use crate::sim::panda::{GridSettings, Group, Hit, Scan};
+use crate::{
+    geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace},
+    sim::panda::{GridSettings, Group, Hit, Scan},
+};
 use nalgebra::Point3;
 use std::fmt::{Display, Formatter, Result};
 
@@ -331,10 +333,10 @@ impl<'a> Cell<'a> {
         }
     }
 
-    /// Determine what a ray would hit within the cell.
+    /// Determine what a ray would observe within the cell.
     #[inline]
     #[must_use]
-    pub fn hit(&self, mut ray: Ray, bump_dist: f64) -> Option<Hit> {
+    pub fn observe(&self, mut ray: Ray, bump_dist: f64) -> Option<Hit> {
         let mut dist_travelled = 0.0;
 
         // Move the ray to within the domain of the grid if it isn't already within it.

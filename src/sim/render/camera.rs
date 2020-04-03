@@ -114,4 +114,3 @@ impl Camera {
         ray
     }
 }
-
