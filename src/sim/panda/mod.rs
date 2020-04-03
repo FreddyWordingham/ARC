@@ -1,5 +1,5 @@
 //! Rendering simulation sub-module.
 
-// pub mod camera;
+pub mod shader;
 
-// pub use self::camera::*;
+pub use self::shader::*;
