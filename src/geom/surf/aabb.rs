@@ -154,6 +154,27 @@ impl Aabb {
 
         (t_min, t_max)
     }
+
+    /// Shrink the aabb by a fraction of its lengths, maintaining the central position.
+    pub fn shrink(&mut self, f: f64) {
+        debug_assert!(f > 0.0);
+        debug_assert!(f < 1.0);
+
+        let delta = self.half_widths() * f;
+
+        self.mins += delta;
+        self.maxs -= delta;
+    }
+
+    /// Expand the aabb by a fraction of its lengths, maintaining the central position.
+    pub fn expand(&mut self, f: f64) {
+        debug_assert!(f > 0.0);
+
+        let delta = self.half_widths() * f;
+
+        self.mins += delta;
+        self.maxs -= delta;
+    }
 }
 
 impl Trace for Aabb {

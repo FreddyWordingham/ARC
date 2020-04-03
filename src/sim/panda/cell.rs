@@ -1,8 +1,8 @@
 //! Cell implementation.
 
-use crate::geom::{Aabb, Mesh};
+use crate::geom::{surf::collide::Collide, Aabb, Mesh};
+// use crate::geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace};
 use crate::sim::panda::{GridSettings, Group};
-// use crate::geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace},
 use nalgebra::Point3;
 // use nalgebra::{Point3, Unit, Vector3};
 
@@ -47,9 +47,42 @@ impl Cell {
     #[inline]
     #[must_use]
     pub fn new_root(grid_settings: &GridSettings, surfaces: &[(Group, Vec<Mesh>)]) -> Self {
+        let boundary = Self::init_boundary(grid_settings, surfaces);
+
         Self::Root {
-            boundary: Aabb::new(Point3::new(-1.0, -1.0, -1.0), Point3::new(1.0, 1.0, 1.0)),
-            // children: [],
+            boundary, // children: [],
         }
+    }
+
+    /// Create a Aabb encompassing all the given meshes.
+    #[inline]
+    #[must_use]
+    fn init_boundary(grid_settings: &GridSettings, surfaces: &[(Group, Vec<Mesh>)]) -> Aabb {
+        let mut mins = Point3::new(0.0, 0.0, 0.0);
+        let mut maxs = mins;
+
+        for (_group, meshes) in surfaces {
+            for mesh in meshes {
+                let (mesh_mins, mesh_maxs) = mesh.bounding_box().mins_maxs();
+
+                for (grid_min, mesh_min) in mins.iter_mut().zip(mesh_mins.iter()) {
+                    if mesh_min < grid_min {
+                        *grid_min = *mesh_min;
+                    }
+                }
+
+                for (grid_max, mesh_max) in maxs.iter_mut().zip(mesh_maxs.iter()) {
+                    if mesh_max > grid_max {
+                        *grid_max = *mesh_max;
+                    }
+                }
+            }
+        }
+
+        let mut boundary = Aabb::new(mins, maxs);
+
+        boundary.expand(grid_settings.padding());
+
+        boundary
     }
 }

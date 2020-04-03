@@ -1,7 +1,8 @@
 {
     "grid_settings": {
         "max_depth": 6,
-        "tar_tris": 10
+        "tar_tris": 10,
+        "padding": 0.01
     },
     "surfaces": [
         [0, [
