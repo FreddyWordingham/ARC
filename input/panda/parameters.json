@@ -4,14 +4,18 @@
         "tar_tris": 10
     },
     "surfaces": [
-        [
-            0, [
+
+        [0,
+            [
                 ["cube", null]
-            ],
-            1, [
+            ]
+        ],
+        [1,
+            [
                 ["torus", null]
             ]
         ]
+
     ],
     "shader_settings": {
         "sun_pos": [-100, 100, 200],

@@ -42,7 +42,6 @@ fn main() {
     let params = load_parameters(params_path);
 
     banner::section("Loading");
-    info!("Loading surfaces");
     let surfs = load_surfs(&in_dir, &params.surfaces);
 
     banner::section("Building");
@@ -50,11 +49,8 @@ fn main() {
 
     banner::section("Rendering");
     for (name, cam) in params.cameras {
-        info!("Rendering image: {}", name);
-
-        info!("Building camera...");
         let cam = cam.build();
-        report!(cam, "Camera");
+        info!("{} camera{}", name, cam);
     }
 }
 
@@ -96,6 +92,8 @@ fn load_surfs(
                 mesh.transform(&trans.build());
             }
 
+            info!("{} mesh triangles: {}", name, mesh.tris().len());
+
             if let Some(entry) = surfs.get_mut(group) {
                 entry.push(mesh);
             } else {
@@ -103,13 +101,16 @@ fn load_surfs(
             }
         }
     }
+    info!("{} meshes loaded.\n", surfs.len());
 
     let mut surfaces = Vec::with_capacity(surfs.len());
+    info!("Total groups: {}", surfs.len());
     for (group, meshes) in surfs {
         let mut ms = Vec::with_capacity(meshes.len());
         for mesh in meshes {
             ms.push(mesh);
         }
+        info!("Group {} contains {} surfaces.", group, ms.len());
         surfaces.push((group, ms));
     }
 
