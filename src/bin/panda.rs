@@ -5,7 +5,7 @@ use arc::{
     file::{Camera, Load, Transform as FileTransform},
     geom::{Mesh, Transform},
     report,
-    sim::panda::{GridSettings, Group, ShaderSettings},
+    sim::panda::{Cell, GridSettings, Group, ShaderSettings},
     util::{banner, exec, init},
 };
 use attr::form;
