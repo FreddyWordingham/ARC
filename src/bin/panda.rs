@@ -2,14 +2,14 @@
 
 use arc::{
     args,
-    file::{Load, Transform},
+    file::{Camera, Load, Transform},
     report,
     sim::panda::{GridSettings, ShaderSettings},
     util::{banner, exec, init},
 };
 use attr::form;
 use log::info;
-use std::path::Path;
+use std::{collections::BTreeMap, path::Path};
 
 #[form]
 struct Parameters {
@@ -19,6 +19,8 @@ struct Parameters {
     shader_settings: ShaderSettings,
     /// Traceable surfaces.
     surfaces: Vec<(i32, Vec<(String, Option<Transform>)>)>,
+    /// Cameras to take images with.
+    cameras: BTreeMap<String, Camera>,
 }
 
 fn main() {
@@ -48,6 +50,11 @@ fn load_parameters(path: &Path) -> Parameters {
 
     report!(&params.grid_settings, "Grid settings");
     report!(&params.shader_settings, "Shader settings");
+
+    info!("Cameras:");
+    for (name, cam) in &params.cameras {
+        report!(cam, name);
+    }
 
     params
 }

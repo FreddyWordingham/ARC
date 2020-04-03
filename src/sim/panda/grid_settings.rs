@@ -20,8 +20,8 @@ impl GridSettings {
 
 impl Display for GridSettings {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "...")?;
-        writeln!(fmt, "\tmax depth    : {}", self.max_depth)?;
-        write!(fmt, "\ttar triangles: {}", self.tar_tris)
+        writeln!(fmt, "")?;
+        writeln!(fmt, "\tmax depth                  : {}", self.max_depth)?;
+        write!(fmt, "\ttar triangles              : {}", self.tar_tris)
     }
 }

@@ -3,6 +3,7 @@
 use crate::{access, clone, sim::render::Camera as SimCam};
 use attr::json;
 use nalgebra::Point3;
+use std::fmt::{Display, Formatter, Result};
 
 /// Camera building structure.
 #[json]
@@ -37,5 +38,20 @@ impl Camera {
             self.res,
             self.ss_power,
         )
+    }
+}
+
+impl Display for Camera {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        writeln!(fmt, "")?;
+        writeln!(fmt, "\tposition                   : {}", self.pos)?;
+        writeln!(fmt, "\ttarget                     : {}", self.tar)?;
+        writeln!(fmt, "\tfield of view              : {} [deg]", self.fov)?;
+        writeln!(
+            fmt,
+            "\tresolution                 : {} x {}",
+            self.res.0, self.res.1
+        )?;
+        write!(fmt, "\tsupersampling power        : {}", self.ss_power)
     }
 }
