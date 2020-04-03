@@ -310,6 +310,27 @@ impl<'a> Cell<'a> {
     pub fn ave_leaf_tris(&self) -> f64 {
         self.num_tri_refs() as f64 / self.num_leaf_cells() as f64
     }
+
+    /// Determine the maximum depth used.
+    #[inline]
+    #[must_use]
+    pub fn max_depth(&self) -> usize {
+        match self {
+            Self::Root { children, .. } => children
+                .iter()
+                .map(|c| c.max_depth())
+                .max()
+                .expect("Failed to determine depth."),
+            Self::Branch { children, .. } => {
+                1 + children
+                    .iter()
+                    .map(|c| c.max_depth())
+                    .max()
+                    .expect("Failed to determine depth.")
+            }
+            Self::Leaf { .. } | Self::Empty { .. } => 1,
+        }
+    }
 }
 
 impl<'a> Display for Cell<'a> {
@@ -346,6 +367,7 @@ impl<'a> Display for Cell<'a> {
             "total triangle references",
             self.num_tri_refs()
         )?;
+        writeln!(fmt, "{:>30} : {}", "maximum depth", self.max_depth())?;
         writeln!(
             fmt,
             "{:>30} : {}",
