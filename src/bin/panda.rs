@@ -73,6 +73,8 @@ fn load_parameters(path: &Path) -> Parameters {
 }
 
 /// Load the base meshes and transform them into their final surfaces.
+#[inline]
+#[must_use]
 fn load_surfs(
     in_dir: &Path,
     list: &[(Group, Vec<(String, Option<FileTransform>)>)],
@@ -117,7 +119,9 @@ fn load_surfs(
 }
 
 /// Build the world grid.
-fn build_grid(grid_settings: &GridSettings, surfaces: &[(Group, Vec<Mesh>)]) -> Cell {
+#[inline]
+#[must_use]
+fn build_grid<'a>(grid_settings: &GridSettings, surfaces: &'a [(Group, Vec<Mesh>)]) -> Cell<'a> {
     info!("Building grid...");
     report!(grid_settings.max_depth(), "max depth");
     report!(grid_settings.tar_tris(), "target triangles");
