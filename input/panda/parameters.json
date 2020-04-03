@@ -13,7 +13,7 @@
             null
         ]
     },
-    "shader": {
+    "shader_settings": {
         "sun_pos": [
             -100,
             100,

@@ -4,7 +4,7 @@ use arc::{
     args,
     file::Load,
     report,
-    sim::panda::Shader,
+    sim::panda::ShaderSettings,
     util::{banner, exec, init},
 };
 use attr::form;
@@ -14,7 +14,7 @@ use std::path::Path;
 #[form]
 struct Parameters {
     /// Shader information.
-    shader: Shader,
+    shader_settings: ShaderSettings,
 }
 
 fn main() {
@@ -42,7 +42,7 @@ fn load_parameters(path: &Path) -> Parameters {
     info!("Loading parameters file");
     let params = Parameters::load(&path);
 
-    report!(&params.shader, "Shader settings");
+    report!(&params.shader_settings, "Shader settings");
 
     params
 }
