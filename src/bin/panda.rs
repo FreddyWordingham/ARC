@@ -3,7 +3,7 @@
 use arc::{
     args,
     file::{Camera, Load, Transform as FileTransform},
-    geom::Mesh,
+    geom::{Mesh, Transform},
     report,
     sim::panda::{GridSettings, Group, ShaderSettings},
     util::{banner, exec, init},
@@ -45,7 +45,7 @@ fn main() {
     let surfs = load_surfs(&in_dir, &params.surfaces);
 
     banner::section("Building");
-    let _grid = build_grid(&surfs);
+    let _grid = build_grid(&params.grid_settings, &surfs);
 
     banner::section("Rendering");
     for (name, cam) in params.cameras {
@@ -73,7 +73,6 @@ fn load_parameters(path: &Path) -> Parameters {
 }
 
 /// Load the base meshes and transform them into their final surfaces.
-use arc::geom::surf::transform::Transform;
 fn load_surfs(
     in_dir: &Path,
     list: &[(Group, Vec<(String, Option<FileTransform>)>)],
@@ -118,9 +117,12 @@ fn load_surfs(
 }
 
 /// Build the world grid.
-fn build_grid(_surfaces: &[(Group, Vec<Mesh>)]) -> () {
+fn build_grid(grid_settings: &GridSettings, surfaces: &[(Group, Vec<Mesh>)]) -> () {
     info!("Building grid...");
-    let grid = ();
+    report!(grid_settings.max_depth(), "max depth");
+    report!(grid_settings.tar_tris(), "target triangles");
+
+    let grid = Cell::new_root(grid_settings, surfaces);
 
     grid
 }
