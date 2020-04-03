@@ -2,7 +2,7 @@
 
 use arc::{
     args,
-    file::Load,
+    file::{Load, Transform},
     report,
     sim::panda::{GridSettings, ShaderSettings},
     util::{banner, exec, init},
@@ -17,6 +17,8 @@ struct Parameters {
     grid_settings: GridSettings,
     /// Shader information.
     shader_settings: ShaderSettings,
+    /// Traceable surfaces.
+    surfaces: Vec<(i32, Vec<(String, Option<Transform>)>)>,
 }
 
 fn main() {

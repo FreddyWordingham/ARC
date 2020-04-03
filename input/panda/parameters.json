@@ -3,16 +3,28 @@
         "max_depth": 6,
         "tar_tris": 10
     },
-    "surfaces": {
-        "0": [
-            "piece",
-            null
+    "surfaces": [
+        [
+            0,
+            [
+                [
+                    "piece",
+                    null
+                ],
+            ]
         ],
-        "1": [
-            "cube",
-            null
-        ]
-    },
+        [
+            1,
+            [
+                [
+                    "cube",
+                    {
+                        "scale": 0.5
+                    }
+                ],
+            ]
+        ],
+    ],
     "shader_settings": {
         "sun_pos": [
             -100,
