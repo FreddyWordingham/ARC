@@ -23,7 +23,7 @@ impl GridSettings {
 
 impl Display for GridSettings {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "")?;
+        writeln!(fmt)?;
         writeln!(
             fmt,
             "{:>30} : {}%",

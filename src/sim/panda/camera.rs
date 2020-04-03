@@ -123,7 +123,7 @@ impl Camera {
 
 impl Display for Camera {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "")?;
+        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "position", self.forward.pos())?;
         writeln!(
             fmt,

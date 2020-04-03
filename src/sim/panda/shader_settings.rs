@@ -18,7 +18,7 @@ impl ShaderSettings {
 
 impl Display for ShaderSettings {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "")?;
+        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "sun position", self.sun_pos)
     }
 }

@@ -224,6 +224,8 @@ impl<'a> Cell<'a> {
     }
 
     /// Reference the cell's boundary.
+    #[inline]
+    #[must_use]
     pub fn boundary(&self) -> &Aabb {
         match self {
             Self::Root { boundary, .. }

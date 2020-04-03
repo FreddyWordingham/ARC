@@ -1,9 +1,8 @@
 //! Cell implementation.
 
-use crate::geom::{surf::collide::Collide, Aabb, Mesh, SmoothTriangle};
-use crate::sim::panda::{GridSettings, Group};
-use nalgebra::Point3;
-// use nalgebra::{Point3, Unit, Vector3};
+use crate::geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace};
+use crate::sim::panda::{GridSettings, Group, Hit};
+use nalgebra::{Point3, Unit, Vector3};
 use std::fmt::{Display, Formatter, Result};
 
 /// Grid cell enumeration.
@@ -331,11 +330,50 @@ impl<'a> Cell<'a> {
             Self::Leaf { .. } | Self::Empty { .. } => 1,
         }
     }
+
+    /// Determine what a ray would hit within the cell.
+    #[inline]
+    #[must_use]
+    pub fn hit(&self, mut ray: Ray, bump_dist: f64) -> Option<Hit> {
+        let mut dist_travelled = 0.0;
+
+        // Move the ray to within the domain of the grid if it isn't already within it.
+        if let Some(dist) = self.boundary().dist(&ray) {
+            if !self.boundary().contains(ray.pos()) {
+                let d = dist + bump_dist;
+                ray.travel(d);
+                dist_travelled += d;
+            }
+        } else {
+            return None;
+        }
+
+        // Trace forward until leaving the grid or observing something.
+        while let Some(cell) = self.find_terminal_cell(ray.pos()) {
+            if let Some(hit) = cell.hit_scan(ray) {
+                return Some(Hit::new(
+                    hit.group(),
+                    hit.dist() + dist_travelled,
+                    hit.norm(),
+                ));
+            }
+
+            let bound_dist = cell
+                .boundary()
+                .dist(&ray)
+                .expect("Could not determine cell boundary distance.");
+            let d = bound_dist + bump_dist;
+            tracer.travel(d);
+            dist_travelled += d;
+        }
+
+        Some(Hit::new(0, dist_travelled, Vector3::z_axis()))
+    }
 }
 
 impl<'a> Display for Cell<'a> {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "")?;
+        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "number of cells", self.num_cells())?;
         writeln!(
             fmt,
