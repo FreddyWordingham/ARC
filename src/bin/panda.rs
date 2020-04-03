@@ -10,7 +10,9 @@ use attr::form;
 use log::info;
 
 #[form]
-struct Parameters {}
+struct Parameters {
+    
+}
 
 fn main() {
     colog::init();
