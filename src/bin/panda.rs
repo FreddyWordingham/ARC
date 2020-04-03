@@ -57,10 +57,25 @@ fn main() {
         let cam = cam.build();
         info!("{} camera{}", name, cam);
 
-        let img: Array2<_> =
-            Array2::from_elem((400, 300), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
+        let mut img: Array2<_> =
+            Array2::from_elem((7, 5), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
+        // for n in 0..10 {
+        //     img[[2 * n, 10]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        // }
+        img[[1, 1]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        img[[1, 2]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        img[[1, 3]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        img[[2, 1]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        img[[3, 1]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        img[[5, 3]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
         save_image(&out_dir, &name, img);
     }
+    // let res = (20, 10);
+    // for n in 0..200 {
+    //     let xi = n % res.0;
+    //     let yi = n / res.0;
+    //     println!("{}\t{}", xi, yi);
+    // }
 
     banner::section("Finished");
 }
@@ -147,18 +162,30 @@ fn build_grid<'a>(grid_settings: &GridSettings, surfaces: &'a [(Group, Vec<Mesh>
 pub fn save_image(in_dir: &Path, name: &str, img: Array2<LinSrgba>) {
     info!("Saving camera image: {}", name);
 
+    info!("Transforming image");
+    let mut data = Array2::from_elem(
+        (img.shape()[1], img.shape()[0]),
+        Srgba::new(0.0, 0.0, 0.0, 1.0).into_linear(),
+    );
+    for xi in 0..img.shape()[1] {
+        for yi in 0..img.shape()[0] {
+            data[[img.shape()[1] - xi - 1, yi]] = img[[yi, xi]];
+        }
+    }
+    let data = data.t();
+
     let path = &in_dir.join(format!("{}.png", name));
+
     let file = File::create(path).unwrap();
     let ref mut w = BufWriter::new(file);
-
-    let mut encoder = Encoder::new(w, img.shape()[0] as u32, img.shape()[1] as u32);
+    let mut encoder = Encoder::new(w, data.shape()[0] as u32, data.shape()[1] as u32);
     encoder.set_color(ColorType::RGBA);
     encoder.set_depth(BitDepth::Eight);
     let mut writer = encoder
         .write_header()
         .expect("Could not build image writer.");
 
-    let data: Vec<[u8; 4]> = img
+    let data: Vec<[u8; 4]> = data
         .mapv(|col| Srgba::from_linear(col).into_format().into_raw())
         .into_raw_vec();
     writer
