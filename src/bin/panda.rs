@@ -58,24 +58,13 @@ fn main() {
         info!("{} camera{}", name, cam);
 
         let mut img: Array2<_> =
-            Array2::from_elem((7, 5), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
-        // for n in 0..10 {
-        //     img[[2 * n, 10]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        // }
-        img[[1, 1]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        img[[1, 2]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        img[[1, 3]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        img[[2, 1]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        img[[3, 1]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
-        img[[5, 3]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+            Array2::from_elem((40, 30), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
+        for n in 0..10 {
+            img[[2 * n, 10]] = Srgba::new(0.8, 0.5, 0.5, 1.0).into_linear();
+        }
+
         save_image(&out_dir, &name, img);
     }
-    // let res = (20, 10);
-    // for n in 0..200 {
-    //     let xi = n % res.0;
-    //     let yi = n / res.0;
-    //     println!("{}\t{}", xi, yi);
-    // }
 
     banner::section("Finished");
 }
