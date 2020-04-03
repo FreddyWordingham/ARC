@@ -117,7 +117,7 @@ fn load_surfs(
 }
 
 /// Build the world grid.
-fn build_grid(grid_settings: &GridSettings, surfaces: &[(Group, Vec<Mesh>)]) -> () {
+fn build_grid(grid_settings: &GridSettings, surfaces: &[(Group, Vec<Mesh>)]) -> Cell {
     info!("Building grid...");
     report!(grid_settings.max_depth(), "max depth");
     report!(grid_settings.tar_tris(), "target triangles");
