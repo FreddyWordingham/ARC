@@ -4,6 +4,7 @@ use crate::{access, clone, sim::panda::Group};
 use nalgebra::{Unit, Vector3};
 
 /// Hit collision information.
+#[derive(Clone)]
 pub struct Hit {
     /// Group hit.
     group: Group,

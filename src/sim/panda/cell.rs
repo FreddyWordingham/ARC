@@ -1,8 +1,8 @@
 //! Cell implementation.
 
 use crate::geom::{surf::collide::Collide, Aabb, Mesh, Ray, SmoothTriangle, Trace};
-use crate::sim::panda::{GridSettings, Group, Hit};
-use nalgebra::{Point3, Unit, Vector3};
+use crate::sim::panda::{GridSettings, Group, Hit, Scan};
+use nalgebra::Point3;
 use std::fmt::{Display, Formatter, Result};
 
 /// Grid cell enumeration.
@@ -350,24 +350,64 @@ impl<'a> Cell<'a> {
 
         // Trace forward until leaving the grid or observing something.
         while let Some(cell) = self.find_terminal_cell(ray.pos()) {
-            if let Some(hit) = cell.hit_scan(ray) {
-                return Some(Hit::new(
-                    hit.group(),
-                    hit.dist() + dist_travelled,
-                    hit.norm(),
-                ));
+            match cell.hit_scan(&ray) {
+                Scan::Surface { hit } => {
+                    return Some(Hit::new(
+                        hit.group(),
+                        hit.dist() + dist_travelled,
+                        *hit.norm(),
+                    ));
+                }
+                Scan::Boundary { dist } => {
+                    let d = dist + bump_dist;
+                    ray.travel(d);
+                    dist_travelled += d;
+                }
             }
-
-            let bound_dist = cell
-                .boundary()
-                .dist(&ray)
-                .expect("Could not determine cell boundary distance.");
-            let d = bound_dist + bump_dist;
-            tracer.travel(d);
-            dist_travelled += d;
         }
 
-        Some(Hit::new(0, dist_travelled, Vector3::z_axis()))
+        None
+    }
+
+    /// Scan for hits within the cell.
+    #[inline]
+    #[must_use]
+    pub fn hit_scan(&self, ray: &Ray) -> Scan {
+        match self {
+            Self::Leaf { boundary, tris } => {
+                let mut nearest: Option<Hit> = None;
+                for (group, tri) in tris {
+                    if let Some((dist, norm)) = tri.dist_norm(&ray) {
+                        if nearest.is_none()
+                            || (nearest
+                                .as_ref()
+                                .expect("Failed to resolve hit scan.")
+                                .dist()
+                                > dist)
+                        {
+                            nearest = Some(Hit::new(*group, dist, norm));
+                        }
+                    }
+                }
+
+                let boundary_dist = boundary.dist(ray).expect("Ray has escaped cell.");
+                if let Some(hit) = nearest {
+                    if hit.dist() < boundary_dist {
+                        return Scan::new_surface_scan(hit);
+                    }
+                }
+
+                Scan::new_boundary_scan(boundary_dist)
+            }
+            Self::Empty { boundary } => Scan::new_boundary_scan(
+                boundary
+                    .dist(ray)
+                    .expect("Could not determine boundary distance."),
+            ),
+            Self::Root { .. } | Self::Branch { .. } => {
+                panic!("Should not be performing hit scans on branching cells!");
+            }
+        }
     }
 }
 
