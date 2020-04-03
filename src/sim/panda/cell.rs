@@ -175,4 +175,14 @@ impl<'a> Cell<'a> {
 
         Self::Branch { boundary, children }
     }
+
+    /// Reference the cell's boundary.
+    pub fn boundary(&self) -> &Aabb {
+        match self {
+            Self::Root { boundary, .. }
+            | Self::Branch { boundary, .. }
+            | Self::Leaf { boundary, .. }
+            | Self::Empty { boundary, .. } => boundary,
+        }
+    }
 }
