@@ -58,7 +58,7 @@ fn main() {
         info!("{} camera{}", name, cam);
 
         let img: Array2<_> =
-            Array2::from_elem((40, 20), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
+            Array2::from_elem((400, 300), Srgba::new(0.8, 0.1, 0.6, 1.0).into_linear());
         save_image(&out_dir, &name, img);
     }
 
