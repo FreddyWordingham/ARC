@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone};
+use crate::{access, clone, sim::panda::Camera as SimCamera};
 use attr::json;
 use nalgebra::Point3;
 use std::fmt::{Display, Formatter, Result};
@@ -17,7 +17,7 @@ pub struct Camera {
     /// Image resolution.
     res: (usize, usize),
     /// Super sampling power.
-    ss_power: u64,
+    ss_power: usize,
 }
 
 impl Camera {
@@ -25,12 +25,12 @@ impl Camera {
     access!(tar, Point3<f64>);
     clone!(fov, f64);
     clone!(res, (usize, usize));
-    clone!(ss_power, u64);
+    clone!(ss_power, usize);
 
     /// Build a panda simulation camera.
     #[inline]
     #[must_use]
-    pub fn build(&self) -> crate::sim::panda::Camera {
+    pub fn build(&self) -> SimCamera {
         crate::sim::panda::Camera::new(
             self.pos,
             self.tar,
@@ -49,7 +49,7 @@ impl Camera {
             self.tar,
             self.fov.to_radians(),
             self.res,
-            self.ss_power,
+            self.ss_power as u64,
         )
     }
 }

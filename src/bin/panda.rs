@@ -38,7 +38,15 @@ fn main() {
     report!(params_path.display(), "parameters path");
 
     banner::section("Loading");
-    let _params = load_parameters(params_path);
+    let params = load_parameters(params_path);
+
+    banner::section("Rendering");
+    for (name, cam) in params.cameras {
+        info!("Rendering image: {}", name);
+
+        let cam = cam.build();
+        report!(cam, "Camera");
+    }
 }
 
 /// Load the parameters file and report the settings.
