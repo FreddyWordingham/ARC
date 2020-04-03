@@ -32,7 +32,7 @@ pub enum Cell<'a> {
         /// Boundary.
         boundary: Aabb,
         /// Intersecting triangles.
-        tris: Vec<(&'a SmoothTriangle, Group)>,
+        tris: Vec<(Group, &'a SmoothTriangle)>,
     },
     /// Terminal empty cell.
     Empty {
@@ -108,79 +108,36 @@ impl<'a> Cell<'a> {
     fn init_children(
         settings: &GridSettings,
         parent_boundary: &Aabb,
-        parent_depth: u32,
-        potential_tris: &[(Group, &SmoothTriangle)],
+        depth: u32,
+        potential_tris: &[(Group, &'a SmoothTriangle)],
     ) -> [Box<Cell<'a>>; 8] {
+        debug_assert!(depth <= settings.max_depth());
         debug_assert!(!potential_tris.is_empty());
-        let depth = parent_depth + 1;
+
+        let hws = parent_boundary.half_widths();
+        let make_child = |min_x: f64, min_y: f64, min_z: f64| {
+            let min = Point3::new(min_x, min_y, min_z);
+            Box::new(Self::new_child(
+                settings,
+                Aabb::new(min, min + hws),
+                depth,
+                potential_tris,
+            ))
+        };
 
         let mins = parent_boundary.mins();
         let min_x = mins.x;
         let min_y = mins.y;
         let min_z = mins.z;
 
-        let hws = parent_boundary.half_widths();
-        let hw_x = hws.x;
-        let hw_y = hws.y;
-        let hw_z = hws.z;
-
-        let min = Point3::new(min_x, min_y, min_z);
-        let nnn = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-        let min = Point3::new(min_x + hw_x, min_y, min_z);
-        let pnn = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-        let min = Point3::new(min_x, min_y + hw_y, min_z);
-        let npn = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-        let min = Point3::new(min_x + hw_x, min_y + hw_y, min_z);
-        let ppn = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-
-        let min = Point3::new(min_x, min_y, min_z + hw_z);
-        let nnp = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-        let min = Point3::new(min_x + hw_x, min_y, min_z + hw_z);
-        let pnp = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-        let min = Point3::new(min_x, min_y + hw_y, min_z + hw_z);
-        let npp = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
-        let min = Point3::new(min_x + hw_x, min_y + hw_y, min_z + hw_z);
-        let ppp = Box::new(Self::new_child(
-            settings,
-            Aabb::new(min, min + hws),
-            depth,
-            potential_tris,
-        ));
+        let nnn = make_child(min_x, min_y, min_z);
+        let pnn = make_child(min_x + hws.x, min_y, min_z);
+        let npn = make_child(min_x, min_y + hws.y, min_z);
+        let ppn = make_child(min_x + hws.x, min_y + hws.y, min_z);
+        let nnp = make_child(min_x, min_y, min_z + hws.z);
+        let pnp = make_child(min_x + hws.x, min_y, min_z + hws.z);
+        let npp = make_child(min_x, min_y + hws.y, min_z + hws.z);
+        let ppp = make_child(min_x + hws.x, min_y + hws.y, min_z + hws.z);
 
         [nnn, pnn, npn, ppn, nnp, pnp, npp, ppp]
     }
@@ -189,11 +146,33 @@ impl<'a> Cell<'a> {
     #[inline]
     #[must_use]
     fn new_child(
-        _settings: &GridSettings,
+        settings: &GridSettings,
         boundary: Aabb,
-        _depth: u32,
-        _potential_tris: &[(Group, &SmoothTriangle)],
+        depth: u32,
+        potential_tris: &[(Group, &'a SmoothTriangle)],
     ) -> Self {
-        Self::Empty { boundary }
+        debug_assert!(depth <= settings.max_depth());
+
+        let mut detection_vol = boundary.clone();
+        detection_vol.expand(settings.padding());
+
+        let mut tris = Vec::new();
+        for (group, tri) in potential_tris {
+            if tri.overlap(&detection_vol) {
+                tris.push((*group, *tri));
+            }
+        }
+
+        if tris.is_empty() {
+            return Self::Empty { boundary };
+        }
+
+        if (tris.len() <= settings.tar_tris()) || (depth >= settings.max_depth()) {
+            return Self::Leaf { boundary, tris };
+        }
+
+        let children = Self::init_children(settings, &boundary, depth + 1, &tris);
+
+        Self::Branch { boundary, children }
     }
 }
