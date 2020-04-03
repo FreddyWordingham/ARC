@@ -4,6 +4,7 @@ use crate::geom::{surf::collide::Collide, Aabb, Mesh, SmoothTriangle};
 use crate::sim::panda::{GridSettings, Group};
 use nalgebra::Point3;
 // use nalgebra::{Point3, Unit, Vector3};
+use std::fmt::{Display, Formatter, Result};
 
 /// Grid cell enumeration.
 ///
@@ -217,5 +218,139 @@ impl<'a> Cell<'a> {
             | Self::Leaf { boundary, .. }
             | Self::Empty { boundary, .. } => boundary,
         }
+    }
+
+    /// Determine the number of cells used.
+    #[inline]
+    #[must_use]
+    pub fn num_cells(&self) -> usize {
+        match self {
+            Self::Root { children, .. } | Self::Branch { children, .. } => {
+                1 + children.iter().map(|ch| ch.num_cells()).sum::<usize>()
+            }
+            Self::Leaf { .. } | Self::Empty { .. } => 1,
+        }
+    }
+
+    /// Determine the number of terminal cells used.
+    #[inline]
+    #[must_use]
+    pub fn num_terminal_cells(&self) -> usize {
+        match self {
+            Self::Root { children, .. } | Self::Branch { children, .. } => children
+                .iter()
+                .map(|ch| ch.num_terminal_cells())
+                .sum::<usize>(),
+            Self::Leaf { .. } | Self::Empty { .. } => 1,
+        }
+    }
+
+    /// Determine the number of branch cells used.
+    #[inline]
+    #[must_use]
+    pub fn num_branch_cells(&self) -> usize {
+        match self {
+            Self::Root { children, .. } => children
+                .iter()
+                .map(|ch| ch.num_branch_cells())
+                .sum::<usize>(),
+            Self::Branch { children, .. } => {
+                1 + children
+                    .iter()
+                    .map(|ch| ch.num_branch_cells())
+                    .sum::<usize>()
+            }
+            Self::Leaf { .. } | Self::Empty { .. } => 0,
+        }
+    }
+
+    /// Determine the total number of terminal cells used.
+    #[inline]
+    #[must_use]
+    pub fn num_leaf_cells(&self) -> usize {
+        match self {
+            Self::Root { children, .. } | Self::Branch { children, .. } => {
+                children.iter().map(|ch| ch.num_leaf_cells()).sum::<usize>()
+            }
+            Self::Leaf { .. } => 1,
+            Self::Empty { .. } => 0,
+        }
+    }
+
+    /// Determine the total number of empty cells used.
+    #[inline]
+    #[must_use]
+    pub fn num_empty_cells(&self) -> usize {
+        match self {
+            Self::Root { children, .. } | Self::Branch { children, .. } => children
+                .iter()
+                .map(|ch| ch.num_empty_cells())
+                .sum::<usize>(),
+            Self::Leaf { .. } => 0,
+            Self::Empty { .. } => 1,
+        }
+    }
+
+    /// Determine the average number of triangles in each leaf cell.
+    #[inline]
+    #[must_use]
+    pub fn num_tri_refs(&self) -> usize {
+        match self {
+            Self::Root { children, .. } | Self::Branch { children, .. } => {
+                children.iter().map(|c| c.num_tri_refs()).sum()
+            }
+            Self::Leaf { tris, .. } => tris.len(),
+            Self::Empty { .. } => 0,
+        }
+    }
+
+    /// Determine the average number of triangles in each leaf cell.
+    #[inline]
+    #[must_use]
+    pub fn ave_leaf_tris(&self) -> f64 {
+        self.num_tri_refs() as f64 / self.num_leaf_cells() as f64
+    }
+}
+
+impl<'a> Display for Cell<'a> {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        writeln!(fmt, "")?;
+        writeln!(fmt, "{:>30} : {}", "number of cells", self.num_cells())?;
+        writeln!(
+            fmt,
+            "{:>30} : {}",
+            "total terminal cells",
+            self.num_terminal_cells()
+        )?;
+        writeln!(
+            fmt,
+            "{:>30} : {}",
+            "total branches",
+            self.num_branch_cells()
+        )?;
+        writeln!(
+            fmt,
+            "{:>30} : {}",
+            "number of leaves",
+            self.num_leaf_cells()
+        )?;
+        writeln!(
+            fmt,
+            "{:>30} : {}",
+            "number of empty cells",
+            self.num_empty_cells()
+        )?;
+        writeln!(
+            fmt,
+            "{:>30} : {}",
+            "total triangle references",
+            self.num_tri_refs()
+        )?;
+        writeln!(
+            fmt,
+            "{:>30} : {}",
+            "average triangles per leaf",
+            self.ave_leaf_tris()
+        )
     }
 }

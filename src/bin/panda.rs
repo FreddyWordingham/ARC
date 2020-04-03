@@ -45,7 +45,8 @@ fn main() {
     let surfs = load_surfs(&in_dir, &params.surfaces);
 
     banner::section("Building");
-    let _grid = build_grid(&params.grid_settings, &surfs);
+    let grid = build_grid(&params.grid_settings, &surfs);
+    report!(grid, "Grid");
 
     banner::section("Rendering");
     for (name, cam) in params.cameras {
