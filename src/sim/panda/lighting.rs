@@ -160,7 +160,10 @@ pub fn casting_samples(
         let (theta, phi) = golden::sphere(n as i32, sett.sunlight_samples());
         lr.rotate(phi, theta + offset);
 
-        total_shadow += sunlight(sett, &lr, &norm, root, bump_dist);
+        if let Some(hit) = root.observe(lr.clone(), bump_dist) {
+            lr.travel(hit.dist());
+            total_shadow += ssscx(sett, *lr.pos(), &norm, root, bump_dist) / (hit.dist() + 1.0);
+        }
     }
 
     total_shadow / sett.sunlight_samples() as f64
@@ -172,3 +175,37 @@ pub fn casting_samples(
 fn reflect(inc: &Unit<Vector3<f64>>, norm: &Unit<Vector3<f64>>) -> Unit<Vector3<f64>> {
     Unit::new_normalize(inc.as_ref() + (2.0 * (-inc.dot(norm)) * norm.as_ref()))
 } // TODO: Check this for inverted normals.
+
+/// Calculate the sunlight factor.
+#[inline]
+#[must_use]
+pub fn ssscx(
+    sett: &ShaderSettings,
+    pos: Point3<f64>,
+    norm: &Unit<Vector3<f64>>,
+    root: &Cell,
+    bump_dist: f64,
+) -> f64 {
+    debug_assert!(bump_dist > 0.0);
+
+    let mut light_ray = Ray::new(pos, *norm);
+    light_ray.travel(bump_dist);
+
+    *light_ray.dir_mut() = Unit::new_normalize(sett.sun_pos() - light_ray.pos());
+
+    let mut light = 1.0;
+    while let Some(hit) = root.observe(light_ray.clone(), bump_dist) {
+        match hit.group() {
+            -1 => {
+                light *= 1.0 - sett.transparency();
+            }
+            _ => {
+                return sett.shadow();
+            }
+        }
+
+        light_ray.travel(hit.dist() + bump_dist);
+    }
+
+    light
+}
