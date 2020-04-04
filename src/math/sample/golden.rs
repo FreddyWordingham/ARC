@@ -34,3 +34,13 @@ pub fn sphere(n: i64, max: i64) -> (f64, f64) {
 
     (phi, theta)
 }
+
+/// Sample points on a hemisphere's surface using the golden ratio.
+#[inline]
+#[must_use]
+pub fn hemisphere(n: i64, max: i64) -> (f64, f64) {
+    debug_assert!(n >= 0);
+    debug_assert!(n < max);
+
+    sphere(n, max * 2)
+}
