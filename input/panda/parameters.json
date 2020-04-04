@@ -51,7 +51,18 @@
         "sunlight_radius": 1e-1,
     },
     "cameras": {
-        "img_0": {
+        "a_test": {
+            "pos": [0.0, 0.0, 3.0],
+            "tar": [-11.0, 0.0, 3.0],
+            "fov": 100,
+            "res": [688, 288],
+            "splits": [86, 36],
+            "ss_power": 1,
+            "dof_samples": 1,
+            "dof_radius": 1e-3,
+            "frame_saving": false
+        },
+        "high_res": {
             "pos": [0.0, 0.0, 3.0],
             "tar": [-11.0, 0.0, 3.0],
             "fov": 100,
@@ -61,17 +72,6 @@
             "dof_samples": 16,
             "dof_radius": 1e-3,
             "frame_saving": false
-        },
-        // "img_1": {
-        //     "pos": [0.0, 0.0, 3.0],
-        //     "tar": [-11.0, 0.0, 3.0],
-        //     "fov": 100,
-        //     "res": [688, 288],
-        //     "splits": [86, 36],
-        //     "ss_power": 1,
-        //     "dof_samples": 1,
-        //     "dof_radius": 1e-3,
-        //     "frame_saving": false
-        // }
+        }
     }
 }
