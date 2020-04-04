@@ -23,7 +23,7 @@ pub fn henyey_greenstein(rng: &mut ThreadRng, asym: f64) -> f64 {
 #[inline]
 #[must_use]
 pub fn normal(rng: &mut ThreadRng) -> f64 {
-    let a = (-2.0 * rng.gen_range(0.0f64, 1.0).ln()).sqrt();
+    let a = (-2.0 * rng.gen_range(0.0_f64, 1.0).ln()).sqrt();
     let theta = rng.gen_range(0.0, 2.0 * PI);
 
     // Z = Some(a * theta.sin()); // Using mutable static will lead to data race :(.
@@ -35,5 +35,5 @@ pub fn normal(rng: &mut ThreadRng) -> f64 {
 #[inline]
 #[must_use]
 pub fn gaussian(rng: &mut ThreadRng, mu: f64, sigma: f64) -> f64 {
-    (normal(rng) * sigma) + mu
+    normal(rng).mul_add(sigma, mu)
 }

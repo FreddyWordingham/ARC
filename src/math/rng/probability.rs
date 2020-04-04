@@ -104,12 +104,12 @@ impl Probability {
         match self {
             Self::Point { c } => *c,
             Self::Points { cs } => *cs.get(rng.gen_range(0, cs.len())).expect("Invalid index."),
-            Self::WeightedPoints { cs: _, ws: _ } => {
+            Self::WeightedPoints { .. } => {
                 unimplemented!();
             }
             Self::Uniform { min, max } => rng.gen_range(*min, *max),
             Self::Gaussian { mu, sigma } => distribution::gaussian(rng, *mu, *sigma),
-            Self::Linear { m: _, c: _ } => {
+            Self::Linear { .. } => {
                 let e: f64 = rng.gen();
                 1.0 - e.sqrt()
             }

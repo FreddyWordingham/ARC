@@ -104,15 +104,19 @@ fn render_frame(index: usize, cam: &Camera, root: &Cell) -> Array2<LinSrgba> {
         Srgba::new(rng.gen(), rng.gen(), rng.gen(), 1.0).into_linear(),
     );
 
+    let super_samples = cam.ss_power().pow(2);
+
     for xi in 0..frame_res.0 {
         let rx = start_x + xi;
         for yi in 0..frame_res.1 {
             let ry = start_y + yi;
 
-            let ray = cam.gen_ray(rx, ry);
-            *frame
-                .get_mut((xi, yi))
-                .expect("Could not access frame pixel.") = colour(ray, &root);
+            for n in 0..super_samples {
+                let ray = cam.gen_ss_ray(rx, ry, n);
+                *frame
+                    .get_mut((xi, yi))
+                    .expect("Could not access frame pixel.") += colour(ray, root);
+            }
         }
     }
 
@@ -122,6 +126,12 @@ fn render_frame(index: usize, cam: &Camera, root: &Cell) -> Array2<LinSrgba> {
 /// Determine the colour of a given ray.
 #[inline]
 #[must_use]
-pub fn colour(_ray: crate::geom::Ray, _root: &Cell) -> LinSrgba {
-    Srgba::new(1.0, 0.1, 0.6, 1.0).into_linear()
+pub fn colour(ray: crate::geom::Ray, _root: &Cell) -> LinSrgba {
+    Srgba::new(
+        ray.dir().dot(&nalgebra::Vector3::x_axis()).abs() as f32,
+        ray.dir().dot(&nalgebra::Vector3::y_axis()).abs() as f32,
+        ray.dir().dot(&nalgebra::Vector3::z_axis()).abs() as f32,
+        1.0,
+    )
+    .into_linear()
 }

@@ -56,7 +56,8 @@ impl Camera {
         debug_assert!(res.0 > 1);
         debug_assert!(res.1 > 1);
         debug_assert!(ss_power > 0);
-        debug_assert!(splits.0 * splits.1 >= 64);
+        debug_assert!(splits.0 > 0);
+        debug_assert!(splits.1 > 0);
         debug_assert!(res.0 % splits.0 == 0);
         debug_assert!(res.1 % splits.1 == 0);
 

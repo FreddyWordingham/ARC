@@ -25,7 +25,7 @@
         "img_0": {
             "pos": [1, 2, 2],
             "tar": [0, 0, 0],
-            "fov": 45,
+            "fov": 720,
             "res": [480, 480],
             "splits": [8, 8],
             "ss_power": 1,
@@ -33,12 +33,12 @@
         },
         "img_1": {
             "pos": [1, 2, 2],
-            "tar": [4, 5, 5],
-            "fov": 45,
+            "tar": [0, 0, 0],
+            "fov": 90,
             "res": [1024, 1024],
-            "splits": [128, 128],
+            "splits": [4, 4],
             "ss_power": 1,
-            "frame_saving": false
+            "frame_saving": true
         }
     }
 }

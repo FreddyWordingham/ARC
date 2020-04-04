@@ -64,7 +64,7 @@ impl Camera {
 
 impl Display for Camera {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "")?;
+        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "position", self.pos)?;
         writeln!(fmt, "{:>30} : {}", "target", self.tar)?;
         writeln!(fmt, "{:>30} : {} [deg]", "field of view", self.fov)?;
