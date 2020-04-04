@@ -20,6 +20,7 @@ colored = "1.9.3"
 indicatif = "0.14.0"
 json5 = "0.2.7"
 log = "0.4.8"
+lazy_static = "1.4.0"
 nalgebra = { version = "0.20.0", features = ["serde-serialize"] }
 ndarray = { version = "0.13.0", features = ["rayon", "serde-1"] }
 ndarray-parallel = "0.9.1"
