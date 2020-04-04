@@ -42,7 +42,9 @@
         "specular": 2,
         "specular_pow": 8,
         "transparency": 0.9,
-        "shadow": 0.1
+        "shadow": 0.1,
+        "sunlight_samples": 16,
+        "sunlight_radius": 1e-1,
     },
     "cameras": {
         "img_0": {
