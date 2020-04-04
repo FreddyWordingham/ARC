@@ -7,6 +7,7 @@ use crate::{
 use nalgebra::Point3;
 use palette::Gradient;
 use palette::{LinSrgba, Srgba};
+use rand::rngs::ThreadRng;
 
 /// Determine the colour of a given ray.
 #[inline]
@@ -17,6 +18,7 @@ pub fn colour(
     root: &Cell,
     mut ray: Ray,
     bump_dist: f64,
+    rng: &mut ThreadRng,
 ) -> LinSrgba {
     debug_assert!(bump_dist > 0.0);
 
@@ -34,7 +36,8 @@ pub fn colour(
         let mut x = (lighting::ambient(sett)
             + lighting::diffuse(sett, &ray, hit.norm())
             + lighting::specular(sett, &ray, hit.norm(), cam_pos))
-            * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist);
+            // * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist);
+            * lighting::sunlight_samples(sett, &ray, hit.norm(), root, bump_dist, 16, 1e-1, rng);
         x /= 3.2;
         LinSrgba::from(grad.get(x as f32))
     // Srgba::new(1.0, 1.0, 1.0, 1.0).into_linear()

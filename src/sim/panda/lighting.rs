@@ -5,6 +5,8 @@ use crate::{
     sim::panda::{Cell, ShaderSettings},
 };
 use nalgebra::{Point3, Unit, Vector3};
+use rand::{rngs::ThreadRng, Rng};
+use std::f64::consts::PI;
 
 /// Calculate the ambient lighting coefficient.
 #[inline]
@@ -71,6 +73,72 @@ pub fn sunlight(
     }
 
     light
+}
+
+/// Calculate the sunlight factor from a number of samples.
+#[inline]
+#[must_use]
+pub fn sunlight_samples(
+    sett: &ShaderSettings,
+    ray: &Ray,
+    norm: &Unit<Vector3<f64>>,
+    root: &Cell,
+    bump_dist: f64,
+    samples: usize,
+    sample_radius: f64,
+    rng: &mut ThreadRng,
+) -> f64 {
+    debug_assert!(bump_dist > 0.0);
+    debug_assert!(samples > 0);
+    debug_assert!(sample_radius > 0.0);
+
+    let shadow = |mut light_ray: Ray| {
+        let mut light = 1.0;
+        while let Some(hit) = root.observe(light_ray.clone(), bump_dist) {
+            match hit.group() {
+                -1 => {
+                    light *= 1.0 - sett.transparency();
+                }
+                _ => {
+                    return sett.shadow();
+                }
+            }
+
+            light_ray.travel(hit.dist() + bump_dist);
+        }
+
+        light
+    };
+
+    let mut light_ray = Ray::new(*ray.pos(), *norm);
+    light_ray.travel(bump_dist + 1e-1);
+
+    let mut total_shadow = 0.0;
+    let offset = rng.gen::<f64>() * 2.0 * PI;
+    for n in 0..samples {
+        let mut lr = light_ray.clone();
+        let (theta, phi) = crate::math::sample::golden::hemisphere(n as i64, samples as i64);
+        lr.rotate(phi, theta + offset);
+        lr.travel(sample_radius);
+
+        // let forward = norm;
+        // let up = Unit::new_normalize(forward.cross(&Vector3::z_axis()));
+        // let right = Unit::new_normalize(forward.cross(&up));
+
+        // let (r, theta) = crate::math::sample::golden::circle(n as i64, samples as i64);
+
+        // let mut pos = light_ray.pos().clone();
+        // pos += right.as_ref() * (r * theta.sin() * sample_radius);
+        // pos += up.as_ref() * (r * theta.cos() * sample_radius);
+
+        // total_shadow += shadow(Ray::new(pos, Unit::new_normalize(sett.sun_pos() - pos)));
+        total_shadow += shadow(Ray::new(
+            *lr.pos(),
+            Unit::new_normalize(sett.sun_pos() - lr.pos()),
+        ));
+    }
+
+    total_shadow / samples as f64
 }
 
 /// Calculate the reflection vector for a given input unit vector and surface normal.

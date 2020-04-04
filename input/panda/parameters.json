@@ -49,23 +49,24 @@
             "pos": [1.0, 0.0, 2.75],
             "tar": [-10.5, 0.0, 2.65],
             "fov": 120,
-            "res": [3440, 1440],
+            // "res": [3440, 1440],
+            "res": [1720, 720],
             "splits": [43, 18],
             "ss_power": 1,
             "dof_samples": 1,
             "dof_radius": 1e-1,
             "frame_saving": false
         },
-        "img_1": {
-            "pos": [1.0, 0.0, 2.75],
-            "tar": [-10.5, 0.0, 2.65],
-            "fov": 120,
-            "res": [3440, 1440],
-            "splits": [43, 18],
-            "ss_power": 4,
-            "dof_samples": 16,
-            "dof_radius": 1e-1,
-            "frame_saving": false
-        }
+        // "img_1": {
+        //     "pos": [1.0, 0.0, 2.75],
+        //     "tar": [-10.5, 0.0, 2.65],
+        //     "fov": 120,
+        //     "res": [3440, 1440],
+        //     "splits": [43, 18],
+        //     "ss_power": 4,
+        //     "dof_samples": 16,
+        //     "dof_radius": 1e-1,
+        //     "frame_saving": false
+        // }
     }
 }

@@ -19,6 +19,7 @@ use crate::util::{ParProgressBar, ProgressBar};
 use log::info;
 use ndarray::Array2;
 use palette::LinSrgba;
+use rand::{rngs::ThreadRng, thread_rng};
 use rayon::prelude::*;
 use std::{
     path::Path,
@@ -111,6 +112,8 @@ fn render_frame(
     let super_samples = cam.ss_power().pow(2);
     let dof_samples = cam.dof_samples();
 
+    let mut rng = thread_rng();
+
     if dof_samples > 1 {
         if super_samples > 1 {
             frame_ss_dof(
@@ -122,15 +125,34 @@ fn render_frame(
                 start,
                 super_samples,
                 dof_samples,
+                &mut rng,
             )
         } else {
-            frame_dof(sett, cam, root, bump_dist, frame_res, start, dof_samples)
+            frame_dof(
+                sett,
+                cam,
+                root,
+                bump_dist,
+                frame_res,
+                start,
+                dof_samples,
+                &mut rng,
+            )
         }
     } else {
         if super_samples > 1 {
-            frame_ss(sett, cam, root, bump_dist, frame_res, start, super_samples)
+            frame_ss(
+                sett,
+                cam,
+                root,
+                bump_dist,
+                frame_res,
+                start,
+                super_samples,
+                &mut rng,
+            )
         } else {
-            frame(sett, cam, root, bump_dist, frame_res, start)
+            frame(sett, cam, root, bump_dist, frame_res, start, &mut rng)
         }
     }
 }
@@ -145,6 +167,7 @@ fn frame(
     bump_dist: f64,
     frame_res: (usize, usize),
     start: (usize, usize),
+    rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
 
@@ -158,7 +181,7 @@ fn frame(
             *frame
                 .get_mut((xi, yi))
                 .expect("Could not access frame pixel.") +=
-                pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist);
+                pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist, rng);
         }
     }
 
@@ -176,6 +199,7 @@ fn frame_ss(
     frame_res: (usize, usize),
     start: (usize, usize),
     super_samples: usize,
+    rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
 
@@ -190,7 +214,7 @@ fn frame_ss(
                 *frame
                     .get_mut((xi, yi))
                     .expect("Could not access frame pixel.") +=
-                    pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist)
+                    pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist, rng)
                         / super_samples as f32;
             }
         }
@@ -210,6 +234,7 @@ fn frame_dof(
     frame_res: (usize, usize),
     start: (usize, usize),
     dof_samples: usize,
+    rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
 
@@ -224,7 +249,7 @@ fn frame_dof(
                 *frame
                     .get_mut((xi, yi))
                     .expect("Could not access frame pixel.") +=
-                    pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist)
+                    pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist, rng)
                         / dof_samples as f32;
             }
         }
@@ -246,6 +271,7 @@ fn frame_ss_dof(
     start: (usize, usize),
     super_samples: usize,
     dof_samples: usize,
+    rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
 
@@ -261,7 +287,7 @@ fn frame_ss_dof(
                     *frame
                         .get_mut((xi, yi))
                         .expect("Could not access frame pixel.") +=
-                        pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist)
+                        pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist, rng)
                             / (super_samples * dof_samples) as f32;
                 }
             }
