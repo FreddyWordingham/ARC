@@ -5,6 +5,11 @@
         "padding": 0.1
     },
     "surfaces": [
+        [-4, [
+            ["../../zebra/entities/leaves_0", null],
+            ["../../zebra/entities/leaves_1", null],
+            ["../../zebra/entities/leaves_2", null],
+        ]],
         [-2, [
             ["../../zebra/entities/rain", null],
         ]],
@@ -20,13 +25,12 @@
             ["../../zebra/entities/klm", null],
             ["../../zebra/entities/fjmw", null],
             ["../../zebra/entities/dog", null],
+            ["../../zebra/entities/stars", null],
+            ["../../zebra/entities/stars_1", null],
             ["../../zebra/entities/lead", null],
             ["../../zebra/entities/path", null],
             ["../../zebra/entities/hills", null],
             ["../../zebra/entities/trees", null],
-            ["../../zebra/entities/leaves_0", null],
-            ["../../zebra/entities/leaves_1", null],
-            ["../../zebra/entities/leaves_2", null],
             ["../../zebra/entities/lamps", null],
             ["../../zebra/entities/planet", null],
             ["../../zebra/entities/umbrella", null],
@@ -47,14 +51,14 @@
         "specular_pow": 8,
         "transparency": 0.9,
         "shadow": 0.1,
-        "sunlight_samples": 10,
+        "sunlight_samples": 64,
         "sunlight_radius": 1e-1,
     },
     "cameras": {
         "a_test": {
             "pos": [0.0, 0.0, 3.0],
-            "tar": [-11.0, 0.0, 3.0],
-            "fov": 100,
+            "tar": [-11.0, 0.0, 2.5],
+            "fov": 150,
             "res": [688, 288],
             "splits": [86, 36],
             "ss_power": 1,
@@ -65,7 +69,7 @@
         "high_res": {
             "pos": [0.0, 0.0, 3.0],
             "tar": [-11.0, 0.0, 3.0],
-            "fov": 100,
+            "fov": 150,
             "res": [3440, 1440],
             "splits": [86, 36],
             "ss_power": 4,

@@ -75,7 +75,12 @@ pub fn colour(
             0 => {
                 return LinSrgba::from(grad_0.get(x as f32));
             }
-            1..=3 => {
+            -4 => {
+                return (LinSrgba::from(grad_0.get(x as f32)) * (1.0 - sett.transparency()) as f32)
+                    + (colour(sett, cam_pos, root, ray, bump_dist, rng)
+                        * sett.transparency() as f32);
+            }
+            1..=3 | -4 => {
                 return LinSrgba::from(grad_0.get(x as f32));
             }
             _ => {

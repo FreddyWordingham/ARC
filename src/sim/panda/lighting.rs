@@ -62,7 +62,7 @@ pub fn sunlight(
     let mut light = 1.0;
     while let Some(hit) = root.observe(light_ray.clone(), bump_dist) {
         match hit.group() {
-            -1 => {
+            -4 => {
                 light *= 1.0 - sett.transparency();
             }
             _ => {
@@ -95,7 +95,7 @@ pub fn sunlight_samples(
         let mut light = 1.0;
         while let Some(hit) = root.observe(light_ray.clone(), bump_dist) {
             match hit.group() {
-                -1 => {
+                -4 => {
                     light *= 1.0 - sett.transparency();
                 }
                 _ => {
@@ -196,7 +196,7 @@ pub fn ssscx(
     let mut light = 1.0;
     while let Some(hit) = root.observe(light_ray.clone(), bump_dist) {
         match hit.group() {
-            -1 => {
+            -4 => {
                 light *= 1.0 - sett.transparency();
             }
             _ => {
