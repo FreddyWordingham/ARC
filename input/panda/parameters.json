@@ -2,11 +2,11 @@
     "grid_settings": {
         "max_depth": 6,
         "tar_tris": 10,
-        "padding": 0.01
+        "padding": 0.1
     },
     "surfaces": [
-        [0, [
-            ["cube", null]
+        [2, [
+            ["sphere", null]
         ]],
         [1, [
             ["torus", null]
@@ -14,31 +14,29 @@
     ],
     "shader_settings": {
         "sun_pos": [-100, 100, 200],
-        "lighting": {
-            "ambient": 0.1,
-            "diffuse": 1,
-            "specular": 2,
-            "specular_pow": 8
-        }
+        "ambient": 0.1,
+        "diffuse": 1,
+        "specular": 2,
+        "specular_pow": 8
     },
     "cameras": {
         "img_0": {
-            "pos": [1, 2, 2],
-            "tar": [0, 0, 0],
-            "fov": 720,
+            "pos": [3.0, 3.0, 3.0],
+            "tar": [0.0, 0.0, 0.0],
+            "fov": 45,
             "res": [480, 480],
-            "splits": [8, 8],
+            "splits": [16, 16],
             "ss_power": 1,
             "frame_saving": false
         },
-        "img_1": {
-            "pos": [1, 2, 2],
-            "tar": [0, 0, 0],
-            "fov": 90,
-            "res": [1024, 1024],
-            "splits": [4, 4],
-            "ss_power": 1,
-            "frame_saving": true
-        }
+        // "img_1": {
+        //     "pos": [1.0, 1.0, 2.75],
+        //     "tar": [0.0, 0.0, 0.0],
+        //     "fov": 90,
+        //     "res": [1024, 1024],
+        //     "splits": [16, 16],
+        //     "ss_power": 1,
+        //     "frame_saving": false
+        // }
     }
 }

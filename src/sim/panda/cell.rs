@@ -59,6 +59,7 @@ impl<'a> Cell<'a> {
                     mins = Some(mesh_mins);
                 } else {
                     for (grid_min, mesh_min) in mins
+                        .as_mut()
                         .expect("Missing minimum point.")
                         .iter_mut()
                         .zip(mesh_mins.iter())
@@ -73,6 +74,7 @@ impl<'a> Cell<'a> {
                     maxs = Some(mesh_maxs);
                 } else {
                     for (grid_max, mesh_max) in maxs
+                        .as_mut()
                         .expect("Missing maximum point.")
                         .iter_mut()
                         .zip(mesh_maxs.iter())
@@ -84,9 +86,10 @@ impl<'a> Cell<'a> {
                 }
             }
         }
+
         let boundary = Aabb::new(
             mins.expect("Missing minimum point."),
-            maxs.expect("Missing minimum point."),
+            maxs.expect("Missing maximum point."),
         );
 
         let mut tris = Vec::new();

@@ -5,6 +5,8 @@ pub mod cell;
 pub mod grid_settings;
 pub mod group;
 pub mod hit;
+pub mod lighting;
+pub mod pipe;
 pub mod save;
 pub mod scan;
 pub mod shader_settings;
@@ -16,7 +18,7 @@ pub use self::{
 use crate::util::{ParProgressBar, ProgressBar};
 use log::info;
 use ndarray::Array2;
-use palette::{LinSrgba, Srgba};
+use palette::LinSrgba;
 use rayon::prelude::*;
 use std::{
     path::Path,
@@ -25,7 +27,7 @@ use std::{
 
 /// Run a panda rendering simulation.
 #[inline]
-pub fn run(out_dir: &Path, name: &str, cam: &Camera, root: &Cell) {
+pub fn run(out_dir: &Path, name: &str, sett: &ShaderSettings, cam: &Camera, root: &Cell) {
     let total_frames = cam.splits().0 * cam.splits().1;
     let pb = ParProgressBar::new("Rendering", total_frames as u64);
     let pb = Arc::new(Mutex::new(pb));
@@ -36,7 +38,7 @@ pub fn run(out_dir: &Path, name: &str, cam: &Camera, root: &Cell) {
         .par_iter()
         .map(|index| {
             pb.lock().expect("Could not lock progress bar.").tick();
-            let frame = render_frame(*index, cam, root);
+            let frame = render_frame(*index, sett, cam, root);
             if cam.frame_saving() {
                 save::png(out_dir, &format!("{}_{}", name, index), frame.clone());
             }
@@ -87,10 +89,12 @@ fn stitch(cam: &Camera, frames: Vec<(usize, Array2<LinSrgba>)>) -> Array2<LinSrg
 /// Render a frame of the image.
 #[inline]
 #[must_use]
-fn render_frame(index: usize, cam: &Camera, root: &Cell) -> Array2<LinSrgba> {
-    use rand::{thread_rng, Rng};
-    let mut rng = thread_rng();
-
+fn render_frame(
+    index: usize,
+    sett: &ShaderSettings,
+    cam: &Camera,
+    root: &Cell,
+) -> Array2<LinSrgba> {
     let frame_res = cam.frame_res();
 
     let fx = index % cam.splits().0;
@@ -99,10 +103,7 @@ fn render_frame(index: usize, cam: &Camera, root: &Cell) -> Array2<LinSrgba> {
     let start_x = frame_res.0 * fx;
     let start_y = frame_res.1 * fy;
 
-    let mut frame = Array2::from_elem(
-        frame_res,
-        Srgba::new(rng.gen(), rng.gen(), rng.gen(), 1.0).into_linear(),
-    );
+    let mut frame = Array2::default(frame_res);
 
     let super_samples = cam.ss_power().pow(2);
 
@@ -115,23 +116,10 @@ fn render_frame(index: usize, cam: &Camera, root: &Cell) -> Array2<LinSrgba> {
                 let ray = cam.gen_ss_ray(rx, ry, n);
                 *frame
                     .get_mut((xi, yi))
-                    .expect("Could not access frame pixel.") += colour(ray, root);
+                    .expect("Could not access frame pixel.") += pipe::colour(sett, cam, root, ray);
             }
         }
     }
 
     frame
-}
-
-/// Determine the colour of a given ray.
-#[inline]
-#[must_use]
-pub fn colour(ray: crate::geom::Ray, _root: &Cell) -> LinSrgba {
-    Srgba::new(
-        ray.dir().dot(&nalgebra::Vector3::x_axis()).abs() as f32,
-        ray.dir().dot(&nalgebra::Vector3::y_axis()).abs() as f32,
-        ray.dir().dot(&nalgebra::Vector3::z_axis()).abs() as f32,
-        1.0,
-    )
-    .into_linear()
 }

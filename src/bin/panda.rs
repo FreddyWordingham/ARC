@@ -46,15 +46,15 @@ fn main() {
     let surfs = load_surfs(&in_dir, &params.surfaces);
 
     banner::section("Building");
-    let grid = build_grid(&params.grid_settings, &surfs);
-    report!(grid, "Grid");
+    let root = build_grid(&params.grid_settings, &surfs);
+    report!(root, "Grid");
 
     banner::section("Rendering");
     for (name, cam) in params.cameras {
         let cam = cam.build();
         info!("{} camera{}", name, cam);
 
-        arc::sim::panda::run(&out_dir, &name, &cam, &grid);
+        arc::sim::panda::run(&out_dir, &name, &params.shader_settings, &cam, &root);
     }
 
     banner::section("Finished");
@@ -88,6 +88,7 @@ fn load_surfs(
     info!("Loading surfaces...");
     let mut surfs: BTreeMap<Group, Vec<_>> = BTreeMap::new();
 
+    let mut total_meshes = 0;
     for (group, meshes) in list {
         for (name, transform) in meshes {
             let path = &in_dir.join(format!("surfaces/{}.obj", name));
@@ -106,9 +107,11 @@ fn load_surfs(
             } else {
                 surfs.insert(*group, vec![mesh]);
             }
+
+            total_meshes += 1;
         }
     }
-    info!("{} meshes loaded.\n", surfs.len());
+    info!("{} meshes loaded.", total_meshes);
 
     let mut surfaces = Vec::with_capacity(surfs.len());
     info!("Total groups: {}", surfs.len());
@@ -132,7 +135,7 @@ fn build_grid<'a>(grid_settings: &GridSettings, surfaces: &'a [(Group, Vec<Mesh>
     report!(grid_settings.max_depth(), "max depth");
     report!(grid_settings.tar_tris(), "target triangles");
 
-    let grid = Cell::new_root(grid_settings, surfaces);
+    let root = Cell::new_root(grid_settings, surfaces);
 
-    grid
+    root
 }

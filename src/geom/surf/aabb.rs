@@ -172,8 +172,8 @@ impl Aabb {
 
         let delta = self.half_widths() * f;
 
-        self.mins += delta;
-        self.maxs -= delta;
+        self.mins -= delta;
+        self.maxs += delta;
     }
 }
 
