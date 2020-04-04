@@ -86,13 +86,11 @@ fn render_frame(_index: usize, cam: &Camera, _grid: &Cell) -> Array2<LinSrgba> {
     use rand::{thread_rng, Rng};
     let mut rng = thread_rng();
 
-    let frame = Array2::from_elem(
-        cam.frame_res(),
-        Srgba::new(rng.gen(), rng.gen(), rng.gen(), 1.0).into_linear(),
-    );
-
     // let fx = cam.res().0 / cam.splits().0;
     // let fy = cam.res().1 / cam.splits().1;
 
-    frame
+    Array2::from_elem(
+        cam.frame_res(),
+        Srgba::new(rng.gen(), rng.gen(), rng.gen(), 1.0).into_linear(),
+    )
 }
