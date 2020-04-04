@@ -91,7 +91,7 @@ impl<'a> Cell<'a> {
             mins.expect("Missing minimum point."),
             maxs.expect("Missing maximum point."),
         );
-        boundary.expand(grid_settings.padding());
+        boundary.expand(settings.padding());
 
         let mut tris = Vec::new();
         for (group, meshes) in surfaces {
