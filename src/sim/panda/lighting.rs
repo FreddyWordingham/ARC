@@ -2,9 +2,9 @@
 
 use crate::{
     geom::Ray,
-    sim::panda::{Camera, Cell, ShaderSettings},
+    sim::panda::{Cell, ShaderSettings},
 };
-use nalgebra::{Unit, Vector3};
+use nalgebra::{Point3, Unit, Vector3};
 
 /// Calculate the ambient lighting coefficient.
 #[inline]
@@ -25,9 +25,14 @@ pub fn diffuse(sett: &ShaderSettings, ray: &Ray, norm: &Unit<Vector3<f64>>) -> f
 /// Calculate the specular lighting coefficient.
 #[inline]
 #[must_use]
-pub fn specular(sett: &ShaderSettings, ray: &Ray, norm: &Unit<Vector3<f64>>, cam: &Camera) -> f64 {
+pub fn specular(
+    sett: &ShaderSettings,
+    ray: &Ray,
+    norm: &Unit<Vector3<f64>>,
+    cam_pos: &Point3<f64>,
+) -> f64 {
     let light_dir = Unit::new_normalize(sett.sun_pos() - ray.pos());
-    let view_dir = Unit::new_normalize(cam.forward().pos() - ray.pos());
+    let view_dir = Unit::new_normalize(cam_pos - ray.pos());
 
     let ref_dir = reflect(&-light_dir, norm);
 

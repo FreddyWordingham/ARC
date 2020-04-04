@@ -2,8 +2,9 @@
 
 use crate::{
     geom::Ray,
-    sim::panda::{lighting, Camera, Cell, ShaderSettings},
+    sim::panda::{lighting, Cell, ShaderSettings},
 };
+use nalgebra::Point3;
 use palette::Gradient;
 use palette::{LinSrgba, Srgba};
 
@@ -12,7 +13,7 @@ use palette::{LinSrgba, Srgba};
 #[must_use]
 pub fn colour(
     sett: &ShaderSettings,
-    cam: &Camera,
+    cam_pos: &Point3<f64>,
     root: &Cell,
     mut ray: Ray,
     bump_dist: f64,
@@ -32,7 +33,7 @@ pub fn colour(
         ray.travel(hit.dist());
         let mut x = (lighting::ambient(sett)
             + lighting::diffuse(sett, &ray, hit.norm())
-            + lighting::specular(sett, &ray, hit.norm(), cam))
+            + lighting::specular(sett, &ray, hit.norm(), cam_pos))
             * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist);
         x /= 3.2;
         LinSrgba::from(grad.get(x as f32))

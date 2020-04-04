@@ -20,6 +20,10 @@ pub struct Camera {
     splits: (usize, usize),
     /// Super sampling power.
     ss_power: usize,
+    /// Depth of field samples.
+    dof_samples: usize,
+    /// Depth of field maximum jitter radius.
+    dof_radius: f64,
     /// When true save each frame to a separate file.
     frame_saving: bool,
 }
@@ -31,6 +35,8 @@ impl Camera {
     clone!(res, (usize, usize));
     clone!(splits, (usize, usize));
     clone!(ss_power, usize);
+    clone!(dof_samples, usize);
+    clone!(dof_radius, f64);
     clone!(frame_saving, bool);
 
     /// Build a panda simulation camera.
@@ -44,6 +50,8 @@ impl Camera {
             self.res,
             self.splits,
             self.ss_power,
+            self.dof_samples,
+            self.dof_radius,
             self.frame_saving,
         )
     }

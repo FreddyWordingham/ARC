@@ -112,6 +112,7 @@ fn render_frame(
     let mut frame = Array2::default(frame_res);
 
     let super_samples = cam.ss_power().pow(2);
+    let dof_samples = cam.dof_samples();
 
     for xi in 0..frame_res.0 {
         let rx = start_x + xi;
@@ -119,11 +120,16 @@ fn render_frame(
             let ry = start_y + yi;
 
             for n in 0..super_samples {
-                let ray = cam.gen_ss_ray(rx, ry, n);
-                *frame
-                    .get_mut((xi, yi))
-                    .expect("Could not access frame pixel.") +=
-                    pipe::colour(sett, cam, root, ray, bump_dist) / super_samples as f32;
+                for m in 0..dof_samples {
+                    // let ray = cam.gen_ss_ray(rx, ry, n);
+                    let ray = cam.gen_ss_dof_ray(rx, ry, n, m);
+
+                    *frame
+                        .get_mut((xi, yi))
+                        .expect("Could not access frame pixel.") +=
+                        pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist)
+                            / (super_samples * dof_samples) as f32;
+                }
             }
         }
     }

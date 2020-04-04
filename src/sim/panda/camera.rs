@@ -24,6 +24,10 @@ pub struct Camera {
     sub_delta: (f64, f64),
     /// Super sampling power.
     ss_power: usize,
+    /// Depth of field samples.
+    dof_samples: usize,
+    /// Depth of field maximum jitter radius.
+    dof_radius: f64,
     /// When true save each frame to a separate file.
     frame_saving: bool,
 }
@@ -38,6 +42,8 @@ impl Camera {
     clone!(delta, (f64, f64));
     clone!(sub_delta, (f64, f64));
     clone!(ss_power, usize);
+    clone!(dof_samples, usize);
+    clone!(dof_radius, f64);
     clone!(frame_saving, bool);
 
     /// Construct a new instance.
@@ -50,16 +56,20 @@ impl Camera {
         res: (usize, usize),
         splits: (usize, usize),
         ss_power: usize,
+        dof_samples: usize,
+        dof_radius: f64,
         frame_saving: bool,
     ) -> Self {
         debug_assert!(fov_x > 0.0);
         debug_assert!(res.0 > 1);
         debug_assert!(res.1 > 1);
-        debug_assert!(ss_power > 0);
         debug_assert!(splits.0 > 0);
         debug_assert!(splits.1 > 0);
         debug_assert!(res.0 % splits.0 == 0);
         debug_assert!(res.1 % splits.1 == 0);
+        debug_assert!(ss_power > 0);
+        debug_assert!(dof_samples > 0);
+        debug_assert!(dof_radius > 0.0);
 
         let fov = (fov_x, fov_x * (res.1 as f64 / res.0 as f64));
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
@@ -79,6 +89,8 @@ impl Camera {
             delta,
             sub_delta,
             ss_power,
+            dof_samples,
+            dof_radius,
             frame_saving,
         }
     }
@@ -133,6 +145,41 @@ impl Camera {
         phi += (sy * self.sub_delta.1) - (self.delta.1 * 0.5);
 
         let mut ray = self.forward.clone();
+
+        *ray.dir_mut() = Rotation3::from_axis_angle(&self.up, theta)
+            * Rotation3::from_axis_angle(&self.right, phi)
+            * ray.dir();
+
+        ray
+    }
+
+    /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
+    #[inline]
+    #[must_use]
+    pub fn gen_ss_dof_ray(
+        &self,
+        xi: usize,
+        yi: usize,
+        sub_sample: usize,
+        depth_sample: usize,
+    ) -> Ray {
+        debug_assert!(xi < self.res.0);
+        debug_assert!(yi < self.res.1);
+        debug_assert!(sub_sample < self.ss_power.pow(2));
+
+        let mut theta = (xi as f64 * self.delta.0) - (self.fov.0 * 0.5);
+        let mut phi = (yi as f64 * self.delta.1) - (self.fov.1 * 0.5);
+
+        let sx = (sub_sample % self.ss_power) as f64 + 0.5;
+        let sy = (sub_sample / self.ss_power) as f64 + 0.5;
+        theta += (sx * self.sub_delta.0) - (self.delta.0 * 0.5);
+        phi += (sy * self.sub_delta.1) - (self.delta.1 * 0.5);
+
+        let mut ray = self.forward.clone();
+        let (r, t) =
+            crate::math::sample::golden::circle(depth_sample as i64, self.dof_samples as i64);
+        *ray.pos_mut() += self.right.as_ref() * r * t.cos();
+        *ray.pos_mut() += self.up.as_ref() * r * t.sin();
 
         *ray.dir_mut() = Rotation3::from_axis_angle(&self.up, theta)
             * Rotation3::from_axis_angle(&self.right, phi)
