@@ -341,6 +341,8 @@ impl<'a> Cell<'a> {
     #[inline]
     #[must_use]
     pub fn observe(&self, mut ray: Ray, bump_dist: f64) -> Option<Hit> {
+        debug_assert!(bump_dist > 0.0);
+
         let mut dist_travelled = 0.0;
 
         // Move the ray to within the domain of the grid if it isn't already within it.

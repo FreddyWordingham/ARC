@@ -5,8 +5,10 @@
         "padding": 0.01
     },
     "surfaces": [
-        [0, [
-            ["cube", null]
+        [-1, [
+            ["../../zebra/entities/leaves_0", null],
+            ["../../zebra/entities/leaves_1", null],
+            ["../../zebra/entities/leaves_2", null]
         ]],
         [1, [
             ["../../zebra/entities/alt_windows", null],
@@ -19,9 +21,6 @@
             ["../../zebra/entities/klm", null],
             ["../../zebra/entities/lamps", null],
             ["../../zebra/entities/lead", null],
-            ["../../zebra/entities/leaves_0", null],
-            ["../../zebra/entities/leaves_1", null],
-            ["../../zebra/entities/leaves_2", null],
             ["../../zebra/entities/moon", null],
             ["../../zebra/entities/path", null],
             ["../../zebra/entities/planet", null],
@@ -37,11 +36,13 @@
         ]]
     ],
     "shader_settings": {
-        "sun_pos": [-10, 10, 20],
+        "sun_pos": [-20, 10, 20],
         "ambient": 0.1,
         "diffuse": 1,
         "specular": 2,
-        "specular_pow": 8
+        "specular_pow": 8,
+        "transparency": 0.9,
+        "shadow": 0.1
     },
     "cameras": {
         "img_0": {

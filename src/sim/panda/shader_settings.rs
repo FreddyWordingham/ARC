@@ -18,6 +18,10 @@ pub struct ShaderSettings {
     specular: f64,
     /// Specular power factor.
     specular_pow: i32,
+    /// Transparency.
+    transparency: f64,
+    /// Shadow.
+    shadow: f64,
 }
 
 impl ShaderSettings {
@@ -26,6 +30,8 @@ impl ShaderSettings {
     clone!(diffuse, f64);
     clone!(specular, f64);
     clone!(specular_pow, i32);
+    clone!(transparency, f64);
+    clone!(shadow, f64);
 }
 
 impl Display for ShaderSettings {

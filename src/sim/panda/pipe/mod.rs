@@ -10,7 +10,15 @@ use palette::{LinSrgba, Srgba};
 /// Determine the colour of a given ray.
 #[inline]
 #[must_use]
-pub fn colour(sett: &ShaderSettings, cam: &Camera, root: &Cell, mut ray: Ray) -> LinSrgba {
+pub fn colour(
+    sett: &ShaderSettings,
+    cam: &Camera,
+    root: &Cell,
+    mut ray: Ray,
+    bump_dist: f64,
+) -> LinSrgba {
+    debug_assert!(bump_dist > 0.0);
+
     // let grad = Gradient::new(vec![
     //     palette::Hsv::from(LinSrgba::new(1.0, 0.1, 0.1, 1.0)),
     //     palette::Hsv::from(LinSrgba::new(0.1, 1.0, 1.0, 1.0)),
@@ -22,9 +30,10 @@ pub fn colour(sett: &ShaderSettings, cam: &Camera, root: &Cell, mut ray: Ray) ->
 
     if let Some(hit) = root.observe(ray.clone(), 1.0e-6) {
         ray.travel(hit.dist());
-        let mut x = lighting::ambient(sett)
+        let mut x = (lighting::ambient(sett)
             + lighting::diffuse(sett, &ray, hit.norm())
-            + lighting::specular(sett, &ray, hit.norm(), cam);
+            + lighting::specular(sett, &ray, hit.norm(), cam))
+            * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist);
         x /= 3.2;
         LinSrgba::from(grad.get(x as f32))
     // Srgba::new(1.0, 1.0, 1.0, 1.0).into_linear()

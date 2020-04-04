@@ -25,6 +25,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+/// Distance to travel away from surfaces.
+const BUMP_DIST: f64 = 1.0e-6;
+
 /// Run a panda rendering simulation.
 #[inline]
 pub fn run(out_dir: &Path, name: &str, sett: &ShaderSettings, cam: &Camera, root: &Cell) {
@@ -38,7 +41,7 @@ pub fn run(out_dir: &Path, name: &str, sett: &ShaderSettings, cam: &Camera, root
         .par_iter()
         .map(|index| {
             pb.lock().expect("Could not lock progress bar.").tick();
-            let frame = render_frame(*index, sett, cam, root);
+            let frame = render_frame(*index, sett, cam, root, BUMP_DIST);
             if cam.frame_saving() {
                 save::png(out_dir, &format!("{}_{}", name, index), frame.clone());
             }
@@ -94,7 +97,10 @@ fn render_frame(
     sett: &ShaderSettings,
     cam: &Camera,
     root: &Cell,
+    bump_dist: f64,
 ) -> Array2<LinSrgba> {
+    debug_assert!(bump_dist > 0.0);
+
     let frame_res = cam.frame_res();
 
     let fx = index % cam.splits().0;
@@ -117,7 +123,7 @@ fn render_frame(
                 *frame
                     .get_mut((xi, yi))
                     .expect("Could not access frame pixel.") +=
-                    pipe::colour(sett, cam, root, ray) / super_samples as f32;
+                    pipe::colour(sett, cam, root, ray, bump_dist) / super_samples as f32;
             }
         }
     }

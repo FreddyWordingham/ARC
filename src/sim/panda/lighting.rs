@@ -2,7 +2,7 @@
 
 use crate::{
     geom::Ray,
-    sim::panda::{Camera, ShaderSettings},
+    sim::panda::{Camera, Cell, ShaderSettings},
 };
 use nalgebra::{Unit, Vector3};
 
@@ -32,6 +32,40 @@ pub fn specular(sett: &ShaderSettings, ray: &Ray, norm: &Unit<Vector3<f64>>, cam
     let ref_dir = reflect(&-light_dir, norm);
 
     sett.specular() * view_dir.dot(&ref_dir).max(0.0).powi(sett.specular_pow())
+}
+
+/// Calculate the sunlight factor.
+#[inline]
+#[must_use]
+pub fn sunlight(
+    sett: &ShaderSettings,
+    ray: &Ray,
+    norm: &Unit<Vector3<f64>>,
+    root: &Cell,
+    bump_dist: f64,
+) -> f64 {
+    debug_assert!(bump_dist > 0.0);
+
+    let mut light_ray = Ray::new(*ray.pos(), *norm);
+    light_ray.travel(bump_dist);
+
+    *light_ray.dir_mut() = Unit::new_normalize(sett.sun_pos() - light_ray.pos());
+
+    let mut light = 1.0;
+    while let Some(hit) = root.observe(light_ray.clone(), bump_dist) {
+        match hit.group() {
+            -1 => {
+                light *= 1.0 - sett.transparency();
+            }
+            _ => {
+                return sett.shadow();
+            }
+        }
+
+        light_ray.travel(hit.dist() + bump_dist);
+    }
+
+    light
 }
 
 /// Calculate the reflection vector for a given input unit vector and surface normal.
