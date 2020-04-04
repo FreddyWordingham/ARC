@@ -47,20 +47,24 @@
     "cameras": {
         "img_0": {
             "pos": [1.0, 0.0, 2.75],
-            "tar": [0.0, 0.0, 2.65],
-            "fov": 45,
-            "res": [512, 512],
-            "splits": [16, 16],
+            "tar": [-10.5, 0.0, 2.65],
+            "fov": 30,
+            "res": [256, 512],
+            "splits": [32, 64],
             "ss_power": 1,
+            "dof_samples": 1,
+            "dof_radius": 0e-9,
             "frame_saving": false
         },
         "img_1": {
             "pos": [1.0, 0.0, 2.75],
-            "tar": [0.0, 0.0, 2.65],
-            "fov": 90,
-            "res": [1024, 1024],
-            "splits": [16, 16],
+            "tar": [-10.5, 0.0, 2.65],
+            "fov": 30,
+            "res": [256, 512],
+            "splits": [32, 64],
             "ss_power": 1,
+            "dof_samples": 16,
+            "dof_radius": 1e-1,
             "frame_saving": false
         }
     }

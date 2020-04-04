@@ -106,22 +106,156 @@ fn render_frame(
     let fx = index % cam.splits().0;
     let fy = index / cam.splits().0;
 
-    let start_x = frame_res.0 * fx;
-    let start_y = frame_res.1 * fy;
-
-    let mut frame = Array2::default(frame_res);
+    let start = (frame_res.0 * fx, frame_res.1 * fy);
 
     let super_samples = cam.ss_power().pow(2);
     let dof_samples = cam.dof_samples();
 
+    if dof_samples > 1 {
+        if super_samples > 1 {
+            frame_ss_dof(
+                sett,
+                cam,
+                root,
+                bump_dist,
+                frame_res,
+                start,
+                super_samples,
+                dof_samples,
+            )
+        } else {
+            frame_dof(sett, cam, root, bump_dist, frame_res, start, dof_samples)
+        }
+    } else {
+        if super_samples > 1 {
+            frame_ss(sett, cam, root, bump_dist, frame_res, start, super_samples)
+        } else {
+            frame(sett, cam, root, bump_dist, frame_res, start)
+        }
+    }
+}
+
+/// Render a basic frame.
+#[inline]
+#[must_use]
+fn frame(
+    sett: &ShaderSettings,
+    cam: &Camera,
+    root: &Cell,
+    bump_dist: f64,
+    frame_res: (usize, usize),
+    start: (usize, usize),
+) -> Array2<LinSrgba> {
+    let mut frame = Array2::default(frame_res);
+
     for xi in 0..frame_res.0 {
-        let rx = start_x + xi;
+        let rx = start.0 + xi;
         for yi in 0..frame_res.1 {
-            let ry = start_y + yi;
+            let ry = start.1 + yi;
+
+            let ray = cam.gen_ray(rx, ry);
+
+            *frame
+                .get_mut((xi, yi))
+                .expect("Could not access frame pixel.") +=
+                pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist);
+        }
+    }
+
+    frame
+}
+
+/// Render a frame with super-sampling.
+#[inline]
+#[must_use]
+fn frame_ss(
+    sett: &ShaderSettings,
+    cam: &Camera,
+    root: &Cell,
+    bump_dist: f64,
+    frame_res: (usize, usize),
+    start: (usize, usize),
+    super_samples: usize,
+) -> Array2<LinSrgba> {
+    let mut frame = Array2::default(frame_res);
+
+    for xi in 0..frame_res.0 {
+        let rx = start.0 + xi;
+        for yi in 0..frame_res.1 {
+            let ry = start.1 + yi;
+
+            for n in 0..super_samples {
+                let ray = cam.gen_ss_ray(rx, ry, n);
+
+                *frame
+                    .get_mut((xi, yi))
+                    .expect("Could not access frame pixel.") +=
+                    pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist)
+                        / super_samples as f32;
+            }
+        }
+    }
+
+    frame
+}
+
+/// Render a frame with depth-of-field.
+#[inline]
+#[must_use]
+fn frame_dof(
+    sett: &ShaderSettings,
+    cam: &Camera,
+    root: &Cell,
+    bump_dist: f64,
+    frame_res: (usize, usize),
+    start: (usize, usize),
+    dof_samples: usize,
+) -> Array2<LinSrgba> {
+    let mut frame = Array2::default(frame_res);
+
+    for xi in 0..frame_res.0 {
+        let rx = start.0 + xi;
+        for yi in 0..frame_res.1 {
+            let ry = start.1 + yi;
+
+            for m in 0..dof_samples {
+                let ray = cam.gen_ss_dof_ray(rx, ry, 0, m);
+
+                *frame
+                    .get_mut((xi, yi))
+                    .expect("Could not access frame pixel.") +=
+                    pipe::colour(sett, &ray.pos().clone(), root, ray, bump_dist)
+                        / dof_samples as f32;
+            }
+        }
+    }
+
+    frame
+}
+
+/// Render a frame with super-sampling and depth-of-field.
+#[allow(clippy::too_many_arguments)]
+#[inline]
+#[must_use]
+fn frame_ss_dof(
+    sett: &ShaderSettings,
+    cam: &Camera,
+    root: &Cell,
+    bump_dist: f64,
+    frame_res: (usize, usize),
+    start: (usize, usize),
+    super_samples: usize,
+    dof_samples: usize,
+) -> Array2<LinSrgba> {
+    let mut frame = Array2::default(frame_res);
+
+    for xi in 0..frame_res.0 {
+        let rx = start.0 + xi;
+        for yi in 0..frame_res.1 {
+            let ry = start.1 + yi;
 
             for n in 0..super_samples {
                 for m in 0..dof_samples {
-                    // let ray = cam.gen_ss_ray(rx, ry, n);
                     let ray = cam.gen_ss_dof_ray(rx, ry, n, m);
 
                     *frame

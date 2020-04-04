@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone, geom::Ray};
+use crate::{access, clone, geom::Ray, math::sample::golden};
 use nalgebra::{Point3, Rotation3, Unit, Vector3};
 use std::fmt::{Display, Formatter, Result};
 
@@ -12,6 +12,8 @@ pub struct Camera {
     up: Unit<Vector3<f64>>,
     /// Right axis.
     right: Unit<Vector3<f64>>,
+    /// Target point.
+    tar: Point3<f64>,
     /// Field of view.
     fov: (f64, f64),
     /// Image resolution.
@@ -36,6 +38,7 @@ impl Camera {
     access!(forward, Ray);
     access!(up, Vector3<f64>);
     access!(right, Vector3<f64>);
+    access!(tar, Point3<f64>);
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
     clone!(splits, (usize, usize));
@@ -83,6 +86,7 @@ impl Camera {
             forward,
             up,
             right,
+            tar,
             fov,
             res,
             splits,
@@ -175,14 +179,18 @@ impl Camera {
         theta += (sx * self.sub_delta.0) - (self.delta.0 * 0.5);
         phi += (sy * self.sub_delta.1) - (self.delta.1 * 0.5);
 
-        let mut ray = self.forward.clone();
-        let (r, t) =
-            crate::math::sample::golden::circle(depth_sample as i64, self.dof_samples as i64);
-        *ray.pos_mut() += self.right.as_ref() * r * t.cos();
-        *ray.pos_mut() += self.up.as_ref() * r * t.sin();
+        let (r, t) = golden::circle(depth_sample as i64, self.dof_samples as i64);
+        let mut pos = self.forward.pos().clone();
+        pos += self.right.as_ref() * (r * t.sin() * self.dof_radius);
+        pos += self.up.as_ref() * (r * t.cos() * self.dof_radius);
 
-        *ray.dir_mut() = Rotation3::from_axis_angle(&self.up, theta)
-            * Rotation3::from_axis_angle(&self.right, phi)
+        let forward = Unit::new_normalize(self.tar - pos);
+        let up = Vector3::z_axis();
+        let right = Unit::new_normalize(forward.cross(&up));
+
+        let mut ray = Ray::new(pos, forward);
+        *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
+            * Rotation3::from_axis_angle(&right, phi)
             * ray.dir();
 
         ray
