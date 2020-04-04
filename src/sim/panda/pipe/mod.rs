@@ -4,17 +4,20 @@ use crate::{
     geom::Ray,
     sim::panda::{lighting, Camera, Cell, ShaderSettings},
 };
+use palette::Gradient;
 use palette::{LinSrgba, Srgba};
 
 /// Determine the colour of a given ray.
 #[inline]
 #[must_use]
 pub fn colour(sett: &ShaderSettings, cam: &Camera, root: &Cell, mut ray: Ray) -> LinSrgba {
-    use palette::{Gradient, Hsv};
-
+    // let grad = Gradient::new(vec![
+    //     palette::Hsv::from(LinSrgba::new(1.0, 0.1, 0.1, 1.0)),
+    //     palette::Hsv::from(LinSrgba::new(0.1, 1.0, 1.0, 1.0)),
+    // ]);
     let grad = Gradient::new(vec![
-        Hsv::from(LinSrgba::new(1.0, 0.1, 0.1, 1.0)),
-        Hsv::from(LinSrgba::new(0.1, 1.0, 1.0, 1.0)),
+        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
+        LinSrgba::new(1.0, 1.0, 1.0, 1.0),
     ]);
 
     if let Some(hit) = root.observe(ray.clone(), 1.0e-6) {
