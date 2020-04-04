@@ -25,9 +25,9 @@ pub struct Camera {
     /// Sub-sampling deltas.
     sub_delta: (f64, f64),
     /// Super sampling power.
-    ss_power: usize,
+    ss_power: i32,
     /// Depth of field samples.
-    dof_samples: usize,
+    dof_samples: i32,
     /// Depth of field maximum jitter radius.
     dof_radius: f64,
     /// When true save each frame to a separate file.
@@ -44,8 +44,8 @@ impl Camera {
     clone!(splits, (usize, usize));
     clone!(delta, (f64, f64));
     clone!(sub_delta, (f64, f64));
-    clone!(ss_power, usize);
-    clone!(dof_samples, usize);
+    clone!(ss_power, i32);
+    clone!(dof_samples, i32);
     clone!(dof_radius, f64);
     clone!(frame_saving, bool);
 
@@ -58,8 +58,8 @@ impl Camera {
         fov_x: f64,
         res: (usize, usize),
         splits: (usize, usize),
-        ss_power: usize,
-        dof_samples: usize,
+        ss_power: i32,
+        dof_samples: i32,
         dof_radius: f64,
         frame_saving: bool,
     ) -> Self {
@@ -135,7 +135,7 @@ impl Camera {
     /// Generate a super-sampling ray for the corresponding pixel indices.
     #[inline]
     #[must_use]
-    pub fn gen_ss_ray(&self, xi: usize, yi: usize, sample: usize) -> Ray {
+    pub fn gen_ss_ray(&self, xi: usize, yi: usize, sample: i32) -> Ray {
         debug_assert!(xi < self.res.0);
         debug_assert!(yi < self.res.1);
         debug_assert!(sample < self.ss_power.pow(2));
@@ -160,13 +160,7 @@ impl Camera {
     /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
     #[inline]
     #[must_use]
-    pub fn gen_ss_dof_ray(
-        &self,
-        xi: usize,
-        yi: usize,
-        sub_sample: usize,
-        depth_sample: usize,
-    ) -> Ray {
+    pub fn gen_ss_dof_ray(&self, xi: usize, yi: usize, sub_sample: i32, depth_sample: i32) -> Ray {
         debug_assert!(xi < self.res.0);
         debug_assert!(yi < self.res.1);
         debug_assert!(sub_sample < self.ss_power.pow(2));
@@ -179,7 +173,7 @@ impl Camera {
         theta += (sx * self.sub_delta.0) - (self.delta.0 * 0.5);
         phi += (sy * self.sub_delta.1) - (self.delta.1 * 0.5);
 
-        let (r, t) = golden::circle(depth_sample as i64, self.dof_samples as i64);
+        let (r, t) = golden::circle(depth_sample, self.dof_samples);
         let mut pos = self.forward.pos().clone();
         pos += self.right.as_ref() * (r * t.sin() * self.dof_radius);
         pos += self.up.as_ref() * (r * t.cos() * self.dof_radius);
@@ -249,7 +243,7 @@ impl Display for Camera {
             fmt,
             "{:>30} : {} [x10^6]",
             "total samples",
-            (self.ss_power.pow(2) * (self.res.0 * self.res.1)) as f64 / 1e6
+            (self.ss_power.pow(2) * (self.res.0 * self.res.1) as i32) as f64 / 1e6
         )
         // /// Field of view.
         // fov: (f64, f64),

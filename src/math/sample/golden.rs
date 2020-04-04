@@ -11,7 +11,7 @@ lazy_static! {
 /// Sample points within a circle using the golden ratio.
 #[inline]
 #[must_use]
-pub fn circle(n: i64, max: i64) -> (f64, f64) {
+pub fn circle(n: i32, max: i32) -> (f64, f64) {
     debug_assert!(n >= 0);
     debug_assert!(n < max);
 
@@ -24,7 +24,7 @@ pub fn circle(n: i64, max: i64) -> (f64, f64) {
 /// Sample points on a sphere's surface using the golden ratio.
 #[inline]
 #[must_use]
-pub fn sphere(n: i64, max: i64) -> (f64, f64) {
+pub fn sphere(n: i32, max: i32) -> (f64, f64) {
     debug_assert!(n >= 0);
     debug_assert!(n < max);
 
@@ -38,7 +38,7 @@ pub fn sphere(n: i64, max: i64) -> (f64, f64) {
 /// Sample points on a hemisphere's surface using the golden ratio.
 #[inline]
 #[must_use]
-pub fn hemisphere(n: i64, max: i64) -> (f64, f64) {
+pub fn hemisphere(n: i32, max: i32) -> (f64, f64) {
     debug_assert!(n >= 0);
     debug_assert!(n < max);
 

@@ -84,13 +84,11 @@ pub fn sunlight_samples(
     norm: &Unit<Vector3<f64>>,
     root: &Cell,
     bump_dist: f64,
-    samples: usize,
-    sample_radius: f64,
     rng: &mut ThreadRng,
 ) -> f64 {
     debug_assert!(bump_dist > 0.0);
-    debug_assert!(samples > 0);
-    debug_assert!(sample_radius > 0.0);
+    debug_assert!(sett.sunlight_samples() > 0);
+    debug_assert!(sett.sunlight_radius() > 0.0);
 
     let shadow = |mut light_ray: Ray| {
         let mut light = 1.0;
@@ -115,11 +113,12 @@ pub fn sunlight_samples(
 
     let mut total_shadow = 0.0;
     let offset = rng.gen::<f64>() * 2.0 * PI;
-    for n in 0..samples {
+    for n in 0..sett.sunlight_samples() {
         let mut lr = light_ray.clone();
-        let (theta, phi) = crate::math::sample::golden::hemisphere(n as i64, samples as i64);
+        let (theta, phi) =
+            crate::math::sample::golden::hemisphere(n as i32, sett.sunlight_samples());
         lr.rotate(phi, theta + offset);
-        lr.travel(sample_radius);
+        lr.travel(sett.sunlight_radius());
 
         // let forward = norm;
         // let up = Unit::new_normalize(forward.cross(&Vector3::z_axis()));
@@ -138,7 +137,7 @@ pub fn sunlight_samples(
         ));
     }
 
-    total_shadow / samples as f64
+    total_shadow / sett.sunlight_samples() as f64
 }
 
 /// Calculate the reflection vector for a given input unit vector and surface normal.

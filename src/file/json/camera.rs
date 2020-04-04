@@ -19,9 +19,9 @@ pub struct Camera {
     /// Splits.
     splits: (usize, usize),
     /// Super sampling power.
-    ss_power: usize,
+    ss_power: i32,
     /// Depth of field samples.
-    dof_samples: usize,
+    dof_samples: i32,
     /// Depth of field maximum jitter radius.
     dof_radius: f64,
     /// When true save each frame to a separate file.
@@ -34,8 +34,8 @@ impl Camera {
     clone!(fov, f64);
     clone!(res, (usize, usize));
     clone!(splits, (usize, usize));
-    clone!(ss_power, usize);
-    clone!(dof_samples, usize);
+    clone!(ss_power, i32);
+    clone!(dof_samples, i32);
     clone!(dof_radius, f64);
     clone!(frame_saving, bool);
 

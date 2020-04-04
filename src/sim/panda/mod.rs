@@ -198,7 +198,7 @@ fn frame_ss(
     bump_dist: f64,
     frame_res: (usize, usize),
     start: (usize, usize),
-    super_samples: usize,
+    super_samples: i32,
     rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
@@ -209,7 +209,7 @@ fn frame_ss(
             let ry = start.1 + yi;
 
             for n in 0..super_samples {
-                let ray = cam.gen_ss_ray(rx, ry, n);
+                let ray = cam.gen_ss_ray(rx, ry, n as i32);
 
                 *frame
                     .get_mut((xi, yi))
@@ -233,7 +233,7 @@ fn frame_dof(
     bump_dist: f64,
     frame_res: (usize, usize),
     start: (usize, usize),
-    dof_samples: usize,
+    dof_samples: i32,
     rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
@@ -244,7 +244,7 @@ fn frame_dof(
             let ry = start.1 + yi;
 
             for m in 0..dof_samples {
-                let ray = cam.gen_ss_dof_ray(rx, ry, 0, m);
+                let ray = cam.gen_ss_dof_ray(rx, ry, 0, m as i32);
 
                 *frame
                     .get_mut((xi, yi))
@@ -269,8 +269,8 @@ fn frame_ss_dof(
     bump_dist: f64,
     frame_res: (usize, usize),
     start: (usize, usize),
-    super_samples: usize,
-    dof_samples: usize,
+    super_samples: i32,
+    dof_samples: i32,
     rng: &mut ThreadRng,
 ) -> Array2<LinSrgba> {
     let mut frame = Array2::default(frame_res);
@@ -282,7 +282,7 @@ fn frame_ss_dof(
 
             for n in 0..super_samples {
                 for m in 0..dof_samples {
-                    let ray = cam.gen_ss_dof_ray(rx, ry, n, m);
+                    let ray = cam.gen_ss_dof_ray(rx, ry, n as i32, m as i32);
 
                     *frame
                         .get_mut((xi, yi))

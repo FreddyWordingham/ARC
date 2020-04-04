@@ -22,6 +22,10 @@ pub struct ShaderSettings {
     transparency: f64,
     /// Shadow.
     shadow: f64,
+    /// Sunlight shadow samples.
+    sunlight_samples: i32,
+    /// Sunlight shadow sampling radius.
+    sunlight_radius: f64,
 }
 
 impl ShaderSettings {
@@ -32,6 +36,8 @@ impl ShaderSettings {
     clone!(specular_pow, i32);
     clone!(transparency, f64);
     clone!(shadow, f64);
+    clone!(sunlight_samples, i32);
+    clone!(sunlight_radius, f64);
 }
 
 impl Display for ShaderSettings {
