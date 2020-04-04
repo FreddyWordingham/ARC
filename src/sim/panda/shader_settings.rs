@@ -26,6 +26,12 @@ pub struct ShaderSettings {
     sunlight_samples: i32,
     /// Sunlight shadow sampling radius.
     sunlight_radius: f64,
+    /// Direct light weighting.
+    direct_weight: f64,
+    /// Local light weighting.
+    local_weight: f64,
+    /// Casted ray light weighting.
+    cast_weight: f64,
 }
 
 impl ShaderSettings {
@@ -38,6 +44,9 @@ impl ShaderSettings {
     clone!(shadow, f64);
     clone!(sunlight_samples, i32);
     clone!(sunlight_radius, f64);
+    clone!(direct_weight, f64);
+    clone!(local_weight, f64);
+    clone!(cast_weight, f64);
 }
 
 impl Display for ShaderSettings {

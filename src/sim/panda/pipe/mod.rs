@@ -36,9 +36,12 @@ pub fn colour(
         let mut x = (lighting::ambient(sett)
             + lighting::diffuse(sett, &ray, hit.norm())
             + lighting::specular(sett, &ray, hit.norm(), cam_pos))
-            // * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist);
-        // * lighting::sunlight_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
-        * lighting::casting_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
+            * ((sett.direct_weight()
+                * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist))
+                + (sett.local_weight()
+                    * lighting::sunlight_samples(sett, &ray, hit.norm(), root, bump_dist, rng))
+                + (sett.cast_weight()
+                    * lighting::casting_samples(sett, &ray, hit.norm(), root, bump_dist, rng)));
         x /= 3.2;
 
         match hit.group() {

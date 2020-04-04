@@ -53,29 +53,34 @@
         "shadow": 0.1,
         "sunlight_samples": 16,
         "sunlight_radius": 1e-2,
+        "direct_weight": 0.5,
+        "local_weight": 0.3,
+        "cast_weight": 0.2
     },
     "cameras": {
         "a_test": {
             "pos": [0.0, 0.0, 2.25],
             "tar": [-11.0, 0.0, 1.65],
             "fov": 150,
-            "res": [688, 288],
+            // "res": [3440, 1440],
+            "res": [1720, 720],
+            // "res": [688, 288],
             "splits": [86, 36],
             "ss_power": 1,
             "dof_samples": 1,
-            "dof_radius": 1e-3,
+            "dof_radius": 4e-1,
             "frame_saving": false
         },
-        "high_res": {
-            "pos": [0.0, 0.0, 2.25],
-            "tar": [-11.0, 0.0, 1.65],
-            "fov": 150,
-            "res": [3440, 1440],
-            "splits": [86, 36],
-            "ss_power": 3,
-            "dof_samples": 16,
-            "dof_radius": 1e-3,
-            "frame_saving": false
-        }
+        // "high_res": {
+        //     "pos": [0.0, 0.0, 2.25],
+        //     "tar": [-11.0, 0.0, 1.65],
+        //     "fov": 150,
+        //     "res": [3440, 1440],
+        //     "splits": [86, 36],
+        //     "ss_power": 3,
+        //     "dof_samples": 16,
+        //     "dof_radius": 1e-1,
+        //     "frame_saving": false
+        // }
     }
 }
