@@ -2,37 +2,13 @@
     "grid_settings": {
         "max_depth": 8,
         "tar_tris": 10,
-        "padding": 0.01
+        "padding": 0.1
     },
     "surfaces": [
-        [-1, [
-            ["../../zebra/entities/leaves_0", null],
-            ["../../zebra/entities/leaves_1", null],
-            ["../../zebra/entities/leaves_2", null]
-        ]],
         [1, [
-            ["../../zebra/entities/alt_windows", null],
-            ["../../zebra/entities/bulbs", null],
-            ["../../zebra/entities/bushes", null],
-            ["../../zebra/entities/dog", null],
-            ["../../zebra/entities/far_side", null],
-            ["../../zebra/entities/fjmw", null],
-            ["../../zebra/entities/hills", null],
-            ["../../zebra/entities/klm", null],
-            ["../../zebra/entities/lamps", null],
-            ["../../zebra/entities/lead", null],
-            ["../../zebra/entities/moon", null],
-            ["../../zebra/entities/path", null],
-            ["../../zebra/entities/planet", null],
-            ["../../zebra/entities/river", null],
-            ["../../zebra/entities/shades", null],
-            ["../../zebra/entities/sides", null],
-            ["../../zebra/entities/single_bulb", null],
-            ["../../zebra/entities/stars", null],
-            ["../../zebra/entities/stars_1", null],
-            ["../../zebra/entities/trees", null],
-            ["../../zebra/entities/umbrella", null],
-            ["../../zebra/entities/underboard", null]
+            ["stand", null],
+            ["cloth", null],
+            ["gem", null],
         ]]
     ],
     "shader_settings": {
@@ -43,14 +19,14 @@
         "specular_pow": 8,
         "transparency": 0.9,
         "shadow": 0.1,
-        "sunlight_samples": 16,
+        "sunlight_samples": 20,
         "sunlight_radius": 1e-1,
     },
     "cameras": {
-        "img_0": {
-            "pos": [1.0, 0.0, 2.75],
-            "tar": [-10.5, 0.0, 2.65],
-            "fov": 120,
+        "img_1": {
+            "pos": [3.0, 3.0, 6.0],
+            "tar": [0.0, 0.0, 0.0],
+            "fov": 60,
             // "res": [3440, 1440],
             "res": [1720, 720],
             "splits": [43, 18],

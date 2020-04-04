@@ -87,10 +87,11 @@ impl<'a> Cell<'a> {
             }
         }
 
-        let boundary = Aabb::new(
+        let mut boundary = Aabb::new(
             mins.expect("Missing minimum point."),
             maxs.expect("Missing maximum point."),
         );
+        boundary.expand(grid_settings.padding());
 
         let mut tris = Vec::new();
         for (group, meshes) in surfaces {

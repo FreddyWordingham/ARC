@@ -37,7 +37,8 @@ pub fn colour(
             + lighting::diffuse(sett, &ray, hit.norm())
             + lighting::specular(sett, &ray, hit.norm(), cam_pos))
             // * lighting::sunlight(sett, &ray, hit.norm(), root, bump_dist);
-            * lighting::sunlight_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
+        // * lighting::sunlight_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
+        * lighting::casting_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
         x /= 3.2;
         LinSrgba::from(grad.get(x as f32))
     // Srgba::new(1.0, 1.0, 1.0, 1.0).into_linear()

@@ -2,6 +2,7 @@
 
 use crate::{
     geom::Ray,
+    math::sample::golden,
     sim::panda::{Cell, ShaderSettings},
 };
 use nalgebra::{Point3, Unit, Vector3};
@@ -109,32 +110,57 @@ pub fn sunlight_samples(
     };
 
     let mut light_ray = Ray::new(*ray.pos(), *norm);
-    light_ray.travel(bump_dist + 1e-1);
+    light_ray.travel(bump_dist + (sett.sunlight_radius() * 0.1));
 
     let mut total_shadow = 0.0;
     let offset = rng.gen::<f64>() * 2.0 * PI;
     for n in 0..sett.sunlight_samples() {
         let mut lr = light_ray.clone();
-        let (theta, phi) =
-            crate::math::sample::golden::hemisphere(n as i32, sett.sunlight_samples());
+        let (theta, phi) = golden::hemisphere(n as i32, sett.sunlight_samples());
         lr.rotate(phi, theta + offset);
         lr.travel(sett.sunlight_radius());
 
-        // let forward = norm;
-        // let up = Unit::new_normalize(forward.cross(&Vector3::z_axis()));
-        // let right = Unit::new_normalize(forward.cross(&up));
-
-        // let (r, theta) = crate::math::sample::golden::circle(n as i64, samples as i64);
-
-        // let mut pos = light_ray.pos().clone();
-        // pos += right.as_ref() * (r * theta.sin() * sample_radius);
-        // pos += up.as_ref() * (r * theta.cos() * sample_radius);
-
-        // total_shadow += shadow(Ray::new(pos, Unit::new_normalize(sett.sun_pos() - pos)));
         total_shadow += shadow(Ray::new(
             *lr.pos(),
             Unit::new_normalize(sett.sun_pos() - lr.pos()),
         ));
+    }
+
+    total_shadow / sett.sunlight_samples() as f64
+}
+
+/// Calculate ambient light.
+#[inline]
+#[must_use]
+pub fn casting_samples(
+    sett: &ShaderSettings,
+    ray: &Ray,
+    norm: &Unit<Vector3<f64>>,
+    root: &Cell,
+    bump_dist: f64,
+    rng: &mut ThreadRng,
+) -> f64 {
+    debug_assert!(bump_dist > 0.0);
+    debug_assert!(sett.sunlight_samples() > 0);
+    debug_assert!(sett.sunlight_radius() > 0.0);
+
+    let norm = if norm.dot(ray.dir()) > 0.0 {
+        *norm
+    } else {
+        Unit::new_normalize(norm.as_ref() * -1.0)
+    };
+
+    let mut obs_ray = Ray::new(*ray.pos(), norm);
+    obs_ray.travel(bump_dist + sett.sunlight_radius());
+
+    let mut total_shadow = 0.0;
+    let offset = rng.gen::<f64>() * 2.0 * PI;
+    for n in 0..sett.sunlight_samples() {
+        let mut lr = obs_ray.clone();
+        let (theta, phi) = golden::sphere(n as i32, sett.sunlight_samples());
+        lr.rotate(phi, theta + offset);
+
+        total_shadow += sunlight(sett, &lr, &norm, root, bump_dist);
     }
 
     total_shadow / sett.sunlight_samples() as f64
