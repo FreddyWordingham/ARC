@@ -33,6 +33,12 @@ impl ParProgressBar {
         }
     }
 
+    /// Tick the bar forward once.
+    #[inline]
+    pub fn tick(&mut self) {
+        self.pb.inc(1);
+    }
+
     /// Request a block of values to work on.
     /// Return the requested block if available.
     /// If there is not enough, return the remaining block.
