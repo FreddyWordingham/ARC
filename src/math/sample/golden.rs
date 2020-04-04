@@ -28,7 +28,7 @@ pub fn sphere(n: i64, max: i64) -> (f64, f64) {
     debug_assert!(n >= 0);
     debug_assert!(n < max);
 
-    let d = n as f64 + (((1 - max) as f64) * 0.5);
+    let d = ((1 - max) as f64).mul_add(0.5, n as f64);
     let phi = ((2.0 * d) / max as f64).asin() + FRAC_PI_2;
     let theta = ((2.0 * PI) / *GOLDEN_RATIO) * (d % *GOLDEN_RATIO);
 
