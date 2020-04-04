@@ -144,7 +144,7 @@ pub fn casting_samples(
     debug_assert!(sett.sunlight_samples() > 0);
     debug_assert!(sett.sunlight_radius() > 0.0);
 
-    let norm = if norm.dot(ray.dir()) > 0.0 {
+    let norm = if norm.dot(ray.dir()) < 0.0 {
         *norm
     } else {
         Unit::new_normalize(norm.as_ref() * -1.0)
