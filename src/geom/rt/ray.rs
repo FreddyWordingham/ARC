@@ -60,6 +60,12 @@ impl Ray {
     /// Refract the ray from a given normal surface from a given refracting index to another.
     #[inline]
     pub fn refract(&mut self, norm: &Unit<Vector3<f64>>, n0: f64, n1: f64) {
+        let norm = if norm.dot(&self.dir) > 0.0 {
+            nalgebra::Unit::new_normalize(norm.as_ref() * -1.0)
+        } else {
+            *norm
+        };
+
         // TODO: Check for critical angle.
         let inc = self.dir();
         let ci = -inc.dot(&norm);

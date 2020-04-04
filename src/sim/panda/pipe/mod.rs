@@ -26,6 +26,10 @@ pub fn colour(
     //     palette::Hsv::from(LinSrgba::new(1.0, 0.1, 0.1, 1.0)),
     //     palette::Hsv::from(LinSrgba::new(0.1, 1.0, 1.0, 1.0)),
     // ]);
+    let grad_0 = Gradient::new(vec![
+        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
+        LinSrgba::new(1.0, 1.0, 1.0, 1.0),
+    ]);
     let grad_1 = Gradient::new(vec![
         LinSrgba::new(0.0, 0.0, 0.0, 1.0),
         LinSrgba::new(1.0, 0.0, 0.0, 1.0),
@@ -61,14 +65,17 @@ pub fn colour(
                     return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
                 }
 
-                return (LinSrgba::from(grad_2.get(x as f32)) * 0.1)
+                return (LinSrgba::from(grad_1.get(x as f32)) * 0.1)
                     + (colour(sett, cam_pos, root, ray, bump_dist, rng) * 0.9);
             }
             -1 => {
                 ray.reflect(hit.norm());
                 ray.travel(bump_dist);
-                return (LinSrgba::from(grad_1.get(x as f32)) * 0.1)
+                return (LinSrgba::from(grad_2.get(x as f32)) * 0.1)
                     + (colour(sett, cam_pos, root, ray, bump_dist, rng) * 0.9);
+            }
+            0 => {
+                return LinSrgba::from(grad_0.get(x as f32));
             }
             1..=3 => {
                 return LinSrgba::from(grad_3.get(x as f32));
