@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/freddywordingham/.cargo/registry/src/github.com-1ecc6299db9ec823/nalgebra-0.19.0/src/base/iter.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>iter.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="https://nalgebra.org/img/favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../nalgebra/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/freddywordingham/.cargo/registry/src/github.com-1ecc6299db9ec823/nalgebra-0.20.0/src/base/iter.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>iter.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="https://nalgebra.org/img/favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../nalgebra/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -319,6 +319,34 @@
 <span id="319">319</span>
 <span id="320">320</span>
 <span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Matrix iterators.</span>
 
@@ -349,12 +377,30 @@
                 <span class="kw">let</span> <span class="ident">shape</span> <span class="op">=</span> <span class="ident">storage</span>.<span class="ident">shape</span>();
                 <span class="kw">let</span> <span class="ident">strides</span> <span class="op">=</span> <span class="ident">storage</span>.<span class="ident">strides</span>();
                 <span class="kw">let</span> <span class="ident">inner_offset</span> <span class="op">=</span> <span class="ident">shape</span>.<span class="number">0</span>.<span class="ident">value</span>() <span class="op">*</span> <span class="ident">strides</span>.<span class="number">0</span>.<span class="ident">value</span>();
+                <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">shape</span>.<span class="number">0</span>.<span class="ident">value</span>() <span class="op">*</span> <span class="ident">shape</span>.<span class="number">1</span>.<span class="ident">value</span>();
                 <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">storage</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ptr</span>();
+
+                <span class="comment">// If we have a size of 0, &#39;ptr&#39; must be</span>
+                <span class="comment">// dangling. Howver, &#39;inner_offset&#39; might</span>
+                <span class="comment">// not be zero if only one dimension is zero, so</span>
+                <span class="comment">// we don&#39;t want to call &#39;offset&#39;.</span>
+                <span class="comment">// This pointer will never actually get used</span>
+                <span class="comment">// if our size is &#39;0&#39;, so it&#39;s fine to use</span>
+                <span class="comment">// &#39;ptr&#39; for both the start and end.</span>
+                <span class="kw">let</span> <span class="ident">inner_end</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">size</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+                    <span class="ident">ptr</span>
+                } <span class="kw">else</span> {
+                    <span class="comment">// Safety:</span>
+                    <span class="comment">// If &#39;size&#39; is non-zero, we know that &#39;ptr&#39;</span>
+                    <span class="comment">// is not dangling, and &#39;inner_offset&#39; must lie</span>
+                    <span class="comment">// within the allocation</span>
+                    <span class="kw">unsafe</span> { <span class="ident">ptr</span>.<span class="ident">offset</span>(<span class="ident">inner_offset</span> <span class="kw">as</span> <span class="ident">isize</span>) }
+                };
 
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">Name</span> {
                     <span class="ident">ptr</span>: <span class="ident">ptr</span>,
                     <span class="ident">inner_ptr</span>: <span class="ident">ptr</span>,
-                    <span class="ident">inner_end</span>: <span class="kw">unsafe</span> { <span class="ident">ptr</span>.<span class="ident">offset</span>(<span class="ident">inner_offset</span> <span class="kw">as</span> <span class="ident">isize</span>) },
+                    <span class="ident">inner_end</span>,
                     <span class="ident">size</span>: <span class="ident">shape</span>.<span class="number">0</span>.<span class="ident">value</span>() <span class="op">*</span> <span class="ident">shape</span>.<span class="number">1</span>.<span class="ident">value</span>(),
                     <span class="ident">strides</span>: <span class="ident">strides</span>,
                     <span class="ident">_phantoms</span>: <span class="ident">PhantomData</span>,
@@ -378,7 +424,12 @@
                         <span class="comment">// Jump to the next outer dimension if needed.</span>
                         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">ptr</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">inner_end</span> {
                             <span class="kw">let</span> <span class="ident">stride</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">strides</span>.<span class="number">1</span>.<span class="ident">value</span>() <span class="kw">as</span> <span class="ident">isize</span>;
-                            <span class="self">self</span>.<span class="ident">inner_end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">offset</span>(<span class="ident">stride</span>);
+                            <span class="comment">// This might go past the end of the allocation,</span>
+                            <span class="comment">// depending on the value of &#39;size&#39;. We use</span>
+                            <span class="comment">// `wrapping_offset` to avoid UB</span>
+                            <span class="self">self</span>.<span class="ident">inner_end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">wrapping_offset</span>(<span class="ident">stride</span>);
+                            <span class="comment">// This will always be in bounds, since</span>
+                            <span class="comment">// we&#39;re going to dereference it</span>
                             <span class="self">self</span>.<span class="ident">ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner_ptr</span>.<span class="ident">offset</span>(<span class="ident">stride</span>);
                             <span class="self">self</span>.<span class="ident">inner_ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ptr</span>;
                         }
@@ -387,8 +438,13 @@
                         <span class="kw">let</span> <span class="ident">old</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ptr</span>;
 
                         <span class="kw">let</span> <span class="ident">stride</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">strides</span>.<span class="number">0</span>.<span class="ident">value</span>() <span class="kw">as</span> <span class="ident">isize</span>;
-                        <span class="self">self</span>.<span class="ident">ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">offset</span>(<span class="ident">stride</span>);
-
+                        <span class="comment">// Don&#39;t offset `self.ptr` for the last element,</span>
+                        <span class="comment">// as this will be out of bounds. Iteration is done</span>
+                        <span class="comment">// at this point (the next call to `next` will return `None`)</span>
+                        <span class="comment">// so this is not observable.</span>
+                        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">size</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+                            <span class="self">self</span>.<span class="ident">ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">offset</span>(<span class="ident">stride</span>);
+                        }
                         <span class="prelude-val">Some</span>(<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">old</span>))
                     }
                 }

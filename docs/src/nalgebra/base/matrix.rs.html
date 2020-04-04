@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/freddywordingham/.cargo/registry/src/github.com-1ecc6299db9ec823/nalgebra-0.19.0/src/base/matrix.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>matrix.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="https://nalgebra.org/img/favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../nalgebra/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/freddywordingham/.cargo/registry/src/github.com-1ecc6299db9ec823/nalgebra-0.20.0/src/base/matrix.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>matrix.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="https://nalgebra.org/img/favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../nalgebra/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1761,6 +1761,12 @@
 <span id="1761">1761</span>
 <span id="1762">1762</span>
 <span id="1763">1763</span>
+<span id="1764">1764</span>
+<span id="1765">1765</span>
+<span id="1766">1766</span>
+<span id="1767">1767</span>
+<span id="1768">1768</span>
+<span id="1769">1769</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">num</span>::{<span class="ident">One</span>, <span class="ident">Zero</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;abomonation-serialize&quot;</span>)]</span>
@@ -2167,7 +2173,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">res</span>.<span class="ident">ncols</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">res</span>.<span class="ident">nrows</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>));
+                    <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>)).<span class="ident">inlined_clone</span>();
                 }
             }
         }
@@ -2186,7 +2192,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span>.<span class="ident">value</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span>.<span class="ident">value</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
+                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
                     <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">a</span>)
                 }
             }
@@ -2212,7 +2218,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span>.<span class="ident">value</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span>.<span class="ident">value</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
+                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
                     <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">i</span>, <span class="ident">j</span>, <span class="ident">a</span>)
                 }
             }
@@ -2244,8 +2250,8 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span>.<span class="ident">value</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span>.<span class="ident">value</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">rhs</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
+                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
+                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
                     <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">a</span>, <span class="ident">b</span>)
                 }
             }
@@ -2285,9 +2291,9 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span>.<span class="ident">value</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span>.<span class="ident">value</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">c</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
+                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
+                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
+                    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
                     <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>)
                 }
             }
@@ -2306,7 +2312,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span>.<span class="ident">value</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span>.<span class="ident">value</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
+                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
                     <span class="ident">res</span> <span class="op">=</span> <span class="ident">f</span>(<span class="ident">res</span>, <span class="ident">a</span>)
                 }
             }
@@ -2337,8 +2343,8 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span>.<span class="ident">value</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span>.<span class="ident">value</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">rhs</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>);
+                    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
+                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">data</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span>, <span class="ident">j</span>).<span class="ident">inlined_clone</span>();
                     <span class="ident">res</span> <span class="op">=</span> <span class="ident">f</span>(<span class="ident">res</span>, <span class="ident">a</span>, <span class="ident">b</span>)
                 }
             }
@@ -2366,7 +2372,7 @@
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
             <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span> {
                 <span class="kw">unsafe</span> {
-                    <span class="kw-2">*</span><span class="ident">out</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">j</span>, <span class="ident">i</span>)) <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>));
+                    <span class="kw-2">*</span><span class="ident">out</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">j</span>, <span class="ident">i</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>)).<span class="ident">inlined_clone</span>();
                 }
             }
         }
@@ -2374,6 +2380,7 @@
 
     <span class="doccomment">/// Transposes `self`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Did you mean to use transpose_mut()?&quot;</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transpose</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MatrixMN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">C</span>, <span class="ident">R</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">C</span>, <span class="ident">R</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">nrows</span>, <span class="ident">ncols</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">shape</span>();
@@ -2481,7 +2488,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span> {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
                 <span class="kw">unsafe</span> {
-                    <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="kw-2">*</span><span class="ident">slice</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span> <span class="op">+</span> <span class="ident">j</span> <span class="op">*</span> <span class="ident">nrows</span>);
+                    <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="ident">slice</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span> <span class="op">+</span> <span class="ident">j</span> <span class="op">*</span> <span class="ident">nrows</span>).<span class="ident">inlined_clone</span>();
                 }
             }
         }
@@ -2504,7 +2511,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">ncols</span>() {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">nrows</span>() {
                 <span class="kw">unsafe</span> {
-                    <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>));
+                    <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="ident">other</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>)).<span class="ident">inlined_clone</span>();
                 }
             }
         }
@@ -2528,7 +2535,7 @@
         <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span> {
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
                 <span class="kw">unsafe</span> {
-                    <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>.<span class="ident">get_unchecked</span>((<span class="ident">j</span>, <span class="ident">i</span>));
+                    <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked_mut</span>((<span class="ident">i</span>, <span class="ident">j</span>)) <span class="op">=</span> <span class="ident">other</span>.<span class="ident">get_unchecked</span>((<span class="ident">j</span>, <span class="ident">i</span>)).<span class="ident">inlined_clone</span>();
                 }
             }
         }
@@ -2551,7 +2558,7 @@
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
                 <span class="kw">unsafe</span> {
                     <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw-2">*</span><span class="ident">e</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">*</span><span class="ident">e</span>)
+                    <span class="kw-2">*</span><span class="ident">e</span> <span class="op">=</span> <span class="ident">f</span>(<span class="ident">e</span>.<span class="ident">inlined_clone</span>())
                 }
             }
         }
@@ -2577,8 +2584,8 @@
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
                 <span class="kw">unsafe</span> {
                     <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw">let</span> <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>));
-                    <span class="kw-2">*</span><span class="ident">e</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">*</span><span class="ident">e</span>, <span class="kw-2">*</span><span class="ident">rhs</span>)
+                    <span class="kw">let</span> <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>)).<span class="ident">inlined_clone</span>();
+                    <span class="kw-2">*</span><span class="ident">e</span> <span class="op">=</span> <span class="ident">f</span>(<span class="ident">e</span>.<span class="ident">inlined_clone</span>(), <span class="ident">rhs</span>)
                 }
             }
         }
@@ -2614,9 +2621,9 @@
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
                 <span class="kw">unsafe</span> {
                     <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">i</span>, <span class="ident">j</span>);
-                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>));
-                    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>));
-                    <span class="kw-2">*</span><span class="ident">e</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">*</span><span class="ident">e</span>, <span class="kw-2">*</span><span class="ident">b</span>, <span class="kw-2">*</span><span class="ident">c</span>)
+                    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>)).<span class="ident">inlined_clone</span>();
+                    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">j</span>)).<span class="ident">inlined_clone</span>();
+                    <span class="kw-2">*</span><span class="ident">e</span> <span class="op">=</span> <span class="ident">f</span>(<span class="ident">e</span>.<span class="ident">inlined_clone</span>(), <span class="ident">b</span>, <span class="ident">c</span>)
                 }
             }
         }
@@ -2705,6 +2712,7 @@
 
     <span class="doccomment">/// The adjoint (aka. conjugate-transpose) of `self`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Did you mean to use adjoint_mut()?&quot;</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">adjoint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MatrixMN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">C</span>, <span class="ident">R</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">C</span>, <span class="ident">R</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">nrows</span>, <span class="ident">ncols</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">shape</span>();
@@ -2740,6 +2748,7 @@
 
     <span class="doccomment">/// The conjugate of `self`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Did you mean to use conjugate_mut()?&quot;</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">conjugate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MatrixMN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">conjugate</span>())
@@ -2747,6 +2756,7 @@
 
     <span class="doccomment">/// Divides each component of the complex matrix `self` by the given real.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Did you mean to use unscale_mut()?&quot;</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unscale</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">real</span>: <span class="ident">N</span>::<span class="ident">RealField</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MatrixMN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">unscale</span>(<span class="ident">real</span>))
@@ -2754,6 +2764,7 @@
 
     <span class="doccomment">/// Multiplies each component of the complex matrix `self` by the given real.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Did you mean to use scale_mut()?&quot;</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">scale</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">real</span>: <span class="ident">N</span>::<span class="ident">RealField</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MatrixMN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">scale</span>(<span class="ident">real</span>))
@@ -2840,7 +2851,7 @@
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">dim</span>.<span class="ident">value</span>() {
             <span class="kw">unsafe</span> {
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">vget_unchecked_mut</span>(<span class="ident">i</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">i</span>)));
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">vget_unchecked_mut</span>(<span class="ident">i</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">i</span>)).<span class="ident">inlined_clone</span>());
             }
         }
 
@@ -2860,7 +2871,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">N</span>::<span class="ident">zero</span>();
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">dim</span>.<span class="ident">value</span>() {
-            <span class="ident">res</span> <span class="op">+</span><span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">i</span>)) };
+            <span class="ident">res</span> <span class="op">+</span><span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="ident">i</span>, <span class="ident">i</span>)).<span class="ident">inlined_clone</span>() };
         }
 
         <span class="ident">res</span>
@@ -2892,7 +2903,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="ident">One</span> <span class="op">+</span> <span class="ident">Zero</span>, <span class="ident">D</span>: <span class="ident">DimAdd</span><span class="op">&lt;</span><span class="ident">U1</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsNotStaticOne</span>, <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span>, <span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="ident">Zero</span> <span class="op">+</span> <span class="ident">One</span>, <span class="ident">D</span>: <span class="ident">DimAdd</span><span class="op">&lt;</span><span class="ident">U1</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsNotStaticOne</span>, <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span>, <span class="ident">S</span><span class="op">&gt;</span> {
 
     <span class="doccomment">/// Yields the homogeneous matrix for this matrix, i.e., appending an additional dimension and</span>
     <span class="doccomment">/// and setting the diagonal element to `1`.</span>
@@ -2901,7 +2912,7 @@
     <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimSum</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span>, <span class="ident">DimSum</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">is_square</span>(), <span class="string">&quot;Only square matrices can currently be transformed to homogeneous coordinates.&quot;</span>);
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="ident">DimSum</span>::<span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span>::<span class="ident">from_usize</span>(<span class="self">self</span>.<span class="ident">nrows</span>() <span class="op">+</span> <span class="number">1</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">MatrixN</span>::<span class="ident">identity_generic</span>(<span class="ident">dim</span>, <span class="ident">dim</span>); 
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">MatrixN</span>::<span class="ident">identity_generic</span>(<span class="ident">dim</span>, <span class="ident">dim</span>);
         <span class="ident">res</span>.<span class="ident">generic_slice_mut</span>::<span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span>((<span class="number">0</span>, <span class="number">0</span>), <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">shape</span>()).<span class="ident">copy_from</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
         <span class="ident">res</span>
     }
@@ -3108,18 +3119,19 @@
     <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span>,
 {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>: <span class="ident">Dim</span>, <span class="ident">C</span>: <span class="ident">Dim</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span>, <span class="ident">S</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">R2</span>, <span class="ident">C</span>, <span class="ident">C2</span>, <span class="ident">S</span>, <span class="ident">S2</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R2</span>, <span class="ident">C2</span>, <span class="ident">S2</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span>, <span class="ident">S</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">N</span>: <span class="ident">Scalar</span>,
+    <span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="ident">PartialEq</span>,
+    <span class="ident">C</span>: <span class="ident">Dim</span>,
+    <span class="ident">C2</span>: <span class="ident">Dim</span>,
+    <span class="ident">R</span>: <span class="ident">Dim</span>,
+    <span class="ident">R2</span>: <span class="ident">Dim</span>,
     <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span><span class="op">&gt;</span>,
+    <span class="ident">S2</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R2</span>, <span class="ident">C2</span><span class="op">&gt;</span>
 {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R</span>, <span class="ident">C</span>, <span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="self">self</span>.<span class="ident">shape</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">right</span>.<span class="ident">shape</span>(),
-            <span class="string">&quot;Matrix equality test dimension mismatch.&quot;</span>
-        );
-        <span class="self">self</span>.<span class="ident">iter</span>().<span class="ident">zip</span>(<span class="ident">right</span>.<span class="ident">iter</span>()).<span class="ident">all</span>(<span class="op">|</span>(<span class="ident">l</span>, <span class="ident">r</span>)<span class="op">|</span> <span class="ident">l</span> <span class="op">=</span><span class="op">=</span> <span class="ident">r</span>)
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Matrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">R2</span>, <span class="ident">C2</span>, <span class="ident">S2</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">shape</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">right</span>.<span class="ident">shape</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">iter</span>().<span class="ident">zip</span>(<span class="ident">right</span>.<span class="ident">iter</span>()).<span class="ident">all</span>(<span class="op">|</span>(<span class="ident">l</span>, <span class="ident">r</span>)<span class="op">|</span> <span class="ident">l</span> <span class="op">=</span><span class="op">=</span> <span class="ident">r</span>)
     }
 }
 
@@ -3133,7 +3145,7 @@
         {
             <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-                <span class="kw">fn</span> <span class="ident">val_width</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="kw">trait</span><span class="op">&gt;</span>(<span class="macro-nonterminal">val</span>: <span class="ident">N</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+                <span class="kw">fn</span> <span class="ident">val_width</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="kw">trait</span><span class="op">&gt;</span>(<span class="macro-nonterminal">val</span>: <span class="kw-2">&amp;</span><span class="ident">N</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
                     <span class="kw">match</span> <span class="ident">f</span>.<span class="ident">precision</span>() {
                         <span class="prelude-val">Some</span>(<span class="ident">precision</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fmt_str_with_precision</span>, <span class="ident">val</span>, <span class="ident">precision</span>).<span class="ident">chars</span>().<span class="ident">count</span>(),
                         <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fmt_str_without_precision</span>, <span class="ident">val</span>).<span class="ident">chars</span>().<span class="ident">count</span>(),
@@ -3141,7 +3153,7 @@
                 }
 
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>))]</span>
-                <span class="kw">fn</span> <span class="ident">val_width</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="kw">trait</span><span class="op">&gt;</span>(<span class="kw">_</span>: <span class="macro-nonterminal">N</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+                <span class="kw">fn</span> <span class="ident">val_width</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="kw">trait</span><span class="op">&gt;</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="macro-nonterminal">N</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
                     <span class="number">4</span>
                 }
 
@@ -3157,7 +3169,7 @@
 
                 <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">nrows</span> {
                     <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">ncols</span> {
-                        <span class="ident">lengths</span>[(<span class="ident">i</span>, <span class="ident">j</span>)] <span class="op">=</span> <span class="ident">val_width</span>(<span class="self">self</span>[(<span class="ident">i</span>, <span class="ident">j</span>)], <span class="ident">f</span>);
+                        <span class="ident">lengths</span>[(<span class="ident">i</span>, <span class="ident">j</span>)] <span class="op">=</span> <span class="ident">val_width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[(<span class="ident">i</span>, <span class="ident">j</span>)], <span class="ident">f</span>);
                         <span class="ident">max_length</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">max</span>(<span class="ident">max_length</span>, <span class="ident">lengths</span>[(<span class="ident">i</span>, <span class="ident">j</span>)]);
                     }
                 }
@@ -3234,8 +3246,8 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">shape</span>() <span class="op">=</span><span class="op">=</span> (<span class="number">2</span>, <span class="number">1</span>), <span class="string">&quot;2D perpendicular product &quot;</span>);
 
         <span class="kw">unsafe</span> {
-            <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>)) <span class="op">*</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>))
-                <span class="op">-</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>)) <span class="op">*</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>))
+            <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>)).<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>)).<span class="ident">inlined_clone</span>()
+                <span class="op">-</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>)).<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>)).<span class="ident">inlined_clone</span>()
         }
     }
 
@@ -3270,17 +3282,17 @@
                 <span class="kw">let</span> <span class="ident">ncols</span> <span class="op">=</span> <span class="ident">SameShapeC</span>::<span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">C2</span><span class="op">&gt;</span>::<span class="ident">from_usize</span>(<span class="number">1</span>);
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">Matrix</span>::<span class="ident">new_uninitialized_generic</span>(<span class="ident">nrows</span>, <span class="ident">ncols</span>);
 
-                <span class="kw">let</span> <span class="ident">ax</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
-                <span class="kw">let</span> <span class="ident">ay</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>));
-                <span class="kw">let</span> <span class="ident">az</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">2</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">ax</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">ay</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">az</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">2</span>, <span class="number">0</span>));
 
-                <span class="kw">let</span> <span class="ident">bx</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
-                <span class="kw">let</span> <span class="ident">by</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>));
-                <span class="kw">let</span> <span class="ident">bz</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">2</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">bx</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">by</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">1</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">bz</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">2</span>, <span class="number">0</span>));
 
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">ay</span> <span class="op">*</span> <span class="ident">bz</span> <span class="op">-</span> <span class="ident">az</span> <span class="op">*</span> <span class="ident">by</span>;
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">1</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">az</span> <span class="op">*</span> <span class="ident">bx</span> <span class="op">-</span> <span class="ident">ax</span> <span class="op">*</span> <span class="ident">bz</span>;
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">2</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">ax</span> <span class="op">*</span> <span class="ident">by</span> <span class="op">-</span> <span class="ident">ay</span> <span class="op">*</span> <span class="ident">bx</span>;
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">ay</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bz</span>.<span class="ident">inlined_clone</span>() <span class="op">-</span> <span class="ident">az</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">by</span>.<span class="ident">inlined_clone</span>();
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">1</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">az</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bx</span>.<span class="ident">inlined_clone</span>() <span class="op">-</span> <span class="ident">ax</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bz</span>.<span class="ident">inlined_clone</span>();
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">2</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">ax</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">by</span>.<span class="ident">inlined_clone</span>() <span class="op">-</span> <span class="ident">ay</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bx</span>.<span class="ident">inlined_clone</span>();
 
                 <span class="ident">res</span>
             }
@@ -3291,17 +3303,17 @@
                 <span class="kw">let</span> <span class="ident">ncols</span> <span class="op">=</span> <span class="ident">SameShapeC</span>::<span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">C2</span><span class="op">&gt;</span>::<span class="ident">from_usize</span>(<span class="number">3</span>);
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">Matrix</span>::<span class="ident">new_uninitialized_generic</span>(<span class="ident">nrows</span>, <span class="ident">ncols</span>);
 
-                <span class="kw">let</span> <span class="ident">ax</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
-                <span class="kw">let</span> <span class="ident">ay</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">1</span>));
-                <span class="kw">let</span> <span class="ident">az</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">2</span>));
+                <span class="kw">let</span> <span class="ident">ax</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">ay</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">1</span>));
+                <span class="kw">let</span> <span class="ident">az</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">2</span>));
 
-                <span class="kw">let</span> <span class="ident">bx</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
-                <span class="kw">let</span> <span class="ident">by</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">1</span>));
-                <span class="kw">let</span> <span class="ident">bz</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">2</span>));
+                <span class="kw">let</span> <span class="ident">bx</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">0</span>));
+                <span class="kw">let</span> <span class="ident">by</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">1</span>));
+                <span class="kw">let</span> <span class="ident">bz</span> <span class="op">=</span> <span class="ident">b</span>.<span class="ident">get_unchecked</span>((<span class="number">0</span>, <span class="number">2</span>));
 
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">ay</span> <span class="op">*</span> <span class="ident">bz</span> <span class="op">-</span> <span class="ident">az</span> <span class="op">*</span> <span class="ident">by</span>;
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">1</span>)) <span class="op">=</span> <span class="ident">az</span> <span class="op">*</span> <span class="ident">bx</span> <span class="op">-</span> <span class="ident">ax</span> <span class="op">*</span> <span class="ident">bz</span>;
-                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">2</span>)) <span class="op">=</span> <span class="ident">ax</span> <span class="op">*</span> <span class="ident">by</span> <span class="op">-</span> <span class="ident">ay</span> <span class="op">*</span> <span class="ident">bx</span>;
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">0</span>)) <span class="op">=</span> <span class="ident">ay</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bz</span>.<span class="ident">inlined_clone</span>() <span class="op">-</span> <span class="ident">az</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">by</span>.<span class="ident">inlined_clone</span>();
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">1</span>)) <span class="op">=</span> <span class="ident">az</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bx</span>.<span class="ident">inlined_clone</span>() <span class="op">-</span> <span class="ident">ax</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bz</span>.<span class="ident">inlined_clone</span>();
+                <span class="kw-2">*</span><span class="ident">res</span>.<span class="ident">get_unchecked_mut</span>((<span class="number">0</span>, <span class="number">2</span>)) <span class="op">=</span> <span class="ident">ax</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">by</span>.<span class="ident">inlined_clone</span>() <span class="op">-</span> <span class="ident">ay</span>.<span class="ident">inlined_clone</span>() <span class="op">*</span> <span class="ident">bx</span>.<span class="ident">inlined_clone</span>();
 
                 <span class="ident">res</span>
             }
@@ -3317,13 +3329,13 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cross_matrix</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MatrixN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">U3</span><span class="op">&gt;</span> {
         <span class="ident">MatrixN</span>::<span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">U3</span><span class="op">&gt;</span>::<span class="ident">new</span>(
             <span class="ident">N</span>::<span class="ident">zero</span>(),
-            <span class="op">-</span><span class="self">self</span>[<span class="number">2</span>],
-            <span class="self">self</span>[<span class="number">1</span>],
-            <span class="self">self</span>[<span class="number">2</span>],
+            <span class="op">-</span><span class="self">self</span>[<span class="number">2</span>].<span class="ident">inlined_clone</span>(),
+            <span class="self">self</span>[<span class="number">1</span>].<span class="ident">inlined_clone</span>(),
+            <span class="self">self</span>[<span class="number">2</span>].<span class="ident">inlined_clone</span>(),
             <span class="ident">N</span>::<span class="ident">zero</span>(),
-            <span class="op">-</span><span class="self">self</span>[<span class="number">0</span>],
-            <span class="op">-</span><span class="self">self</span>[<span class="number">1</span>],
-            <span class="self">self</span>[<span class="number">0</span>],
+            <span class="op">-</span><span class="self">self</span>[<span class="number">0</span>].<span class="ident">inlined_clone</span>(),
+            <span class="op">-</span><span class="self">self</span>[<span class="number">1</span>].<span class="ident">inlined_clone</span>(),
+            <span class="self">self</span>[<span class="number">0</span>].<span class="ident">inlined_clone</span>(),
             <span class="ident">N</span>::<span class="ident">zero</span>(),
         )
     }
@@ -3375,36 +3387,36 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lerp</span><span class="op">&lt;</span><span class="ident">S2</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rhs</span>: <span class="kw-2">&amp;</span><span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">S2</span><span class="op">&gt;</span>, <span class="ident">t</span>: <span class="ident">N</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">VectorN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">clone_owned</span>();
-        <span class="ident">res</span>.<span class="ident">axpy</span>(<span class="ident">t</span>, <span class="ident">rhs</span>, <span class="ident">N</span>::<span class="ident">one</span>() <span class="op">-</span> <span class="ident">t</span>);
+        <span class="ident">res</span>.<span class="ident">axpy</span>(<span class="ident">t</span>.<span class="ident">inlined_clone</span>(), <span class="ident">rhs</span>, <span class="ident">N</span>::<span class="ident">one</span>() <span class="op">-</span> <span class="ident">t</span>);
         <span class="ident">res</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">ComplexField</span>, <span class="ident">D</span>: <span class="ident">Dim</span>, <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">RealField</span>, <span class="ident">D</span>: <span class="ident">Dim</span>, <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Computes the spherical linear interpolation between two unit vectors.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples:</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use nalgebra::geometry::UnitQuaternion;</span>
+    <span class="doccomment">/// # use nalgebra::{Unit, Vector2};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// let q1 = UnitQuaternion::from_euler_angles(std::f32::consts::FRAC_PI_4, 0.0, 0.0);</span>
-    <span class="doccomment">/// let q2 = UnitQuaternion::from_euler_angles(-std::f32::consts::PI, 0.0, 0.0);</span>
+    <span class="doccomment">/// let v1 = Unit::new_normalize(Vector2::new(1.0, 2.0));</span>
+    <span class="doccomment">/// let v2 = Unit::new_normalize(Vector2::new(2.0, -3.0));</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// let q = q1.slerp(&amp;q2, 1.0 / 3.0);</span>
+    <span class="doccomment">/// let v = v1.slerp(&amp;v2, 1.0);</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(q.euler_angles(), (std::f32::consts::FRAC_PI_2, 0.0, 0.0));</span>
+    <span class="doccomment">/// assert_eq!(v, v2);</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">slerp</span><span class="op">&lt;</span><span class="ident">S2</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">rhs</span>: <span class="kw-2">&amp;</span><span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">S2</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-        <span class="ident">t</span>: <span class="ident">N</span>::<span class="ident">RealField</span>,
+        <span class="ident">t</span>: <span class="ident">N</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">VectorN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>,
     {
         <span class="comment">// FIXME: the result is wrong when self and rhs are collinear with opposite direction.</span>
-        <span class="self">self</span>.<span class="ident">try_slerp</span>(<span class="ident">rhs</span>, <span class="ident">t</span>, <span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">default_epsilon</span>())
+        <span class="self">self</span>.<span class="ident">try_slerp</span>(<span class="ident">rhs</span>, <span class="ident">t</span>, <span class="ident">N</span>::<span class="ident">default_epsilon</span>())
             .<span class="ident">unwrap_or</span>(<span class="ident">Unit</span>::<span class="ident">new_unchecked</span>(<span class="self">self</span>.<span class="ident">clone_owned</span>()))
     }
 
@@ -3415,30 +3427,30 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_slerp</span><span class="op">&lt;</span><span class="ident">S2</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">rhs</span>: <span class="kw-2">&amp;</span><span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">S2</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-        <span class="ident">t</span>: <span class="ident">N</span>::<span class="ident">RealField</span>,
-        <span class="ident">epsilon</span>: <span class="ident">N</span>::<span class="ident">RealField</span>,
+        <span class="ident">t</span>: <span class="ident">N</span>,
+        <span class="ident">epsilon</span>: <span class="ident">N</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">VectorN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>,
     {
-        <span class="kw">let</span> (<span class="ident">c_hang</span>, <span class="ident">c_hang_sign</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">dotc</span>(<span class="ident">rhs</span>).<span class="ident">to_exp</span>();
+        <span class="kw">let</span> <span class="ident">c_hang</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">dot</span>(<span class="ident">rhs</span>);
 
         <span class="comment">// self == other</span>
-        <span class="kw">if</span> <span class="ident">c_hang</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">one</span>() {
+        <span class="kw">if</span> <span class="ident">c_hang</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">N</span>::<span class="ident">one</span>() {
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">Unit</span>::<span class="ident">new_unchecked</span>(<span class="self">self</span>.<span class="ident">clone_owned</span>()));
         }
 
         <span class="kw">let</span> <span class="ident">hang</span> <span class="op">=</span> <span class="ident">c_hang</span>.<span class="ident">acos</span>();
-        <span class="kw">let</span> <span class="ident">s_hang</span> <span class="op">=</span> (<span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">one</span>() <span class="op">-</span> <span class="ident">c_hang</span> <span class="op">*</span> <span class="ident">c_hang</span>).<span class="ident">sqrt</span>();
+        <span class="kw">let</span> <span class="ident">s_hang</span> <span class="op">=</span> (<span class="ident">N</span>::<span class="ident">one</span>() <span class="op">-</span> <span class="ident">c_hang</span> <span class="op">*</span> <span class="ident">c_hang</span>).<span class="ident">sqrt</span>();
 
         <span class="comment">// FIXME: what if s_hang is 0.0 ? The result is not well-defined.</span>
-        <span class="kw">if</span> <span class="macro">relative_eq</span><span class="macro">!</span>(<span class="ident">s_hang</span>, <span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">zero</span>(), <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">epsilon</span>) {
+        <span class="kw">if</span> <span class="macro">relative_eq</span><span class="macro">!</span>(<span class="ident">s_hang</span>, <span class="ident">N</span>::<span class="ident">zero</span>(), <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">epsilon</span>) {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">ta</span> <span class="op">=</span> ((<span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">one</span>() <span class="op">-</span> <span class="ident">t</span>) <span class="op">*</span> <span class="ident">hang</span>).<span class="ident">sin</span>() <span class="op">/</span> <span class="ident">s_hang</span>;
+            <span class="kw">let</span> <span class="ident">ta</span> <span class="op">=</span> ((<span class="ident">N</span>::<span class="ident">one</span>() <span class="op">-</span> <span class="ident">t</span>) <span class="op">*</span> <span class="ident">hang</span>).<span class="ident">sin</span>() <span class="op">/</span> <span class="ident">s_hang</span>;
             <span class="kw">let</span> <span class="ident">tb</span> <span class="op">=</span> (<span class="ident">t</span> <span class="op">*</span> <span class="ident">hang</span>).<span class="ident">sin</span>() <span class="op">/</span> <span class="ident">s_hang</span>;
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">scale</span>(<span class="ident">ta</span>);
-            <span class="ident">res</span>.<span class="ident">axpy</span>(<span class="ident">c_hang_sign</span>.<span class="ident">scale</span>(<span class="ident">tb</span>), <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">rhs</span>, <span class="ident">N</span>::<span class="ident">one</span>());
+            <span class="ident">res</span>.<span class="ident">axpy</span>(<span class="ident">tb</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">rhs</span>, <span class="ident">N</span>::<span class="ident">one</span>());
 
             <span class="prelude-val">Some</span>(<span class="ident">Unit</span>::<span class="ident">new_unchecked</span>(<span class="ident">res</span>))
         }

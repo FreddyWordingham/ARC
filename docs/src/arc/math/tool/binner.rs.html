@@ -58,7 +58,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">clone</span>, <span class="ident">math</span>::<span class="ident">Range</span>};
 
 <span class="doccomment">/// One-dimensional binning structure.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Binner</span> {
     <span class="doccomment">/// Range.</span>
     <span class="ident">range</span>: <span class="ident">Range</span>,

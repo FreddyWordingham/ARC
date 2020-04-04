@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["run","Perform a rendering simulation."]],"mod":[["camera","Camera implementation."],["cell","Cell implementation."],["group","Group type."],["scan","Core scanning function."],["settings","Settings implementation."],["tracer","Tracer implementation."]]});

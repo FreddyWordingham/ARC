@@ -41,7 +41,7 @@ with dimensions known either at compile-time (using type-level integers) or at r
 allocated on the heap.</li>
 <li>Convenient aliases for low-dimensional matrices and vectors: <code>Vector1</code> to <code>Vector6</code> and
 <code>Matrix1x1</code> to <code>Matrix6x6</code>, including rectangular matrices like <code>Matrix2x5</code>.</li>
-<li>Points sizes known at compile time, and convenience aliases:: <code>Point1</code> to <code>Point6</code>.</li>
+<li>Points sizes known at compile time, and convenience aliases: <code>Point1</code> to <code>Point6</code>.</li>
 <li>Translation (seen as a transformation that composes by multiplication): <code>Translation2</code>,
 <code>Translation3</code>.</li>
 <li>Rotation matrices: <code>Rotation2</code>, <code>Rotation3</code>.</li>
@@ -50,10 +50,10 @@ allocated on the heap.</li>
 <li>Algebraic entities with a norm equal to one: <code>Unit&lt;T&gt;</code>, e.g., <code>Unit&lt;Vector3&lt;f32&gt;&gt;</code>.</li>
 <li>Isometries (translation ⨯ rotation): <code>Isometry2</code>, <code>Isometry3</code></li>
 <li>Similarity transformations (translation ⨯ rotation ⨯ uniform scale): <code>Similarity2</code>, <code>Similarity3</code>.</li>
-<li>Affine transformations stored as an homogeneous matrix: <code>Affine2</code>, <code>Affine3</code>.</li>
-<li>Projective (i.e. invertible) transformations stored as an homogeneous matrix: <code>Projective2</code>,
+<li>Affine transformations stored as a homogeneous matrix: <code>Affine2</code>, <code>Affine3</code>.</li>
+<li>Projective (i.e. invertible) transformations stored as a homogeneous matrix: <code>Projective2</code>,
 <code>Projective3</code>.</li>
-<li>General transformations that does not have to be invertible, stored as an homogeneous matrix:
+<li>General transformations that does not have to be invertible, stored as a homogeneous matrix:
 <code>Transform2</code>, <code>Transform3</code>.</li>
 <li>3D projections for computer graphics: <code>Perspective3</code>, <code>Orthographic3</code>.</li>
 <li>Matrix factorizations: <code>Cholesky</code>, <code>QR</code>, <code>LU</code>, <code>FullPivLU</code>, <code>SVD</code>, <code>Schur</code>, <code>Hessenberg</code>, <code>SymmetricEigen</code>.</li>

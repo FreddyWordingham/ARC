@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["surface","Mesh implementation."],["transform","Transform implementation."]]});
+initSidebarItems({"mod":[["camera","Camera implementation."],["probability","Probability distribution implementation."],["surface","Mesh implementation."],["transform","Transform implementation."]]});

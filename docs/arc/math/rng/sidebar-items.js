@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["distribution","Distribution functions."]]});
+initSidebarItems({"mod":[["distribution","Distribution functions."],["probability","Probability distribution implementation."]]});
