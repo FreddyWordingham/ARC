@@ -1,19 +1,52 @@
 {
     "grid_settings": {
-        "max_depth": 6,
+        "max_depth": 8,
         "tar_tris": 10,
-        "padding": 0.1
+        "padding": 0.01
     },
     "surfaces": [
-        [2, [
-            ["sphere", null]
+        [0, [
+            ["cube", null]
         ]],
         [1, [
+            ["../../zebra/entities/alt_windows", null],
+            ["../../zebra/entities/back_light", null],
+            // ["../../zebra/entities/back_light_1", null],
+            // ["../../zebra/entities/boundary", null],
+            // ["../../zebra/entities/bulbs", null],
+            ["../../zebra/entities/bushes", null],
+            ["../../zebra/entities/cube", null],
+            ["../../zebra/entities/dog", null],
+            ["../../zebra/entities/far_side", null],
+            ["../../zebra/entities/fjmw", null],
+            ["../../zebra/entities/hills", null],
+            ["../../zebra/entities/klm", null],
+            ["../../zebra/entities/lamps", null],
+            ["../../zebra/entities/lead", null],
+            ["../../zebra/entities/leaves_0", null],
+            ["../../zebra/entities/leaves_1", null],
+            ["../../zebra/entities/leaves_2", null],
+            ["../../zebra/entities/moon", null],
+            ["../../zebra/entities/path", null],
+            ["../../zebra/entities/planet", null],
+            // ["../../zebra/entities/puddles", null],
+            // ["../../zebra/entities/rain", null],
+            ["../../zebra/entities/river", null],
+            ["../../zebra/entities/shades", null],
+            ["../../zebra/entities/sides", null],
+            ["../../zebra/entities/single_bulb", null],
+            ["../../zebra/entities/stars", null],
+            ["../../zebra/entities/stars_1", null],
+            // ["../../zebra/entities/tree_rain", null],
+            ["../../zebra/entities/trees", null],
+            ["../../zebra/entities/umbrella", null],
+            ["../../zebra/entities/underboard", null],
+            ["../../zebra/entities/windows", null],
             ["torus", null]
         ]]
     ],
     "shader_settings": {
-        "sun_pos": [-100, 100, 200],
+        "sun_pos": [-10, 10, 20],
         "ambient": 0.1,
         "diffuse": 1,
         "specular": 2,
@@ -21,22 +54,22 @@
     },
     "cameras": {
         "img_0": {
-            "pos": [3.0, 3.0, 3.0],
-            "tar": [0.0, 0.0, 0.0],
+            "pos": [1.0, 0.0, 2.75],
+            "tar": [0.0, 0.0, 2.65],
             "fov": 45,
-            "res": [480, 480],
+            "res": [480, 960],
             "splits": [16, 16],
             "ss_power": 1,
             "frame_saving": false
         },
-        // "img_1": {
-        //     "pos": [1.0, 1.0, 2.75],
-        //     "tar": [0.0, 0.0, 0.0],
-        //     "fov": 90,
-        //     "res": [1024, 1024],
-        //     "splits": [16, 16],
-        //     "ss_power": 1,
-        //     "frame_saving": false
-        // }
+        "img_1": {
+            "pos": [1.0, 0.0, 2.75],
+            "tar": [0.0, 0.0, 2.65],
+            "fov": 90,
+            "res": [1024, 1024],
+            "splits": [16, 16],
+            "ss_power": 1,
+            "frame_saving": false
+        }
     }
 }

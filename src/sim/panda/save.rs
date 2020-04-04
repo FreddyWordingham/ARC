@@ -24,7 +24,7 @@ pub fn png(in_dir: &Path, name: &str, img: Array2<LinSrgba>) {
         for yi in 0..*img.shape().get(0).expect("Missing dimension.") {
             data[[
                 *img.shape().get(1).expect("Missing dimension.") - xi - 1,
-                yi,
+                *img.shape().get(0).expect("Missing dimension.") - yi - 1,
             ]] = img[[yi, xi]];
         }
     }
