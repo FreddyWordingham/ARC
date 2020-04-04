@@ -6,13 +6,37 @@
     },
     "surfaces": [
         [-2, [
-            ["gem", {
-                "trans": [0.25, 0.4, 0.85]
-            }],
+            ["../../zebra/entities/rain", null],
+        ]],
+        [-3, [
+            ["../../zebra/entities/puddles", null],
+        ]],
+        [-1, [
+            ["../../zebra/entities/alt_windows", null],
         ]],
         [0, [
-            ["cloth", null],
-            ["stand", null],
+            // ["cloth", null],
+            // ["stand", null],
+            ["../../zebra/entities/klm", null],
+            ["../../zebra/entities/fjmw", null],
+            ["../../zebra/entities/dog", null],
+            ["../../zebra/entities/lead", null],
+            ["../../zebra/entities/path", null],
+            ["../../zebra/entities/hills", null],
+            ["../../zebra/entities/trees", null],
+            ["../../zebra/entities/leaves_0", null],
+            ["../../zebra/entities/leaves_1", null],
+            ["../../zebra/entities/leaves_2", null],
+            ["../../zebra/entities/lamps", null],
+            ["../../zebra/entities/planet", null],
+            ["../../zebra/entities/umbrella", null],
+            ["../../zebra/entities/bushes", null],
+            ["../../zebra/entities/sides", null],
+            ["../../zebra/entities/far_side", null],
+            ["../../zebra/entities/moon", null],
+            ["../../zebra/entities/underboard", null],
+            ["../../zebra/entities/bulbs", null],
+            ["../../zebra/entities/shades", null],
         ]]
     ],
     "shader_settings": {
@@ -27,28 +51,27 @@
         "sunlight_radius": 1e-1,
     },
     "cameras": {
-        "img_1": {
-            "pos": [3.0, 3.0, 6.0],
-            "tar": [0.0, 0.0, 0.0],
-            "fov": 45,
-            // "res": [3440, 1440],
-            "res": [1000, 1000],
-            "splits": [50, 50],
-            "ss_power": 4,
-            "dof_samples": 16,
-            "dof_radius": 1e-3,
-            "frame_saving": false
-        },
         // "img_1": {
-        //     "pos": [1.0, 0.0, 2.75],
-        //     "tar": [-10.5, 0.0, 2.65],
-        //     "fov": 120,
+        //     "pos": [0.0, 0.0, 3.0],
+        //     "tar": [-11.0, 0.0, 3.0],
+        //     "fov": 100,
         //     "res": [3440, 1440],
-        //     "splits": [43, 18],
+        //     "splits": [86, 36],
         //     "ss_power": 4,
         //     "dof_samples": 16,
-        //     "dof_radius": 1e-1,
+        //     "dof_radius": 1e-3,
         //     "frame_saving": false
-        // }
+        // },
+        "img_1": {
+            "pos": [0.0, 0.0, 3.0],
+            "tar": [-11.0, 0.0, 3.0],
+            "fov": 100,
+            "res": [688, 288],
+            "splits": [86, 36],
+            "ss_power": 1,
+            "dof_samples": 1,
+            "dof_radius": 1e-3,
+            "frame_saving": false
+        }
     }
 }

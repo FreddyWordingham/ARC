@@ -30,18 +30,6 @@ pub fn colour(
         LinSrgba::new(0.0, 0.0, 0.0, 1.0),
         LinSrgba::new(1.0, 1.0, 1.0, 1.0),
     ]);
-    let grad_1 = Gradient::new(vec![
-        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
-        LinSrgba::new(1.0, 0.0, 0.0, 1.0),
-    ]);
-    let grad_2 = Gradient::new(vec![
-        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
-        LinSrgba::new(0.0, 1.0, 0.0, 1.0),
-    ]);
-    let grad_3 = Gradient::new(vec![
-        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
-        LinSrgba::new(0.0, 0.0, 1.0, 1.0),
-    ]);
 
     while let Some(hit) = root.observe(ray.clone(), bump_dist) {
         ray.travel(hit.dist());
@@ -55,30 +43,40 @@ pub fn colour(
 
         match hit.group() {
             -2 => {
-                ray.refract(hit.norm(), 1.0, 1.0);
+                ray.refract(hit.norm(), 1.0, 1.05);
                 ray.travel(bump_dist);
-                if let Some(second_hit) = root.observe(ray.clone(), bump_dist) {
-                    ray.travel(hit.dist());
-                    ray.refract(second_hit.norm(), 1.1, 1.0);
-                    ray.travel(bump_dist);
-                } else {
-                    return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
-                }
+                // if let Some(second_hit) = root.observe(ray.clone(), bump_dist) {
+                //     ray.travel(hit.dist());
+                //     ray.refract(second_hit.norm(), 1.1, 1.0);
+                //     ray.travel(bump_dist);
+                // } else {
+                //     return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
+                // }
 
-                return (LinSrgba::from(grad_1.get(x as f32)) * 0.1)
+                return (LinSrgba::from(grad_0.get(x as f32)) * 0.1)
                     + (colour(sett, cam_pos, root, ray, bump_dist, rng) * 0.9);
+            }
+            -3 => {
+                ray.reflect(hit.norm());
+                let theta = ((ray.pos().x * 6.0).sin().powi(2) * (ray.pos().y * 6.0).sin().powi(2))
+                    * 0.5e-1;
+                let rot = nalgebra::Rotation3::from_axis_angle(&nalgebra::Vector3::y_axis(), theta);
+                *ray.dir_mut() = nalgebra::Unit::new_normalize(rot * ray.dir().as_ref());
+                ray.travel(bump_dist);
+
+                return colour(sett, cam_pos, root, ray, bump_dist, rng);
             }
             -1 => {
                 ray.reflect(hit.norm());
                 ray.travel(bump_dist);
-                return (LinSrgba::from(grad_2.get(x as f32)) * 0.1)
+                return (LinSrgba::from(grad_0.get(x as f32)) * 0.1)
                     + (colour(sett, cam_pos, root, ray, bump_dist, rng) * 0.9);
             }
             0 => {
                 return LinSrgba::from(grad_0.get(x as f32));
             }
             1..=3 => {
-                return LinSrgba::from(grad_3.get(x as f32));
+                return LinSrgba::from(grad_0.get(x as f32));
             }
             _ => {
                 panic!("Don't know how to handle group {}!", hit.group());
