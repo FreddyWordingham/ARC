@@ -57,9 +57,9 @@
             "pos": [1.0, 0.0, 2.75],
             "tar": [0.0, 0.0, 2.65],
             "fov": 45,
-            "res": [480, 960],
+            "res": [512, 512],
             "splits": [16, 16],
-            "ss_power": 1,
+            "ss_power": 8,
             "frame_saving": false
         },
         "img_1": {

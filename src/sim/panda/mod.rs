@@ -116,7 +116,8 @@ fn render_frame(
                 let ray = cam.gen_ss_ray(rx, ry, n);
                 *frame
                     .get_mut((xi, yi))
-                    .expect("Could not access frame pixel.") += pipe::colour(sett, cam, root, ray);
+                    .expect("Could not access frame pixel.") +=
+                    pipe::colour(sett, cam, root, ray) / super_samples as f32;
             }
         }
     }
