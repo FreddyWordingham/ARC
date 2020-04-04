@@ -19,9 +19,10 @@ use crate::util::{ParProgressBar, ProgressBar};
 use log::info;
 use ndarray::Array2;
 use palette::LinSrgba;
-use rand::{rngs::ThreadRng, thread_rng};
+use rand::{rngs::ThreadRng, thread_rng, Rng};
 use rayon::prelude::*;
 use std::{
+    f64::consts::PI,
     path::Path,
     sync::{Arc, Mutex},
 };
@@ -243,8 +244,9 @@ fn frame_dof(
         for yi in 0..frame_res.1 {
             let ry = start.1 + yi;
 
+            let offset = rng.gen::<f64>() * 2.0 * PI;
             for m in 0..dof_samples {
-                let ray = cam.gen_ss_dof_ray(rx, ry, 0, m as i32);
+                let ray = cam.gen_ss_dof_ray(rx, ry, 0, m as i32, offset);
 
                 *frame
                     .get_mut((xi, yi))
@@ -281,8 +283,9 @@ fn frame_ss_dof(
             let ry = start.1 + yi;
 
             for n in 0..super_samples {
+                let offset = rng.gen::<f64>() * 2.0 * PI;
                 for m in 0..dof_samples {
-                    let ray = cam.gen_ss_dof_ray(rx, ry, n as i32, m as i32);
+                    let ray = cam.gen_ss_dof_ray(rx, ry, n as i32, m as i32, offset);
 
                     *frame
                         .get_mut((xi, yi))

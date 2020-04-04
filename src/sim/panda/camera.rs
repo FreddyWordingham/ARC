@@ -2,7 +2,10 @@
 
 use crate::{access, clone, geom::Ray, math::sample::golden};
 use nalgebra::{Point3, Rotation3, Unit, Vector3};
-use std::fmt::{Display, Formatter, Result};
+use std::{
+    f64::consts::PI,
+    fmt::{Display, Formatter, Result},
+};
 
 /// Image forming camera.
 pub struct Camera {
@@ -160,10 +163,19 @@ impl Camera {
     /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
     #[inline]
     #[must_use]
-    pub fn gen_ss_dof_ray(&self, xi: usize, yi: usize, sub_sample: i32, depth_sample: i32) -> Ray {
+    pub fn gen_ss_dof_ray(
+        &self,
+        xi: usize,
+        yi: usize,
+        sub_sample: i32,
+        depth_sample: i32,
+        offset: f64,
+    ) -> Ray {
         debug_assert!(xi < self.res.0);
         debug_assert!(yi < self.res.1);
         debug_assert!(sub_sample < self.ss_power.pow(2));
+        debug_assert!(offset >= 0.0);
+        debug_assert!(offset <= (2.0 * PI));
 
         let mut theta = (xi as f64 * self.delta.0) - (self.fov.0 * 0.5);
         let mut phi = (yi as f64 * self.delta.1) - (self.fov.1 * 0.5);
@@ -175,8 +187,8 @@ impl Camera {
 
         let (r, t) = golden::circle(depth_sample, self.dof_samples);
         let mut pos = self.forward.pos().clone();
-        pos += self.right.as_ref() * (r * t.sin() * self.dof_radius);
-        pos += self.up.as_ref() * (r * t.cos() * self.dof_radius);
+        pos += self.right.as_ref() * (r * (t + offset).sin() * self.dof_radius);
+        pos += self.up.as_ref() * (r * (t + offset).cos() * self.dof_radius);
 
         let forward = Unit::new_normalize(self.tar - pos);
         let up = Vector3::z_axis();
