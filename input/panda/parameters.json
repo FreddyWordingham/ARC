@@ -34,8 +34,8 @@
             // "res": [3440, 1440],
             "res": [1000, 1000],
             "splits": [50, 50],
-            "ss_power": 2,
-            "dof_samples": 1,
+            "ss_power": 4,
+            "dof_samples": 16,
             "dof_radius": 1e-3,
             "frame_saving": false
         },
