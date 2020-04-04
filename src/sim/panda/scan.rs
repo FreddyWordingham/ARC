@@ -18,11 +18,15 @@ pub enum Scan {
 
 impl Scan {
     /// Construct a new surface scan result instance.
+    #[inline]
+    #[must_use]
     pub fn new_surface_scan(hit: Hit) -> Self {
         Self::Surface { hit }
     }
 
     /// Construct a new boundary scan result instance.
+    #[inline]
+    #[must_use]
     pub fn new_boundary_scan(dist: f64) -> Self {
         debug_assert!(dist > 0.0);
 

@@ -99,12 +99,13 @@ impl<'a> Cell<'a> {
             }
         }
 
-        let children = Self::init_children(&settings, &boundary, 0, &tris);
+        let children = Self::init_children(settings, &boundary, 0, &tris);
 
         Self::Root { boundary, children }
     }
 
     /// Initialise the children of a branching cell.
+    #[allow(clippy::similar_names)]
     #[inline]
     #[must_use]
     fn init_children(
@@ -187,7 +188,7 @@ impl<'a> Cell<'a> {
         }
 
         match self {
-            Self::Leaf { .. } | Self::Empty { .. } => Some(&self),
+            Self::Leaf { .. } | Self::Empty { .. } => Some(self),
             Self::Root { boundary, children } | Self::Branch { boundary, children } => {
                 let mut index = 0;
                 let c = boundary.centre();
@@ -379,7 +380,7 @@ impl<'a> Cell<'a> {
             Self::Leaf { boundary, tris } => {
                 let mut nearest: Option<Hit> = None;
                 for (group, tri) in tris {
-                    if let Some((dist, norm)) = tri.dist_norm(&ray) {
+                    if let Some((dist, norm)) = tri.dist_norm(ray) {
                         if nearest.is_none()
                             || (nearest
                                 .as_ref()

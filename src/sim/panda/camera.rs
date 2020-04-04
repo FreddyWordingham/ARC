@@ -16,14 +16,16 @@ pub struct Camera {
     fov: (f64, f64),
     /// Image resolution.
     res: (usize, usize),
-    /// Sub-image resolution.
-    sub_res: (usize, usize),
+    /// Splits.
+    splits: (usize, usize),
     /// Scanning deltas.
     delta: (f64, f64),
     /// Sub-sampling deltas.
     sub_delta: (f64, f64),
     /// Super sampling power.
     ss_power: usize,
+    /// When true save each frame to a separate file.
+    frame_saving: bool,
 }
 
 impl Camera {
@@ -32,10 +34,11 @@ impl Camera {
     access!(right, Vector3<f64>);
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
-    clone!(sub_res, (usize, usize));
+    clone!(splits, (usize, usize));
     clone!(delta, (f64, f64));
     clone!(sub_delta, (f64, f64));
     clone!(ss_power, usize);
+    clone!(frame_saving, bool);
 
     /// Construct a new instance.
     #[inline]
@@ -45,17 +48,17 @@ impl Camera {
         tar: Point3<f64>,
         fov_x: f64,
         res: (usize, usize),
-        sub_res: (usize, usize),
+        splits: (usize, usize),
         ss_power: usize,
+        frame_saving: bool,
     ) -> Self {
         debug_assert!(fov_x > 0.0);
         debug_assert!(res.0 > 1);
         debug_assert!(res.1 > 1);
         debug_assert!(ss_power > 0);
-        debug_assert!(res.0 / sub_res.0 >= 8);
-        debug_assert!(res.1 / sub_res.1 >= 8);
-        debug_assert!(res.0 % sub_res.0 == 0);
-        debug_assert!(res.1 % sub_res.1 == 0);
+        debug_assert!(splits.0 * splits.1 >= 64);
+        debug_assert!(res.0 % splits.0 == 0);
+        debug_assert!(res.1 % splits.1 == 0);
 
         let fov = (fov_x, fov_x * (res.1 as f64 / res.0 as f64));
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
@@ -71,10 +74,11 @@ impl Camera {
             right,
             fov,
             res,
-            sub_res,
+            splits,
             delta,
             sub_delta,
             ss_power,
+            frame_saving,
         }
     }
 
@@ -83,6 +87,13 @@ impl Camera {
     #[must_use]
     pub fn num_pix(&self) -> usize {
         self.res.0 * self.res.1
+    }
+
+    /// Calculate the sub-frame resolution.
+    #[inline]
+    #[must_use]
+    pub fn frame_res(&self) -> (usize, usize) {
+        (self.res.0 / self.splits.0, self.res.1 / self.splits.1)
     }
 
     /// Generate the a ray for the corresponding pixel indices.

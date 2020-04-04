@@ -16,10 +16,12 @@ pub struct Camera {
     fov: f64,
     /// Image resolution.
     res: (usize, usize),
-    /// Sub-image resolution.
-    sub_res: (usize, usize),
+    /// Splits.
+    splits: (usize, usize),
     /// Super sampling power.
     ss_power: usize,
+    /// When true save each frame to a separate file.
+    frame_saving: bool,
 }
 
 impl Camera {
@@ -27,8 +29,9 @@ impl Camera {
     access!(tar, Point3<f64>);
     clone!(fov, f64);
     clone!(res, (usize, usize));
-    clone!(sub_res, (usize, usize));
+    clone!(splits, (usize, usize));
     clone!(ss_power, usize);
+    clone!(frame_saving, bool);
 
     /// Build a panda simulation camera.
     #[inline]
@@ -39,8 +42,9 @@ impl Camera {
             self.tar,
             self.fov.to_radians(),
             self.res,
-            self.sub_res,
+            self.splits,
             self.ss_power,
+            self.frame_saving,
         )
     }
 
