@@ -26,12 +26,20 @@ pub fn colour(
     //     palette::Hsv::from(LinSrgba::new(1.0, 0.1, 0.1, 1.0)),
     //     palette::Hsv::from(LinSrgba::new(0.1, 1.0, 1.0, 1.0)),
     // ]);
-    let grad = Gradient::new(vec![
+    let grad_1 = Gradient::new(vec![
         LinSrgba::new(0.0, 0.0, 0.0, 1.0),
-        LinSrgba::new(1.0, 1.0, 1.0, 1.0),
+        LinSrgba::new(1.0, 0.0, 0.0, 1.0),
+    ]);
+    let grad_2 = Gradient::new(vec![
+        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
+        LinSrgba::new(0.0, 1.0, 0.0, 1.0),
+    ]);
+    let grad_3 = Gradient::new(vec![
+        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
+        LinSrgba::new(0.0, 0.0, 1.0, 1.0),
     ]);
 
-    if let Some(hit) = root.observe(ray.clone(), 1.0e-6) {
+    while let Some(hit) = root.observe(ray.clone(), bump_dist) {
         ray.travel(hit.dist());
         let mut x = (lighting::ambient(sett)
             + lighting::diffuse(sett, &ray, hit.norm())
@@ -40,16 +48,35 @@ pub fn colour(
         // * lighting::sunlight_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
         * lighting::casting_samples(sett, &ray, hit.norm(), root, bump_dist, rng);
         x /= 3.2;
-        LinSrgba::from(grad.get(x as f32))
-    // Srgba::new(1.0, 1.0, 1.0, 1.0).into_linear()
-    // Srgba::new(
-    //     ray.dir().dot(&nalgebra::Vector3::x_axis()).abs() as f32,
-    //     ray.dir().dot(&nalgebra::Vector3::y_axis()).abs() as f32,
-    //     ray.dir().dot(&nalgebra::Vector3::z_axis()).abs() as f32,
-    //     1.0,
-    // )
-    // .into_linear()
-    } else {
-        Srgba::new(0.0, 0.0, 0.0, 0.1).into_linear()
+
+        match hit.group() {
+            -2 => {
+                ray.refract(hit.norm(), 1.0, 1.0);
+                ray.travel(bump_dist);
+                if let Some(second_hit) = root.observe(ray.clone(), bump_dist) {
+                    ray.travel(hit.dist());
+                    ray.refract(second_hit.norm(), 1.1, 1.0);
+                    ray.travel(bump_dist);
+                } else {
+                    return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
+                }
+
+                return (LinSrgba::from(grad_2.get(x as f32)) * 0.1)
+                    + (colour(sett, cam_pos, root, ray, bump_dist, rng) * 0.9);
+            }
+            -1 => {
+                ray.reflect(hit.norm());
+                ray.travel(bump_dist);
+                return (LinSrgba::from(grad_1.get(x as f32)) * 0.1)
+                    + (colour(sett, cam_pos, root, ray, bump_dist, rng) * 0.9);
+            }
+            1..=3 => {
+                return LinSrgba::from(grad_3.get(x as f32));
+            }
+            _ => {
+                panic!("Don't know how to handle group {}!", hit.group());
+            }
+        }
     }
+    Srgba::new(0.0, 0.0, 0.0, 0.1).into_linear()
 }

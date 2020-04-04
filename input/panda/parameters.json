@@ -5,12 +5,16 @@
         "padding": 0.1
     },
     "surfaces": [
-        [1, [
-            ["stand", null],
-            ["cloth", null],
+        [-2, [
             ["gem", {
                 "trans": [0.25, 0.4, 0.85]
             }],
+        ]],
+        [2, [
+            ["cloth", null],
+        ]],
+        [3, [
+            ["stand", null],
         ]]
     ],
     "shader_settings": {
@@ -21,7 +25,7 @@
         "specular_pow": 8,
         "transparency": 0.9,
         "shadow": 0.1,
-        "sunlight_samples": 100,
+        "sunlight_samples": 10,
         "sunlight_radius": 1e-1,
     },
     "cameras": {
@@ -32,7 +36,7 @@
             // "res": [3440, 1440],
             "res": [1000, 1000],
             "splits": [50, 50],
-            "ss_power": 1,
+            "ss_power": 2,
             "dof_samples": 1,
             "dof_radius": 1e-3,
             "frame_saving": false
