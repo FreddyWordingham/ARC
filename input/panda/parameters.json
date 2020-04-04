@@ -51,27 +51,27 @@
         "sunlight_radius": 1e-1,
     },
     "cameras": {
+        "img_0": {
+            "pos": [0.0, 0.0, 3.0],
+            "tar": [-11.0, 0.0, 3.0],
+            "fov": 100,
+            "res": [3440, 1440],
+            "splits": [86, 36],
+            "ss_power": 4,
+            "dof_samples": 16,
+            "dof_radius": 1e-3,
+            "frame_saving": false
+        },
         // "img_1": {
         //     "pos": [0.0, 0.0, 3.0],
         //     "tar": [-11.0, 0.0, 3.0],
         //     "fov": 100,
-        //     "res": [3440, 1440],
+        //     "res": [688, 288],
         //     "splits": [86, 36],
-        //     "ss_power": 4,
-        //     "dof_samples": 16,
+        //     "ss_power": 1,
+        //     "dof_samples": 1,
         //     "dof_radius": 1e-3,
         //     "frame_saving": false
-        // },
-        "img_1": {
-            "pos": [0.0, 0.0, 3.0],
-            "tar": [-11.0, 0.0, 3.0],
-            "fov": 100,
-            "res": [688, 288],
-            "splits": [86, 36],
-            "ss_power": 1,
-            "dof_samples": 1,
-            "dof_radius": 1e-3,
-            "frame_saving": false
-        }
+        // }
     }
 }
