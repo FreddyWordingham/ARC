@@ -15,8 +15,8 @@ pub fn circle(n: i32, max: i32) -> (f64, f64) {
     debug_assert!(n >= 0);
     debug_assert!(n < max);
 
-    let r = n as f64 / (max - 1) as f64;
-    let theta = n as f64 * *GOLDEN_RATIO;
+    let r = f64::from(n) / f64::from(max - 1);
+    let theta = f64::from(n) * *GOLDEN_RATIO;
 
     (r, theta)
 }
@@ -28,8 +28,8 @@ pub fn sphere(n: i32, max: i32) -> (f64, f64) {
     debug_assert!(n >= 0);
     debug_assert!(n < max);
 
-    let d = ((1 - max) as f64).mul_add(0.5, n as f64);
-    let phi = ((2.0 * d) / max as f64).asin() + FRAC_PI_2;
+    let d = f64::from(1 - max).mul_add(0.5, f64::from(n));
+    let phi = ((2.0 * d) / f64::from(max)).asin() + FRAC_PI_2;
     let theta = ((2.0 * PI) / *GOLDEN_RATIO) * (d % *GOLDEN_RATIO);
 
     (phi, theta)

@@ -53,7 +53,7 @@ pub fn run_thread(
         //println!("Start and end: {}, {}", start, end);
         //println!("total: {}", total);
         while total > 0 {
-            let mut _shifted = false;
+            let mut shifted = false;
             let mut mat = None;
             let mut phot = if let Some(phot) = extra_phot {
                 total += 1;
@@ -132,7 +132,7 @@ pub fn run_thread(
                         *phot.weight_mut() *= env.albedo();
                         let enhanced_prob = 1000.0 * env.shift_prob();
 
-                        if !_shifted && rng.gen_range(0.0, 1.0) <= enhanced_prob {
+                        if !shifted && rng.gen_range(0.0, 1.0) <= enhanced_prob {
                             let mut reweight = phot.clone();
                             *phot.weight_mut() *= env.shift_prob() / enhanced_prob;
                             *reweight.weight_mut() *= 1.0 - env.shift_prob();
@@ -140,14 +140,14 @@ pub fn run_thread(
                             *cr.rec_mut().shifts_mut() += phot.weight();
                             *cr.rec_mut().ram_laser_mut() += 1.0;
                             *phot.wavelength_mut() = 884.0e-9;
-                            _shifted = true;
+                            shifted = true;
                             env = mats
                                 .get(&MatKey::new("ptfe"))
                                 .optics()
                                 .env(phot.wavelength());
                             //println!("Ramanised!: {}", phot.ray().pos());
                         }
-                        if _shifted {
+                        if shifted {
                             *cr.rec_mut().det_raman_mut() += peel_off(
                                 phot.clone(),
                                 env.clone(),
