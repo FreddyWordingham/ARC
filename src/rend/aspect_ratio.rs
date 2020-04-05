@@ -1,6 +1,7 @@
 //! Aspect-ratio implementation.
 
 use attr::json;
+use std::fmt::{Display, Formatter, Result};
 
 /// Aspect-ratio enumeration.
 #[json]
@@ -14,8 +15,8 @@ pub enum AspectRatio {
     Standard,
     /// Widescreen. 43:18
     Widescreen,
-    /// Iphone XS. 375:812 (1125 x 2436)
-    IphoneXS,
+    /// IPhone XS. 375:812 (1125 x 2436)
+    IPhoneXS,
 }
 
 impl AspectRatio {
@@ -28,7 +29,7 @@ impl AspectRatio {
             Self::Classic => (3, 2),
             Self::Standard => (16, 9),
             Self::Widescreen => (43, 18),
-            Self::IphoneXS => (375, 812),
+            Self::IPhoneXS => (375, 812),
         }
     }
 
@@ -51,7 +52,7 @@ impl AspectRatio {
             Self::Classic => 2048,
             Self::Standard => 480,
             Self::Widescreen => 190,
-            Self::IphoneXS => 9,
+            Self::IPhoneXS => 9,
         })
     }
 
@@ -64,7 +65,7 @@ impl AspectRatio {
             Self::Classic => 1024,
             Self::Standard => 240,
             Self::Widescreen => 80,
-            Self::IphoneXS => 3,
+            Self::IPhoneXS => 3,
         })
     }
 
@@ -77,7 +78,7 @@ impl AspectRatio {
             Self::Classic => 512,
             Self::Standard => 120,
             Self::Widescreen => 40,
-            Self::IphoneXS => 2,
+            Self::IPhoneXS => 2,
         })
     }
 
@@ -90,7 +91,7 @@ impl AspectRatio {
             Self::Classic => 256,
             Self::Standard => 60,
             Self::Widescreen => 20,
-            Self::IphoneXS => 1,
+            Self::IPhoneXS => 1,
         })
     }
 
@@ -103,7 +104,14 @@ impl AspectRatio {
             Self::Classic => 128,
             Self::Standard => 30,
             Self::Widescreen => 10,
-            Self::IphoneXS => 1,
+            Self::IPhoneXS => 1,
         })
+    }
+}
+
+impl Display for AspectRatio {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        let (rx, ry) = self.ratio();
+        write!(fmt, "{}:{}", rx, ry)
     }
 }
