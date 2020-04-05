@@ -3,7 +3,7 @@
 use arc::{
     args,
     file::Load,
-    rend::settings::Grid,
+    rend::settings::{Grid, Scene},
     report,
     util::{banner, exec, init},
 };
@@ -16,6 +16,8 @@ use std::path::{Path, PathBuf};
 struct Parameters {
     /// Grit settings.
     grid: Grid,
+    /// Scene settings.
+    scene: String,
 }
 
 fn main() {
@@ -23,40 +25,37 @@ fn main() {
     banner::title(&exec::name());
 
     banner::section("Initialisation");
-    let (_in_dir, _out_dir, params_path) = init_dirs();
+    let (in_dir, _out_dir, params_filename) = init_dirs();
 
     banner::section("Input");
-    let _params = load_parameters(&params_path);
+    let (params, scene) = load(&in_dir, &params_filename);
 }
 
 /// Get the directories.
-fn init_dirs() -> (PathBuf, PathBuf, PathBuf) {
+fn init_dirs() -> (PathBuf, PathBuf, String) {
     args!(_bin_path: String;
-        params_name: String
+        params_filename: String
     );
+    report!(params_filename, "parameters filename");
 
     let (in_dir, out_dir) = init::io_dirs(None, None);
-    let params_path = in_dir.join(params_name);
-
     report!(in_dir.display(), "input directory");
     report!(out_dir.display(), "output directory");
-    report!(params_path.display(), "parameters path");
 
-    (in_dir, out_dir, params_path)
+    (in_dir, out_dir, params_filename)
 }
 
 /// Load the parameters file and report the settings.
-fn load_parameters(path: &Path) -> Parameters {
-    info!("Loading parameters...");
-    let params = Parameters::load(&path);
+fn load(in_dir: &Path, params_filename: &str) -> (Parameters, arc::rend::settings::Scene) {
+    let params_path = in_dir.join(params_filename);
+    info!("Loading parameters file: {}", params_path.display());
+    let params = Parameters::load(&params_path);
 
-    report!(&params.grid, "Grid settings");
-    // report!(&params.shader_settings, "Shader settings");
+    let scene_path = in_dir.join(format!("{}.json", params.scene));
+    info!("Loading scene file: {}", scene_path.display());
+    let scene = arc::rend::settings::Scene::load(&scene_path);
 
-    // info!("Cameras:");
-    // for (name, cam) in &params.cameras {
-    //     report!(cam, name);
-    // }
+    // report!(&params.grid, "Grid settings");
 
-    params
+    (params, scene)
 }
