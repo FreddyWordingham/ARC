@@ -3,7 +3,7 @@
 use arc::{
     args,
     file::Load,
-    rend::settings::{Grid, Scene},
+    rend::settings::{Grid, Palette, Scene},
     report,
     util::{banner, exec, init},
 };
@@ -18,6 +18,8 @@ struct Parameters {
     grid: Grid,
     /// Scene settings.
     scene: String,
+    /// Colour settings.
+    palette: String,
 }
 
 fn main() {
@@ -54,6 +56,10 @@ fn load(in_dir: &Path, params_filename: &str) -> (Parameters, arc::rend::setting
     let scene_path = in_dir.join(format!("{}.json", params.scene));
     info!("Loading scene file: {}", scene_path.display());
     let scene = arc::rend::settings::Scene::load(&scene_path);
+
+    let palette_path = in_dir.join(format!("{}.json", params.palette));
+    info!("Loading palette file: {}", palette_path.display());
+    let palette = arc::rend::settings::Palette::load(&palette_path);
 
     // report!(&params.grid, "Grid settings");
 

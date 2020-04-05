@@ -1,16 +1,16 @@
-//! Colours input settings implementation.
+//! Palette colours input settings implementation.
 
 // use crate::clone;
 use attr::json;
 // use std::fmt::{Display, Formatter, Result};
 
-/// Colours settings.
+/// Palette settings.
 #[json]
-pub struct Colours {}
+pub struct Palette {}
 
-impl Colours {}
+impl Palette {}
 
-// impl Display for Colours {
+// impl Display for Palette {
 //     fn fmt(&self, fmt: &mut Formatter) -> Result {
 //         writeln!(fmt)?;
 //         writeln!(fmt, "{:>30} : {}", "target triangles", self.tar_tris)?;
