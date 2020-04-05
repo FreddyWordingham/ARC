@@ -1,21 +1,12 @@
 {
-    "ambient": 0.1,
-    "diffuse": 1,
-    "specular": 2,
-    "specular_pow": 8,
-    "transparency": 0.5,
-    "shadow": 0.1,
-    "sunlight_samples": 8,
-    "sunlight_radius": 1e-2,
-    "direct_weight": 0.5,
-    "local_weight": 0.3,
-    "cast_weight": 0.2
-
-
-    "lighting_weights": {
+    "light_weights": {
         "ambient": 0.1,
         "diffuse": 1,
         "specular": 2,
     },
-    
+    "shadow_weights": {
+        "direct": 0.5,
+        "local": 0.3,
+        "ambient": 0.2
+    }
 }

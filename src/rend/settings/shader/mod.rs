@@ -3,12 +3,11 @@
 pub mod lighting_weights;
 pub mod shadow_weights;
 
-use self::lighting_weights::*;
-use self::shadow_weights::*;
+use self::{lighting_weights::*, shadow_weights::*};
 
 use crate::access;
 use attr::json;
-// use std::fmt::{Display, Formatter, Result};
+use std::fmt::{Display, Formatter, Result};
 
 /// Shader settings.
 #[json]
@@ -24,16 +23,12 @@ impl Shader {
     access!(shadow_weights, ShadowWeights);
 }
 
-// impl Display for Shader {
-//     fn fmt(&self, fmt: &mut Formatter) -> Result {
-//         writeln!(fmt)?;
-//         writeln!(fmt, "{:>30} : {}", "target triangles", self.tar_tris)?;
-//         writeln!(fmt, "{:>30} : {}", "max depth", self.max_depth)?;
-//         writeln!(
-//             fmt,
-//             "{:>30} : {}%",
-//             "collision detection padding",
-//             self.padding * 100.0
-//         )
-//     }
-// }
+impl Display for Shader {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        writeln!(fmt)?;
+        writeln!(fmt, "lighting sub-settings:")?;
+        write!(fmt, "{}", self.light_weights)?;
+        writeln!(fmt, "shadow sub-settings:")?;
+        write!(fmt, "{}", self.light_weights)
+    }
+}
