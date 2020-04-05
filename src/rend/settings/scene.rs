@@ -26,7 +26,12 @@ impl Display for Scene {
         writeln!(fmt, "{:>30} : {}", "number of groups", self.groups.len())?;
         for (group, meshes) in &self.groups {
             let names: Vec<_> = meshes.iter().map(|(name, _trans)| name.clone()).collect();
-            writeln!(fmt, "[{:^3}] : {} meshes", group, meshes.len())?;
+            writeln!(
+                fmt,
+                "{:>30} : {} meshes",
+                format!("group [{:^3}]", group),
+                meshes.len()
+            )?;
             write!(fmt, "{}", format::cols(&names, 4, 24))?;
         }
 
