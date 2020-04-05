@@ -26,9 +26,9 @@ impl Shader {
 impl Display for Shader {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         writeln!(fmt)?;
-        writeln!(fmt, "lighting sub-settings:")?;
+        writeln!(fmt, "{:>30} :", "lighting sub-settings")?;
         write!(fmt, "{}", self.light_weights)?;
-        writeln!(fmt, "shadow sub-settings:")?;
-        write!(fmt, "{}", self.light_weights)
+        writeln!(fmt, "{:>30} :", "shadow sub-settings")?;
+        write!(fmt, "{}", self.shadow_weights)
     }
 }

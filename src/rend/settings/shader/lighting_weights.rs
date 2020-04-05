@@ -23,7 +23,6 @@ impl LightingWeights {
 
 impl Display for LightingWeights {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "ambient scalar", self.ambient)?;
         writeln!(fmt, "{:>30} : {}", "diffuse scalar", self.diffuse)?;
         writeln!(fmt, "{:>30} : {}", "specular scalar", self.specular)
