@@ -1,4 +1,4 @@
-//! Rendering input sub-module.
+//! Rendering settings sub-module.
 
 pub mod grid;
 pub mod image;

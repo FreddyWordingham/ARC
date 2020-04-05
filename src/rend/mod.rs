@@ -1,5 +1,5 @@
 //! Rendering module.
 
-pub mod input;
+pub mod settings;
 
-pub use self::input::*;
+pub use self::settings::*;
