@@ -1,14 +1,23 @@
 //! Shader input settings implementation.
 
-// use crate::clone;
+pub mod lighting_weights;
+
+use self::lighting_weights::*;
+
+use crate::access;
 use attr::json;
 // use std::fmt::{Display, Formatter, Result};
 
 /// Shader settings.
 #[json]
-pub struct Shader {}
+pub struct Shader {
+    /// Lighting weights.
+    light_weights: LightingWeights,
+}
 
-impl Shader {}
+impl Shader {
+    access!(light_weights, LightingWeights);
+}
 
 // impl Display for Shader {
 //     fn fmt(&self, fmt: &mut Formatter) -> Result {

@@ -6,6 +6,7 @@ use nalgebra::Point3;
 use std::fmt::{Display, Formatter, Result};
 
 /// Scene settings.
+#[allow(clippy::type_complexity)]
 #[json]
 pub struct Scene {
     /// Sun position.
