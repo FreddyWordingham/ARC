@@ -1,14 +1,27 @@
 //! Image input settings implementation.
 
-// use crate::clone;
+use crate::{access, rend::AspectRatio};
 use attr::json;
 // use std::fmt::{Display, Formatter, Result};
+use nalgebra::Point3;
 
 /// Image settings.
 #[json]
-pub struct Image {}
+pub struct Image {
+    /// Position of the camera.
+    cam_pos: Point3<f64>,
+    /// Target of the camera.
+    tar_pos: Point3<f64>,
+    /// Horizontal field of view.
+    fov: f64,
+    /// Aspect ratio.
+    aspect_ratio: AspectRatio,
+}
 
-impl Image {}
+impl Image {
+    access!(cam_pos, Point3<f64>);
+    access!(tar_pos, Point3<f64>);
+}
 
 // impl Display for Image {
 //     fn fmt(&self, fmt: &mut Formatter) -> Result {
