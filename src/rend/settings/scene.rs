@@ -1,30 +1,41 @@
 //! Scene input settings implementation.
 
-use crate::{access, rend::Group};
+use crate::{access, file::Transform, rend::Group};
 use attr::json;
-// use std::fmt::{Display, Formatter, Result};
+use nalgebra::Point3;
+use std::fmt::{Display, Formatter, Result};
 
 /// Scene settings.
 #[json]
 pub struct Scene {
-    /// Traceable surfaces.
-    surfaces: Vec<(Group, Vec<(String, Option<FileTransform>)>)>,
+    /// Sun position.
+    sun_pos: Point3<f64>,
+    /// Traceable surface groups.
+    groups: Vec<(Group, Vec<(String, Option<Transform>)>)>,
 }
 
 impl Scene {
-    access!(surfaces, Vec<(Group, Vec<(String, Option<FileTransform>)>)>);
+    access!(sun_pos, Point3<f64>);
+    access!(groups, Vec<(Group, Vec<(String, Option<Transform>)>)>);
 }
 
-// impl Display for Scene {
-//     fn fmt(&self, fmt: &mut Formatter) -> Result {
-//         writeln!(fmt)?;
-//         writeln!(fmt, "{:>30} : {}", "target triangles", self.tar_tris)?;
-//         writeln!(fmt, "{:>30} : {}", "max depth", self.max_depth)?;
-//         writeln!(
-//             fmt,
-//             "{:>30} : {}%",
-//             "collision detection padding",
-//             self.padding * 100.0
-//         )
-//     }
-// }
+impl Display for Scene {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        writeln!(fmt)?;
+        writeln!(fmt, "{:>30} : {} [m]", "sun position", self.sun_pos)?;
+        writeln!(fmt, "{:>30} : {}", "number of groups", self.groups.len())?;
+        for (group, meshes) in &self.groups {
+            write!(fmt, "[{:^3}] : ", group)?;
+            for (name, trans) in meshes {
+                write!(
+                    fmt,
+                    "[{:>16}] {}",
+                    name,
+                    if trans.is_some() { "*" } else { "-" }
+                )?;
+            }
+            writeln!(fmt)?;
+        }
+        writeln!(fmt)
+    }
+}

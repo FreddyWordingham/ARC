@@ -57,6 +57,7 @@ fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Pa
     let scene_path = in_dir.join(format!("{}.json", params.scene));
     report!(scene_path.display(), "Loading scene file");
     let scene = Scene::load(&scene_path);
+    report!(scene, "Scene settings");
 
     let shader_path = in_dir.join(format!("{}.json", params.shader));
     report!(shader_path.display(), "Loading shader file");
