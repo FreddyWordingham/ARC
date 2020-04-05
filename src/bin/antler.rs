@@ -1,25 +1,36 @@
 //! Antler rendering engine.
 
 use arc::{
-    args, report,
+    args,
+    file::Load,
+    rend::settings::Grid,
+    report,
     util::{banner, exec, init},
 };
 use attr::form;
 use log::info;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
+/// Input parameters.
 #[form]
-struct Parameters {}
+struct Parameters {
+    /// Grit settings.
+    grid: Grid,
+}
 
 fn main() {
     colog::init();
     banner::title(&exec::name());
 
     banner::section("Initialisation");
-    let (_in_dir, _out_dir, _param_path) = start();
+    let (_in_dir, _out_dir, params_path) = init_dirs();
+
+    banner::section("Input");
+    let _params = load_parameters(&params_path);
 }
 
-fn start() -> (PathBuf, PathBuf, PathBuf) {
+/// Get the directories.
+fn init_dirs() -> (PathBuf, PathBuf, PathBuf) {
     args!(_bin_path: String;
         params_name: String
     );
@@ -32,4 +43,20 @@ fn start() -> (PathBuf, PathBuf, PathBuf) {
     report!(params_path.display(), "parameters path");
 
     (in_dir, out_dir, params_path)
+}
+
+/// Load the parameters file and report the settings.
+fn load_parameters(path: &Path) -> Parameters {
+    info!("Loading parameters...");
+    let params = Parameters::load(&path);
+
+    report!(&params.grid, "Grid settings");
+    // report!(&params.shader_settings, "Shader settings");
+
+    // info!("Cameras:");
+    // for (name, cam) in &params.cameras {
+    //     report!(cam, name);
+    // }
+
+    params
 }
