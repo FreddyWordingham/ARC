@@ -3,7 +3,7 @@
 use arc::{
     args,
     file::Load,
-    rend::settings::{Grid, Palette, Scene},
+    rend::settings::{Grid, Palette, Scene, Shader},
     report,
     util::{banner, exec, init},
 };
@@ -20,6 +20,8 @@ struct Parameters {
     scene: String,
     /// Colour settings.
     palette: String,
+    /// Shader settings.
+    shader: String,
 }
 
 fn main() {
@@ -30,7 +32,7 @@ fn main() {
     let (in_dir, _out_dir, params_filename) = init_dirs();
 
     banner::section("Input");
-    let (params, scene) = load(&in_dir, &params_filename);
+    let (_params, _scene, _shader, _palette) = input(&in_dir, &params_filename);
 }
 
 /// Get the directories.
@@ -47,21 +49,23 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     (in_dir, out_dir, params_filename)
 }
 
-/// Load the parameters file and report the settings.
-fn load(in_dir: &Path, params_filename: &str) -> (Parameters, arc::rend::settings::Scene) {
+/// Load the input parameters file and report the settings.
+fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Palette) {
     let params_path = in_dir.join(params_filename);
     info!("Loading parameters file: {}", params_path.display());
     let params = Parameters::load(&params_path);
 
     let scene_path = in_dir.join(format!("{}.json", params.scene));
     info!("Loading scene file: {}", scene_path.display());
-    let scene = arc::rend::settings::Scene::load(&scene_path);
+    let scene = Scene::load(&scene_path);
+
+    let shader_path = in_dir.join(format!("{}.json", params.shader));
+    info!("Loading shader file: {}", shader_path.display());
+    let shader = Shader::load(&shader_path);
 
     let palette_path = in_dir.join(format!("{}.json", params.palette));
     info!("Loading palette file: {}", palette_path.display());
-    let palette = arc::rend::settings::Palette::load(&palette_path);
+    let palette = Palette::load(&palette_path);
 
-    // report!(&params.grid, "Grid settings");
-
-    (params, scene)
+    (params, scene, shader, palette)
 }
