@@ -1,14 +1,19 @@
 //! Scene input settings implementation.
 
-// use crate::clone;
+use crate::{access, rend::Group};
 use attr::json;
 // use std::fmt::{Display, Formatter, Result};
 
 /// Scene settings.
 #[json]
-pub struct Scene {}
+pub struct Scene {
+    /// Traceable surfaces.
+    surfaces: Vec<(Group, Vec<(String, Option<FileTransform>)>)>,
+}
 
-impl Scene {}
+impl Scene {
+    access!(surfaces, Vec<(Group, Vec<(String, Option<FileTransform>)>)>);
+}
 
 // impl Display for Scene {
 //     fn fmt(&self, fmt: &mut Formatter) -> Result {
