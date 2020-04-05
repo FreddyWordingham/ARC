@@ -8,7 +8,6 @@ use arc::{
     util::{banner, exec, init},
 };
 use attr::form;
-use log::info;
 use std::path::{Path, PathBuf};
 
 /// Input parameters.
@@ -52,19 +51,19 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
 /// Load the input parameters file and report the settings.
 fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Palette) {
     let params_path = in_dir.join(params_filename);
-    info!("Loading parameters file: {}", params_path.display());
+    report!(params_path.display(), "Loading parameters file");
     let params = Parameters::load(&params_path);
 
     let scene_path = in_dir.join(format!("{}.json", params.scene));
-    info!("Loading scene file: {}", scene_path.display());
+    report!(scene_path.display(), "Loading scene file");
     let scene = Scene::load(&scene_path);
 
     let shader_path = in_dir.join(format!("{}.json", params.shader));
-    info!("Loading shader file: {}", shader_path.display());
+    report!(shader_path.display(), "Loading shader file");
     let shader = Shader::load(&shader_path);
 
     let palette_path = in_dir.join(format!("{}.json", params.palette));
-    info!("Loading palette file: {}", palette_path.display());
+    report!(palette_path.display(), "Loading palette file");
     let palette = Palette::load(&palette_path);
 
     (params, scene, shader, palette)

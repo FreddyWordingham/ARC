@@ -4,5 +4,7 @@
         "max_depth": 8,
         "padding": 0.01
     },
-    "scene": "riverside"
+    "scene": "scenes/riverside",
+    "shader": "shaders/sunny_day",
+    "palette": "palettes/grey"
 }
