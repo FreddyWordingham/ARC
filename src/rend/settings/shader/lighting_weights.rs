@@ -1,4 +1,4 @@
-//! Shader lighting weights settings implementation.
+//! Shader lighting weightings settings implementation.
 
 use crate::clone;
 use attr::json;

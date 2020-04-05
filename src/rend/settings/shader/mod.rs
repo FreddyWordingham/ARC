@@ -1,8 +1,10 @@
 //! Shader input settings implementation.
 
 pub mod lighting_weights;
+pub mod shadow_weights;
 
 use self::lighting_weights::*;
+use self::shadow_weights::*;
 
 use crate::access;
 use attr::json;
@@ -11,12 +13,15 @@ use attr::json;
 /// Shader settings.
 #[json]
 pub struct Shader {
-    /// Lighting weights.
+    /// Lighting weightings.
     light_weights: LightingWeights,
+    /// Shadow weightings.
+    shadow_weights: ShadowWeights,
 }
 
 impl Shader {
     access!(light_weights, LightingWeights);
+    access!(shadow_weights, ShadowWeights);
 }
 
 // impl Display for Shader {
