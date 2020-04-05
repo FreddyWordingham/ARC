@@ -45,11 +45,11 @@ impl LightMap {
         }
     }
 
-    data_dens!(emis_dens, emis);
-    data_dens!(scat_dens, scats);
-    data_dens!(abs_dens, abs);
+    data_dens!(emissions_dens, emissions);
+    data_dens!(scatters_dens, scatters);
+    data_dens!(absorptions_dens, absorptions);
     data_dens!(shift_dens, shifts);
-    data_dens!(dist_trav_dens, dist_trav);
+    data_dens!(dist_travelled_dens, dist_travelled);
 }
 
 impl AddAssign<&Self> for LightMap {
@@ -63,11 +63,13 @@ impl AddAssign<&Self> for LightMap {
 
 impl Save for LightMap {
     fn save(&self, path: &Path) {
-        self.emis_dens().save(&path.join("lm_emis_dens.nc"));
-        self.scat_dens().save(&path.join("lm_scat_dens.nc"));
-        self.abs_dens().save(&path.join("lm_abs_dens.nc"));
+        self.emissions_dens()
+            .save(&path.join("lm_emissions_dens.nc"));
+        self.scatters_dens().save(&path.join("lm_scatters_dens.nc"));
+        self.absorptions_dens()
+            .save(&path.join("lm_absorptions_dens.nc"));
         self.shift_dens().save(&path.join("lm_shift_dens.nc"));
-        self.dist_trav_dens()
-            .save(&path.join("lm_dist_trav_dens.nc"));
+        self.dist_travelled_dens()
+            .save(&path.join("lm_dist_travelled_dens.nc"));
     }
 }

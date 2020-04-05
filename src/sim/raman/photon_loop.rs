@@ -70,7 +70,7 @@ pub fn run_thread(
             debug_assert!(grid.bound().contains(phot.ray().pos()));
 
             let mut cr = CellRec::new(phot.ray().pos(), grid, &mut lm);
-            *cr.rec_mut().emis_mut() += phot.weight();
+            *cr.rec_mut().emissions_mut() += phot.weight();
 
             #[allow(unused_assignments)]
             // This is here to suppress a warning. I think it's a bug though so check it. - Freddy
@@ -112,31 +112,31 @@ pub fn run_thread(
 
                 match Hit::new(scat_dist, cell_dist, inter_dist, bump_dist) {
                     Hit::Scattering(dist) => {
-                        *cr.rec_mut().dist_trav_mut() += dist;
+                        *cr.rec_mut().dist_travelled_mut() += dist;
                         phot.ray_mut().travel(dist);
                         //if shifted == true {
                         //println!("Abs coeff: {}", env.abs_coeff());
                         //};
 
-                        *cr.rec_mut().abs_mut() +=
+                        *cr.rec_mut().absorptions_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
 
-                        *cr.rec_mut().scats_mut() += phot.weight();
+                        *cr.rec_mut().scatters_mut() += phot.weight();
                         phot.ray_mut().rotate(
                             distribution::henyey_greenstein(&mut rng, env.asym()),
                             rng.gen_range(0.0, 2.0 * PI),
                         );
 
-                        *cr.rec_mut().abs_mut() +=
+                        *cr.rec_mut().absorptions_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
                         *phot.weight_mut() *= env.albedo();
                         let enhanced_prob = 1000.0 * env.shift_prob();
 
                         if !shifted && rng.gen_range(0.0, 1.0) <= enhanced_prob {
-                            let mut reweight = phot.clone();
+                            let mut re_weight = phot.clone();
                             *phot.weight_mut() *= env.shift_prob() / enhanced_prob;
-                            *reweight.weight_mut() *= 1.0 - env.shift_prob();
-                            extra_phot = Some(reweight);
+                            *re_weight.weight_mut() *= 1.0 - env.shift_prob();
+                            extra_phot = Some(re_weight);
                             *cr.rec_mut().shifts_mut() += phot.weight();
                             *cr.rec_mut().ram_laser_mut() += 1.0;
                             *phot.wavelength_mut() = 884.0e-9;
@@ -161,9 +161,9 @@ pub fn run_thread(
                     }
                     Hit::Cell(dist) => {
                         let dist = dist + bump_dist;
-                        *cr.rec_mut().dist_trav_mut() += dist;
+                        *cr.rec_mut().dist_travelled_mut() += dist;
                         phot.ray_mut().travel(dist);
-                        *cr.rec_mut().abs_mut() +=
+                        *cr.rec_mut().absorptions_mut() +=
                             phot.weight() * phot.power() * env.abs_coeff() * dist;
 
                         if !grid.bound().contains(phot.ray().pos()) {
@@ -235,16 +235,16 @@ fn hit_interface(
 
     if rng.gen_range(0.0, 1.0) <= crossing.ref_prob() {
         let effective_dist = (dist - bump_dist).max(MIN_POSITIVE);
-        *cr.rec_mut().dist_trav_mut() += effective_dist;
+        *cr.rec_mut().dist_travelled_mut() += effective_dist;
         phot.ray_mut().travel(effective_dist);
-        *cr.rec_mut().abs_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
+        *cr.rec_mut().absorptions_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
 
         *phot.ray_mut().dir_mut() = *crossing.ref_dir();
     } else {
         let effective_dist = dist + bump_dist;
-        *cr.rec_mut().dist_trav_mut() += effective_dist;
+        *cr.rec_mut().dist_travelled_mut() += effective_dist;
         phot.ray_mut().travel(effective_dist);
-        *cr.rec_mut().abs_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
+        *cr.rec_mut().absorptions_mut() += phot.weight() * phot.power() * env.abs_coeff() * dist;
 
         *phot.ray_mut().dir_mut() = crossing
             .trans_dir()
