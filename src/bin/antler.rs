@@ -43,11 +43,13 @@ fn main() {
 
 /// Get the directories.
 fn init_dirs() -> (PathBuf, PathBuf, String) {
+    banner::sub_section("Command line arguments");
     args!(_bin_path: String;
         params_filename: String
     );
     report!(params_filename, "parameters filename");
 
+    banner::sub_section("Directories");
     let (in_dir, out_dir) = init::io_dirs(None, None);
     report!(in_dir.display(), "input directory");
     report!(out_dir.display(), "output directory");
