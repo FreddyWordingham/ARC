@@ -140,6 +140,18 @@ impl<'a> Grid<'a> {
         [nnn, pnn, npn, ppn, nnp, pnp, npp, ppp]
     }
 
+    /// Reference the cell's boundary.
+    #[inline]
+    #[must_use]
+    pub fn boundary(&self) -> &Aabb {
+        match self {
+            Self::Root { boundary, .. }
+            | Self::Branch { boundary, .. }
+            | Self::Leaf { boundary, .. }
+            | Self::Empty { boundary, .. } => boundary,
+        }
+    }
+
     /// Determine the total number of cells.
     #[inline]
     #[must_use]
@@ -170,7 +182,12 @@ impl<'a> Grid<'a> {
     #[must_use]
     pub fn max_depth(&self) -> usize {
         match self {
-            Self::Root { children, .. } | Self::Branch { children, .. } => {
+            Self::Root { children, .. } => children
+                .iter()
+                .map(|c| c.max_depth())
+                .max()
+                .expect("Could not determine cell depth."),
+            Self::Branch { children, .. } => {
                 1 + children
                     .iter()
                     .map(|c| c.max_depth())
@@ -199,6 +216,35 @@ impl<'a> Grid<'a> {
     #[must_use]
     pub fn ave_leaf_tris(&self) -> f64 {
         self.num_tri_refs() as f64 / self.num_leaf_cells() as f64
+    }
+
+    /// Determine the terminal cell containing the given position.
+    #[inline]
+    #[must_use]
+    pub fn find_terminal_cell(&self, pos: &Point3<f64>) -> Option<&Self> {
+        debug_assert!(self.boundary().contains(pos));
+
+        match self {
+            Self::Leaf { .. } | Self::Empty { .. } => Some(self),
+            Self::Root { boundary, children } | Self::Branch { boundary, children } => {
+                let mut index = 0;
+                let c = boundary.centre();
+
+                if pos.x >= c.x {
+                    index += 1;
+                }
+                if pos.y >= c.y {
+                    index += 2;
+                }
+                if pos.z >= c.z {
+                    index += 4;
+                }
+                children
+                    .get(index)
+                    .expect("Invalid cell child index.")
+                    .find_terminal_cell(pos)
+            }
+        }
     }
 
     /// Scan for hits within the cell.
@@ -240,5 +286,45 @@ impl<'a> Grid<'a> {
                 panic!("Should not be performing hit scans on branching cells!");
             }
         }
+    }
+
+    /// Determine what a ray would observe within the cell.
+    #[inline]
+    #[must_use]
+    pub fn observe(&self, mut ray: Ray, bump_dist: f64) -> Option<Hit> {
+        debug_assert!(bump_dist > 0.0);
+
+        let mut dist_travelled = 0.0;
+
+        // Move the ray to within the domain of the grid if it isn't already within it.
+        if let Some(dist) = self.boundary().dist(&ray) {
+            if !self.boundary().contains(ray.pos()) {
+                let d = dist + bump_dist;
+                ray.travel(d);
+                dist_travelled += d;
+            }
+        } else {
+            return None;
+        }
+
+        // Trace forward until leaving the grid or observing something.
+        while let Some(cell) = self.find_terminal_cell(ray.pos()) {
+            match cell.hit_scan(&ray) {
+                Scan::Surface { hit } => {
+                    return Some(Hit::new(
+                        hit.group(),
+                        hit.dist() + dist_travelled,
+                        *hit.norm(),
+                    ));
+                }
+                Scan::Boundary { dist } => {
+                    let d = dist + bump_dist;
+                    ray.travel(d);
+                    dist_travelled += d;
+                }
+            }
+        }
+
+        None
     }
 }
