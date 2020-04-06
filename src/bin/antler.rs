@@ -41,8 +41,8 @@ fn main() {
 
     values!(
         64,
-        arc::fmt::term_width(),
         "these are the numbers",
+        arc::fmt::term_width(),
         "one",
         2,
         4 - 1,
