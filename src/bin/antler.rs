@@ -47,6 +47,7 @@ fn main() {
     for (name, image_settings) in params.render.images() {
         fmt::sub_section(name);
         let _image = load_image_settings(&in_dir, &image_settings);
+        println!("Rendering...");
     }
 
     fmt::section("Finished");
@@ -96,6 +97,7 @@ fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
 
 /// Build the gridding scheme.
 fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
+    println!("Building...");
     let grid = Grid::new_root(params.render.grid(), &scene);
 
     values!(
