@@ -3,7 +3,7 @@
 use arc::{
     args,
     file::Load,
-    rend::settings::{Grid, Image, Palette, Scene, Shader},
+    rend::settings::{Grid, Image, Palette, Quality, Scene, Shader},
     report,
     util::{banner, exec, init},
 };
@@ -65,7 +65,10 @@ fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Pa
     report!(params.images.len(), "Total images");
     for (name, img) in &params.images {
         report!(img, name);
-        // report!(img, format!(""));
+        let qual_path = in_dir.join(format!("{}.json", img.quality()));
+        report!(qual_path.display(), "Loading quality file");
+        let qual = Quality::load(&qual_path);
+        report!(qual, "Quality settings");
     }
 
     banner::sub_section("Scene");

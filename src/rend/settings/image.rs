@@ -21,6 +21,7 @@ pub struct Image {
 }
 
 impl Image {
+    access!(quality, String);
     access!(cam_pos, Point3<f64>);
     access!(tar_pos, Point3<f64>);
     clone!(fov, f64);
