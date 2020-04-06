@@ -11,6 +11,10 @@ pub struct Camera {
     tar: Point3<f64>,
     /// Forward direction.
     forward: Unit<Vector3<f64>>,
+    /// Up axis.
+    up: Unit<Vector3<f64>>,
+    /// Right axis.
+    right: Unit<Vector3<f64>>,
     /// Field of view.
     fov: (f64, f64),
     /// Image resolution.
@@ -21,6 +25,8 @@ impl Camera {
     access!(pos, Point3<f64>);
     access!(tar, Point3<f64>);
     access!(forward, Unit<Vector3<f64>>);
+    access!(up, Unit<Vector3<f64>>);
+    access!(right, Unit<Vector3<f64>>);
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
 
@@ -40,10 +46,16 @@ impl Camera {
         let fov = (fov_hz, fov_hz / aspect_ratio.ratio());
         let res = aspect_ratio.resolution(tar_pix);
 
+        let forward = Unit::new_normalize(tar - pos);
+        let up = Vector3::z_axis();
+        let right = Unit::new_normalize(forward.cross(&up));
+
         Self {
             pos,
             tar,
-            forward: Unit::new_normalize(tar - pos),
+            forward,
+            up,
+            right,
             fov,
             res,
         }
