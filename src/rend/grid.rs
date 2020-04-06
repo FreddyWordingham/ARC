@@ -1,8 +1,8 @@
 //! Grid implementation.
 
 use crate::{
-    geom::{Aabb, Collide, SmoothTriangle},
-    rend::{settings::Grid as GridSettings, Group, Scene},
+    geom::{Aabb, Collide, Ray, SmoothTriangle, Trace},
+    rend::{settings::Grid as GridSettings, Group, Hit, Scan, Scene},
 };
 use nalgebra::Point3;
 
@@ -199,5 +199,46 @@ impl<'a> Grid<'a> {
     #[must_use]
     pub fn ave_leaf_tris(&self) -> f64 {
         self.num_tri_refs() as f64 / self.num_leaf_cells() as f64
+    }
+
+    /// Scan for hits within the cell.
+    #[inline]
+    #[must_use]
+    pub fn hit_scan(&self, ray: &Ray) -> Scan {
+        match self {
+            Self::Leaf { boundary, tris } => {
+                let mut nearest: Option<Hit> = None;
+                for (group, tri) in tris {
+                    if let Some((dist, norm)) = tri.dist_norm(ray) {
+                        if nearest.is_none()
+                            || (nearest
+                                .as_ref()
+                                .expect("Failed to resolve hit scan.")
+                                .dist()
+                                > dist)
+                        {
+                            nearest = Some(Hit::new(*group, dist, norm));
+                        }
+                    }
+                }
+
+                let boundary_dist = boundary.dist(ray).expect("Ray has escaped cell.");
+                if let Some(hit) = nearest {
+                    if hit.dist() < boundary_dist {
+                        return Scan::new_surface_scan(hit);
+                    }
+                }
+
+                Scan::new_boundary_scan(boundary_dist)
+            }
+            Self::Empty { boundary } => Scan::new_boundary_scan(
+                boundary
+                    .dist(ray)
+                    .expect("Could not determine boundary distance."),
+            ),
+            Self::Root { .. } | Self::Branch { .. } => {
+                panic!("Should not be performing hit scans on branching cells!");
+            }
+        }
     }
 }
