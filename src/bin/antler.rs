@@ -4,12 +4,12 @@ use arc::{
     args, columns,
     file::Load,
     fmt,
-    rend::{settings::Scene, Grid, Settings},
+    rend::{settings::Scene as SceneSettings, Grid, Scene, Settings},
     util::{exec, init},
     values,
 };
 use attr::form_load;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// Column width.
 const COL_WIDTH: usize = 48;
@@ -34,25 +34,9 @@ fn main() {
     let params = Parameters::load(&params_path);
 
     fmt::sub_section("Scene");
-    let scene_path = in_dir.join(&format!("scenes/{}.json", params.render.scene()));
-    values!(2 * COL_WIDTH, scene_path.display());
-    let scene = Scene::load(&scene_path).build(&in_dir.join("meshes"));
-    values!(
-        COL_WIDTH,
-        scene.sun_pos(),
-        scene.boundary().mins(),
-        scene.boundary().maxs(),
-        scene.groups().len(),
-        scene.total_tris()
-    );
-    println!("Group triangle breakdown...");
-    fmt::values(
-        COL_WIDTH,
-        scene
-            .groups()
-            .keys()
-            .map(|group| (group, scene.group_tris(*group))),
-    );
+    let scene = load_scene(&in_dir, &params);
+
+    fmt::sub_section("Grid");
     let grid = Grid::new_root(params.render.grid(), &scene);
     values!(
         COL_WIDTH,
@@ -86,4 +70,31 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     values!(2 * COL_WIDTH, in_dir.display(), out_dir.display());
 
     (in_dir, out_dir, params_filename)
+}
+
+/// Load the rendering scene.
+fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
+    let scene_path = in_dir.join(&format!("scenes/{}.json", params.render.scene()));
+    values!(2 * COL_WIDTH, scene_path.display());
+
+    let scene = SceneSettings::load(&scene_path).build(&in_dir.join("meshes"));
+    values!(
+        COL_WIDTH,
+        scene.sun_pos(),
+        scene.boundary().mins(),
+        scene.boundary().maxs(),
+        scene.groups().len(),
+        scene.total_tris()
+    );
+
+    println!("Group triangle breakdown...");
+    fmt::values(
+        COL_WIDTH,
+        scene
+            .groups()
+            .keys()
+            .map(|group| (group, scene.group_tris(*group))),
+    );
+
+    scene
 }
