@@ -38,6 +38,18 @@ impl AspectRatio {
             Self::IPhoneXS => 375.0 / 81.0,
         }
     }
+
+    /// Determine a resolution for the target number of pixels.
+    pub fn resolution(&self, total: usize) -> (usize, usize) {
+        debug_assert!(total > 0);
+
+        let ratio = self.ratio();
+
+        let nx = (total as f64 * self.ratio()).sqrt();
+        let ny = nx / ratio;
+
+        (nx.ceil() as usize, ny.ceil() as usize)
+    }
 }
 
 impl Display for AspectRatio {
