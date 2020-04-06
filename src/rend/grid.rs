@@ -41,4 +41,11 @@ pub enum Grid<'a> {
     },
 }
 
-impl<'a> Grid<'a> {}
+impl<'a> Grid<'a> {
+    /// Construct a new grid.
+    #[inline]
+    #[must_use]
+    pub fn new_root() -> Self {
+        unimplemented!()
+    }
+}
