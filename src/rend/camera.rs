@@ -2,7 +2,6 @@
 
 use crate::access;
 use nalgebra::{Point3, Unit, Vector3};
-use std::fmt::{Display, Formatter, Result};
 
 /// Image building structure.
 pub struct Camera {
@@ -24,16 +23,5 @@ impl Camera {
             pos,
             forward: Unit::new_normalize(tar - pos),
         }
-    }
-}
-
-impl Display for Camera {
-    fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "{:>30} : {}", "camera position", self.pos)?;
-        writeln!(
-            fmt,
-            "{:>30} : {{{}, {}, {}}}",
-            "forward direction", self.forward.x, self.forward.y, self.forward.z,
-        )
     }
 }

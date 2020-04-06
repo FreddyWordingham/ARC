@@ -7,7 +7,6 @@ use self::{lighting_weights::*, shadow_weights::*};
 
 use crate::access;
 use attr::json;
-use std::fmt::{Display, Formatter, Result};
 
 /// Shader settings.
 #[json]
@@ -21,13 +20,4 @@ pub struct Shader {
 impl Shader {
     access!(light_weights, LightingWeights);
     access!(shadow_weights, ShadowWeights);
-}
-
-impl Display for Shader {
-    fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "{:>30} :", "lighting sub-settings")?;
-        write!(fmt, "{}", self.light_weights)?;
-        writeln!(fmt, "{:>30} :", "shadow sub-settings")?;
-        write!(fmt, "{}", self.shadow_weights)
-    }
 }

@@ -2,7 +2,6 @@
 
 use crate::clone;
 use attr::json;
-use std::fmt::{Display, Formatter, Result};
 
 /// Shadowing weights settings.
 #[json]
@@ -19,12 +18,4 @@ impl ShadowWeights {
     clone!(direct, f64);
     clone!(local, f64);
     clone!(ambient, f64);
-}
-
-impl Display for ShadowWeights {
-    fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "{:>30} : {}", "direct scalar", self.direct)?;
-        writeln!(fmt, "{:>30} : {}", "local scalar", self.local)?;
-        writeln!(fmt, "{:>30} : {}", "ambient scalar", self.ambient)
-    }
 }
