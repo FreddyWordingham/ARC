@@ -53,28 +53,53 @@ pub fn title(title: &str) {
     println!("  {}", "\u{2588}".repeat(right_bar));
 }
 
+/// Print a closing bar.
+#[inline]
+pub fn end(message: &str) {
+    let message = message.to_lowercase();
+
+    let term_width = term_width();
+
+    let (left_bar, right_bar) = if term_width < ((message.len() * 2) + 11) {
+        (4, 4)
+    } else {
+        let left_bar = (term_width - (message.len() * 2) - 3) / 2;
+        (left_bar, term_width - (message.len() * 2) - 3 - left_bar)
+    };
+
+    println!();
+    println!();
+    print!("{} ", "\u{2588}".repeat(left_bar));
+
+    for (pos, ch) in message.chars().enumerate() {
+        match pos % 6 {
+            0 => print!(" {}", format!("{}", ch).bright_red().bold()),
+            1 => print!(" {}", format!("{}", ch).bright_yellow().bold()),
+            2 => print!(" {}", format!("{}", ch).bright_green().bold()),
+            3 => print!(" {}", format!("{}", ch).bright_cyan().bold()),
+            4 => print!(" {}", format!("{}", ch).bright_blue().bold()),
+            5 => print!(" {}", format!("{}", ch).bright_magenta().bold()),
+            _ => unreachable!(),
+        }
+    }
+
+    println!("  {}", "\u{2588}".repeat(right_bar));
+}
+
 /// Print a section bar.
 #[inline]
 pub fn section(title: &str) {
-    let term_width = term_width();
-
-    print!("\n====");
-
-    match unsafe { SECTION } % 6 {
-        0 => print!(" {}", title.bright_red().bold()),
-        1 => print!(" {}", title.bright_yellow().bold()),
-        2 => print!(" {}", title.bright_green().bold()),
-        3 => print!(" {}", title.bright_cyan().bold()),
-        4 => print!(" {}", title.bright_blue().bold()),
-        5 => print!(" {}", title.bright_magenta().bold()),
-        _ => unreachable!(),
-    }
     unsafe {
         SECTION += 1;
     }
 
-    let mut cur_len = 5 + title.len();
+    println!();
+    println!();
+    print!("====");
+    print!(" {}", colour(title).bold());
 
+    let term_width = term_width();
+    let mut cur_len = 5 + title.len();
     if cur_len >= term_width {
         println!();
         return;
@@ -93,17 +118,21 @@ pub fn section(title: &str) {
 /// Print a sub-section bar.
 #[inline]
 pub fn sub_section(title: &str) {
-    print!("\n----");
+    println!();
+    println!("---- {} ----", colour(title));
+}
 
+/// Colour a given string with the appropriate section colour.
+#[inline]
+#[must_use]
+fn colour(string: &str) -> String {
     match unsafe { SECTION } % 6 {
-        0 => print!(" {}", title.bright_red()),
-        1 => print!(" {}", title.bright_yellow()),
-        2 => print!(" {}", title.bright_green()),
-        3 => print!(" {}", title.bright_cyan()),
-        4 => print!(" {}", title.bright_blue()),
-        5 => print!(" {}", title.bright_magenta()),
+        0 => format!("{}", string.bright_magenta()),
+        1 => format!("{}", string.bright_red()),
+        2 => format!("{}", string.bright_yellow()),
+        3 => format!("{}", string.bright_green()),
+        4 => format!("{}", string.bright_cyan()),
+        5 => format!("{}", string.bright_blue()),
         _ => unreachable!(),
     }
-
-    println!("----");
 }

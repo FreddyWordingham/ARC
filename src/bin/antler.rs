@@ -37,6 +37,8 @@ fn main() {
 
     banner::section("Input");
     let (_params, _scene, _shader, _palette) = input(&in_dir, &params_filename);
+
+    banner::end("Simulation complete");
 }
 
 /// Get the directories.
