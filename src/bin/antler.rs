@@ -12,7 +12,7 @@ use attr::form_load;
 use std::path::PathBuf;
 
 /// Column width.
-const COL_WIDTH: usize = 40;
+const COL_WIDTH: usize = 48;
 
 /// Input parameters.
 #[form_load]
@@ -40,6 +40,8 @@ fn main() {
     values!(
         COL_WIDTH,
         scene.sun_pos(),
+        scene.boundary().mins(),
+        scene.boundary().maxs(),
         scene.groups().len(),
         scene.total_tris()
     );
@@ -51,7 +53,15 @@ fn main() {
             .keys()
             .map(|group| (group, scene.group_tris(*group))),
     );
-    let _grid = Grid::new_root(params.render.grid(), &scene);
+    let grid = Grid::new_root(params.render.grid(), &scene);
+    values!(
+        COL_WIDTH,
+        grid.max_depth(),
+        grid.num_cells(),
+        grid.num_leaf_cells(),
+        grid.num_tri_refs(),
+        grid.ave_leaf_tris()
+    );
 
     // /// Build the images.
     // #[inline]
