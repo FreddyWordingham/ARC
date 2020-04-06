@@ -1,5 +1,8 @@
 //! Value reporting macro.
 
+use crate::fmt::columns;
+use std::fmt::Display;
+
 /// Width allocated to value name printing.
 pub const NAME_WIDTH: usize = 24;
 
@@ -15,4 +18,27 @@ macro_rules! values {
             ),*
         );
     };
+}
+
+/// Print a given iterator of name-value pairs into equally spaced columns.
+#[inline]
+pub fn values<I, T, S>(col_width: usize, values: I)
+where
+    I: IntoIterator<Item = (T, S)>,
+    T: Display,
+    S: Display,
+{
+    let val_width = col_width - NAME_WIDTH - 3;
+    columns(
+        col_width,
+        values.into_iter().map(|(name, value)| {
+            format!(
+                "{:>nw$} : {:<vw$}",
+                name,
+                value,
+                nw = NAME_WIDTH,
+                vw = val_width
+            )
+        }),
+    );
 }

@@ -43,9 +43,13 @@ fn main() {
         scene.groups().len(),
         scene.total_tris()
     );
-    fmt::columns(
+    println!("Group triangle breakdown...");
+    fmt::values(
         COL_WIDTH,
-        scene.groups().keys().map(|k| scene.group_tris(*k)),
+        scene
+            .groups()
+            .keys()
+            .map(|group| (group, scene.group_tris(*group))),
     );
 
     // /// Build the grid.
