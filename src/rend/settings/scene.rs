@@ -1,9 +1,14 @@
 //! Scene input settings implementation.
 
-use crate::{access, file::Transform, rend::Group};
+use crate::{
+    access,
+    file::{Load, Transform as FileTransform},
+    geom::{Mesh, Transform},
+    rend::Group,
+};
 use attr::json;
 use nalgebra::Point3;
-use std::path::Path;
+use std::{collections::BTreeMap, path::Path};
 
 /// Scene settings.
 #[allow(clippy::type_complexity)]
@@ -12,17 +17,35 @@ pub struct Scene {
     /// Sun position.
     sun_pos: Point3<f64>,
     /// Traceable surface groups.
-    groups: Vec<(Group, Vec<(String, Option<Transform>)>)>,
+    groups: Vec<(Group, Vec<(String, Option<FileTransform>)>)>,
 }
 
 impl Scene {
     access!(sun_pos, Point3<f64>);
-    access!(groups, Vec<(Group, Vec<(String, Option<Transform>)>)>);
+    access!(groups, Vec<(Group, Vec<(String, Option<FileTransform>)>)>);
 
     /// Build a rendering scene.
     #[inline]
     #[must_use]
-    pub fn build(&self, _in_dir: &Path) -> crate::rend::Scene {
-        crate::rend::Scene::new()
+    pub fn build(&self, in_dir: &Path) -> crate::rend::Scene {
+        let mut surfs: BTreeMap<Group, Vec<_>> = BTreeMap::new();
+        for (group, meshes) in &self.groups {
+            for (name, transform) in meshes {
+                let path = in_dir.join(format!("{}.obj", name));
+                let mut mesh = Mesh::load(&path);
+
+                if let Some(transform) = transform {
+                    mesh.transform(&transform.build());
+                }
+
+                if let Some(entry) = surfs.get_mut(group) {
+                    entry.push(mesh);
+                } else {
+                    surfs.insert(*group, vec![mesh]);
+                }
+            }
+        }
+
+        crate::rend::Scene::new(self.sun_pos, surfs)
     }
 }

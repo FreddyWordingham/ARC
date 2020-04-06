@@ -37,20 +37,20 @@ impl Settings {
     #[inline]
     #[must_use]
     pub fn load_scene(&self, in_dir: &Path) -> RenderScene {
-        Scene::load(&in_dir.join(&self.scene)).build(in_dir)
+        Scene::load(&in_dir.join(&format!("{}.json", self.scene))).build(in_dir)
     }
 
     /// Build the grid.
     #[inline]
     #[must_use]
-    pub fn build_grid(&self, scene: &RenderScene) -> RenderGrid {
+    pub fn build_grid(&self, _scene: &RenderScene) -> RenderGrid {
         RenderGrid::new_root()
     }
 
     /// Build the images.
     #[inline]
     #[must_use]
-    pub fn build_images(&self) -> Vec<RenderImage> {
+    pub fn build_images(&self, _in_dir: &Path) -> Vec<RenderImage> {
         vec![]
     }
 
@@ -60,7 +60,7 @@ impl Settings {
     pub fn build(&self, in_dir: &Path) -> (RenderScene, RenderGrid, Vec<RenderImage>) {
         let scene = self.load_scene(in_dir);
         let grid = self.build_grid(&scene);
-        let images = self.build_images();
+        let images = self.build_images(in_dir);
 
         (scene, grid, images)
     }

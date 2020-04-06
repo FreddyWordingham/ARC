@@ -46,6 +46,7 @@ impl<'a> Grid<'a> {
     #[inline]
     #[must_use]
     pub fn new_root() -> Self {
+        println!("Can't build grid yet...");
         unimplemented!()
     }
 }

@@ -4,12 +4,12 @@ use arc::{
     args, columns,
     file::Load,
     fmt,
-    rend::{Grid, Image, Scene, Settings},
+    rend::Settings,
     util::{exec, init},
     values,
 };
 use attr::form_load;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 /// Column width.
 const COL_WIDTH: usize = 40;
@@ -27,9 +27,18 @@ fn main() {
     fmt::section("Initialisation");
     let (in_dir, _out_dir, params_filename) = init_dirs();
 
-    fmt::section("Input");
-    // let (_scene, _images) = input(&in_dir, &params_filename);
-    // input(&in_dir, &params_filename);
+    fmt::section("Loading");
+    fmt::sub_section("Parameters");
+    let params_path = in_dir.join(params_filename);
+    values!(2 * COL_WIDTH, params_path.display());
+    let params = Parameters::load(&params_path);
+    // fmt::sub_section("Scene");
+    // let scene = params.render.load_scene(&in_dir);
+    // fmt::sub_section("Grid");
+    // let _grid = params.render.build_grid(&scene);
+    // fmt::sub_section("Images");
+    // let _images = params.render.build_images(&in_dir);
+    let (_scene, _grid, _images) = params.render.build(&in_dir);
 
     // banner::end("Simulation complete");
 }
@@ -48,13 +57,3 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
 
     (in_dir, out_dir, params_filename)
 }
-
-// /// Load the scene and images.
-// fn input(in_dir: &Path, params_filename: &str) -> (Scene, Grid<'a>, Vec<Image>) {
-//     fmt::sub_section("Parameters");
-//     let params_path = in_dir.join(params_filename);
-//     values!(2 * COL_WIDTH, params_path.display());
-//     let params = Parameters::load(&params_path);
-
-//     params.render.build(in_dir)
-// }
