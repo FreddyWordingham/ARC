@@ -19,5 +19,9 @@ pub fn cols<T: Display>(data: &[T], num_cols: usize, col_width: usize) -> String
         }
     }
 
+    if data.len() % num_cols == 0 {
+        output.pop();
+    }
+
     output
 }

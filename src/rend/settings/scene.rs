@@ -33,7 +33,7 @@ impl Display for Scene {
                 format!("group [{:^3}]", group),
                 meshes.len()
             )?;
-            write!(fmt, "{}", format::cols(&names, 4, 24))?;
+            writeln!(fmt, "{}", format::cols(&names, 4, 24))?;
         }
 
         Ok(())
