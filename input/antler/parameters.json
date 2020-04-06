@@ -1,8 +1,8 @@
 {
     "render": {
         "grid": {
-            "tar_tris": 10,
-            "max_depth": 8,
+            "tar_tris": 0,
+            "max_depth": 4,
             "padding": 0.01
         },
         "scene": "piece",
