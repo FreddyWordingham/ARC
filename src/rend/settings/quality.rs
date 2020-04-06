@@ -8,7 +8,7 @@ use attr::json;
 pub struct Quality {
     /// Total image pixels.
     total_pixels: usize,
-    /// Super samples.
+    /// Super sampling power.
     super_samples: usize,
     /// Depth of field samples.
     dof_samples: usize,
@@ -26,7 +26,7 @@ impl Quality {
     #[inline]
     #[must_use]
     pub fn samples_per_pixel(&self) -> usize {
-        self.super_samples * self.dof_samples * self.shadow_samples
+        self.super_samples.pow(2) * self.dof_samples * self.shadow_samples
     }
 
     /// Calculate the total number of samples expected.

@@ -131,6 +131,7 @@ pub fn load_image_settings(in_dir: &Path, image: &ImageSettings) -> Image {
         image.fov().to_radians(),
         image.aspect_ratio(),
         quality.total_pixels(),
+        quality.super_samples(),
     );
 
     let image = Image::new(image.aspect_ratio(), quality, shader, palette, camera);
