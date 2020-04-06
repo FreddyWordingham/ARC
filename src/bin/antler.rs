@@ -41,11 +41,10 @@ fn main() {
 
     fmt::section("Initialisation");
     let (in_dir, out_dir, params_filename) = init_dirs();
-    columns!(COL_WIDTH, "--0--", "--1--", "--2--", "--3--");
+    // columns!(COL_WIDTH, "--0--", "--1--", "--2--", "--3--");
     values!(COL_WIDTH, "bs", "cheese");
-    values!(COL_WIDTH, "bs", "c", "pies");
+    values!(COL_WIDTH, "bs", "cheese", "pies");
     values!(COL_WIDTH, "bs", "cheese");
-    values!(COL_WIDTH, in_dir.display(), out_dir.display());
 
     fmt::section("Input");
     // let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
