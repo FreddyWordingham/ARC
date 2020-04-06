@@ -1,6 +1,9 @@
 //! Palette colours input settings implementation.
 
-use crate::{access, rend::Group};
+use crate::{
+    access,
+    rend::{image::Palette as ImagePalette, Group},
+};
 use attr::json;
 
 /// Palette settings.
@@ -12,4 +15,11 @@ pub struct Palette {
 
 impl Palette {
     access!(cols, Vec<(Group, Vec<[f64; 4]>)>);
+
+    /// Build a complete instance.
+    #[inline]
+    #[must_use]
+    pub fn build(&self) -> ImagePalette {
+        ImagePalette::new()
+    }
 }

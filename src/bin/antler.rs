@@ -4,7 +4,13 @@ use arc::{
     args, columns,
     file::Load,
     fmt,
-    rend::{settings::Scene as SceneSettings, Grid, Scene, Settings},
+    rend::{
+        settings::{
+            Image as ImageSettings, Palette as PaletteSettings, Quality as QualitySettings,
+            Scene as SceneSettings, Shader as ShaderSettings,
+        },
+        Grid, Scene, Settings,
+    },
     util::{exec, init},
     values,
 };
@@ -37,14 +43,13 @@ fn main() {
     fmt::sub_section("Grid");
     let _grid = build_grid(&params, &scene);
 
-    // /// Build the images.
-    // #[inline]
-    // #[must_use]
-    // pub fn build_images(&self, _in_dir: &Path) -> Vec<RenderImage> {
-    //     vec![]
-    // }
+    fmt::section("Rendering");
+    for (name, image) in params.render.images() {
+        fmt::sub_section(name);
+        let (_quality, _shader, _palette) = load_image_settings(&in_dir, &image);
+    }
 
-    // banner::end("Simulation complete");
+    fmt::section("Finished");
 }
 
 /// Get the directories.
@@ -103,4 +108,24 @@ fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
     );
 
     grid
+}
+
+/// Load the image settings.
+pub fn load_image_settings(
+    in_dir: &Path,
+    image: &ImageSettings,
+) -> (QualitySettings, ShaderSettings, PaletteSettings) {
+    fmt::sub_sub_section("quality");
+    let quality_path = in_dir.join(format!("quality/{}.json", image.quality()));
+    let quality = QualitySettings::load(&quality_path);
+
+    fmt::sub_sub_section("shader");
+    let shader_path = in_dir.join(format!("shaders/{}.json", image.shader()));
+    let shader = ShaderSettings::load(&shader_path);
+
+    fmt::sub_sub_section("palette");
+    let palette_path = in_dir.join(format!("palettes/{}.json", image.palette()));
+    let palette = PaletteSettings::load(&palette_path);
+
+    (quality, shader, palette)
 }
