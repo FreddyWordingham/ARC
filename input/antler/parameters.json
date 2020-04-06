@@ -14,6 +14,13 @@
             "fov": 60.0,
             "aspect_ratio": "Square",
             "quality": "quality/test"
+        },
+        "img_1": {
+            "cam_pos": [0.0, 0.0, 3.0],
+            "tar_pos": [1.0, 0.0, 3.0],
+            "fov": 90.0,
+            "aspect_ratio": "Square",
+            "quality": "quality/test"
         }
     }
 }

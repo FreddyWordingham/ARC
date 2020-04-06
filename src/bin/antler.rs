@@ -64,6 +64,7 @@ fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Pa
     report!(params.grid, "Grid settings");
     report!(params.images.len(), "Total images");
     for (name, img) in &params.images {
+        banner::sub_section(&format!("Image {}", name));
         report!(img, name);
         let qual_path = in_dir.join(format!("{}.json", img.quality()));
         report!(qual_path.display(), "Loading quality file");
