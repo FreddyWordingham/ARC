@@ -1,0 +1,11 @@
+{
+    "sun_pos": [50.0, 100.0, 200.0],
+    "groups": [
+        [0, [
+            ["piece_cube", null],
+            ["piece_sphere_sml", null],
+            ["piece_sphere_med", null],
+            ["piece_sphere_lrg", null]
+        ]]
+    ]
+}

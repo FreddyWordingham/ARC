@@ -1,7 +1,7 @@
 //! Grid implementation.
 
 use crate::{
-    geom::{Aabb, SmoothTriangle},
+    geom::{Aabb, Collide, SmoothTriangle},
     rend::{settings::Grid as GridSettings, Group, Scene},
 };
 use nalgebra::Point3;
@@ -46,10 +46,8 @@ impl<'a> Grid<'a> {
     /// Construct a new grid.
     #[inline]
     #[must_use]
-    pub fn new_root(settings: &GridSettings, scene: &Scene) -> Self {
-        println!("Can't build grid yet...");
-
-        let mut boundary = scene.boundary();
+    pub fn new_root(settings: &GridSettings, scene: &'a Scene) -> Self {
+        let mut boundary = scene.boundary().clone();
         boundary.expand(settings.padding());
 
         let mut tris = Vec::new();

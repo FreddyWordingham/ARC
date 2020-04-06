@@ -5,25 +5,25 @@
             "max_depth": 8,
             "padding": 0.01
         },
-        "scene": "scenes/riverside",
+        "scene": "piece",
         "images": {
             "img_0": {
-                "quality": "quality/test",
-                "shader": "shaders/sunny_day",
-                "palette": "palettes/grey",
+                "quality": "test",
+                "shader": "sunny_day",
+                "palette": "grey",
                 "aspect_ratio": "Square",
                 "fov": 60.0,
-                "cam_pos": [0.0, 0.0, 3.0],
-                "tar_pos": [1.0, 0.0, 3.0]
+                "cam_pos": [-3.0, 1.0, 13.0],
+                "tar_pos": [0.0, 0.0, 13.0]
             },
             "img_1": {
-                "quality": "quality/test",
-                "shader": "shaders/sunny_day",
-                "palette": "palettes/grey",
+                "quality": "test",
+                "shader": "sunny_day",
+                "palette": "grey",
                 "aspect_ratio": "Square",
                 "fov": 90.0,
-                "cam_pos": [0.0, 0.0, 3.0],
-                "tar_pos": [1.0, 0.0, 3.0]
+                "cam_pos": [-3.0, 1.0, 13.0],
+                "tar_pos": [0.0, 0.0, 13.0]
             }
         }
     }

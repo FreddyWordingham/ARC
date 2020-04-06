@@ -34,7 +34,7 @@ fn main() {
     let params = Parameters::load(&params_path);
 
     fmt::sub_section("Scene");
-    let scene_path = in_dir.join(&format!("{}.json", params.render.scene()));
+    let scene_path = in_dir.join(&format!("scenes/{}.json", params.render.scene()));
     values!(2 * COL_WIDTH, scene_path.display());
     let scene = Scene::load(&scene_path).build(&in_dir.join("meshes"));
     values!(
@@ -51,7 +51,7 @@ fn main() {
             .keys()
             .map(|group| (group, scene.group_tris(*group))),
     );
-    let grid = Grid::new_root(params.render.grid(), &scene);
+    let _grid = Grid::new_root(params.render.grid(), &scene);
 
     // /// Build the images.
     // #[inline]
