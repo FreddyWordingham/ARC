@@ -1,9 +1,6 @@
 //! Image input settings implementation.
 
-use crate::{
-    access, clone,
-    rend::{settings::Quality, AspectRatio},
-};
+use crate::{access, clone, rend::AspectRatio};
 use attr::json;
 use nalgebra::Point3;
 use std::fmt::{Display, Formatter, Result};
@@ -11,8 +8,8 @@ use std::fmt::{Display, Formatter, Result};
 /// Image settings.
 #[json]
 pub struct Image {
-    /// Quality level.
-    quality: Quality,
+    /// Quality preset.
+    quality: String,
     /// Position of the camera.
     cam_pos: Point3<f64>,
     /// Target of the camera.
@@ -24,7 +21,6 @@ pub struct Image {
 }
 
 impl Image {
-    clone!(quality, Quality);
     access!(cam_pos, Point3<f64>);
     access!(tar_pos, Point3<f64>);
     clone!(fov, f64);
@@ -34,7 +30,6 @@ impl Image {
 impl Display for Image {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         writeln!(fmt)?;
-        writeln!(fmt, "{:>30} : {}", "quality level", self.quality)?;
         writeln!(fmt, "{:>30} : {} [m]", "camera position", self.cam_pos)?;
         writeln!(fmt, "{:>30} : {} [m]", "max depth", self.tar_pos)?;
         writeln!(fmt, "{:>30} : {} [deg]", "field of view", self.fov)?;

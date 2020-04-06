@@ -40,6 +40,8 @@ impl AspectRatio {
     }
 
     /// Determine a resolution for the target number of pixels.
+    #[inline]
+    #[must_use]
     pub fn resolution(&self, total: usize) -> (usize, usize) {
         debug_assert!(total > 0);
 
