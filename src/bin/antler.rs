@@ -56,6 +56,7 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
 /// Load the input parameters file and report the settings.
 fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Palette) {
     let params_path = in_dir.join(params_filename);
+    banner::sub_section("Parameters");
     report!(params_path.display(), "Loading parameters file");
     let params = Parameters::load(&params_path);
     report!(params.grid, "Grid settings");
@@ -65,16 +66,19 @@ fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Pa
         // report!(img, format!(""));
     }
 
+    banner::sub_section("Scene");
     let scene_path = in_dir.join(format!("{}.json", params.scene));
     report!(scene_path.display(), "Loading scene file");
     let scene = Scene::load(&scene_path);
     report!(scene, "Scene settings");
 
+    banner::sub_section("Shader");
     let shader_path = in_dir.join(format!("{}.json", params.shader));
     report!(shader_path.display(), "Loading shader file");
     let shader = Shader::load(&shader_path);
     report!(shader, "Shader settings");
 
+    banner::sub_section("Palette");
     let palette_path = in_dir.join(format!("{}.json", params.palette));
     report!(palette_path.display(), "Loading palette file");
     let palette = Palette::load(&palette_path);

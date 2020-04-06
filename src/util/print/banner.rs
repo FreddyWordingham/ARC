@@ -6,6 +6,9 @@ use terminal_size::terminal_size;
 /// Fallback terminal width if it cannot be determined at runtime.
 const FALLBACK_TERM_WIDTH: usize = 80;
 
+/// Index of the section.
+static mut SECTION: i32 = 0;
+
 /// Determine the terminal width.
 #[inline]
 #[must_use]
@@ -57,18 +60,16 @@ pub fn section(title: &str) {
 
     print!("\n====");
 
+    match unsafe { SECTION } % 6 {
+        0 => print!(" {}", title.bright_red().bold()),
+        1 => print!(" {}", title.bright_yellow().bold()),
+        2 => print!(" {}", title.bright_green().bold()),
+        3 => print!(" {}", title.bright_cyan().bold()),
+        4 => print!(" {}", title.bright_blue().bold()),
+        5 => print!(" {}", title.bright_magenta().bold()),
+        _ => unreachable!(),
+    }
     unsafe {
-        /// Index of the section.
-        static mut SECTION: i32 = 0;
-        match SECTION % 6 {
-            0 => print!(" {}", title.bright_red().bold()),
-            1 => print!(" {}", title.bright_yellow().bold()),
-            2 => print!(" {}", title.bright_green().bold()),
-            3 => print!(" {}", title.bright_cyan().bold()),
-            4 => print!(" {}", title.bright_blue().bold()),
-            5 => print!(" {}", title.bright_magenta().bold()),
-            _ => unreachable!(),
-        }
         SECTION += 1;
     }
 
@@ -87,4 +88,22 @@ pub fn section(title: &str) {
     }
 
     println!();
+}
+
+/// Print a sub-section bar.
+#[inline]
+pub fn sub_section(title: &str) {
+    print!("\n----");
+
+    match unsafe { SECTION } % 6 {
+        0 => print!(" {}", title.bright_red()),
+        1 => print!(" {}", title.bright_yellow()),
+        2 => print!(" {}", title.bright_green()),
+        3 => print!(" {}", title.bright_cyan()),
+        4 => print!(" {}", title.bright_blue()),
+        5 => print!(" {}", title.bright_magenta()),
+        _ => unreachable!(),
+    }
+
+    println!("----");
 }
