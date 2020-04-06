@@ -38,7 +38,16 @@ fn main() {
 
     banner::section("Initialisation");
     let (in_dir, _out_dir, params_filename) = init_dirs();
-
+    // use arc::file::Save;
+    // arc::rend::settings::Palette::new({
+    //     let mut map = std::collections::BTreeMap::new();
+    //     map.insert(
+    //         "3".to_string(),
+    //         vec![palette::Srgba::new(1.0, 0.0, 1.0, 1.0)],
+    //     );
+    //     map
+    // })
+    // .save(&in_dir.join("palette.json"));
     banner::section("Input");
     let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
 
@@ -105,7 +114,7 @@ fn input(in_dir: &Path, params_filename: &str) -> (Scene, Shader, Palette) {
     let palette_path = in_dir.join(format!("{}.json", params.palette));
     report!(palette_path.display(), "Loading palette file");
     let palette = Palette::load(&palette_path);
-    // info!("Palette settings:\n{}", palette); TODO
+    info!("Palette settings:\n{}", palette);
 
     (scene, shader, palette)
 }
