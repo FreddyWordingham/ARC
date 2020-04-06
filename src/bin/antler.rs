@@ -32,20 +32,10 @@ fn main() {
     let params_path = in_dir.join(params_filename);
     values!(2 * COL_WIDTH, params_path.display());
     let params = Parameters::load(&params_path);
-
     fmt::sub_section("Scene");
     let scene = load_scene(&in_dir, &params);
-
     fmt::sub_section("Grid");
-    let grid = Grid::new_root(params.render.grid(), &scene);
-    values!(
-        COL_WIDTH,
-        grid.max_depth(),
-        grid.num_cells(),
-        grid.num_leaf_cells(),
-        grid.num_tri_refs(),
-        grid.ave_leaf_tris()
-    );
+    let _grid = build_grid(&params, &scene);
 
     // /// Build the images.
     // #[inline]
@@ -97,4 +87,20 @@ fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
     );
 
     scene
+}
+
+/// Build the gridding scheme.
+fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
+    let grid = Grid::new_root(params.render.grid(), &scene);
+
+    values!(
+        COL_WIDTH,
+        grid.max_depth(),
+        grid.num_cells(),
+        grid.num_leaf_cells(),
+        grid.num_tri_refs(),
+        grid.ave_leaf_tris()
+    );
+
+    grid
 }
