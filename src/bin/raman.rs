@@ -80,7 +80,7 @@ pub fn main() {
         OpenOptions::new()
             .append(true)
             .open(&out_dir.join("Ramans.txt"))
-            .unwrap(),
+            .expect("Could not open file to append to."),
     );
     writeln!(file, "{}, {}", total_shifts, total_det_raman).unwrap();
 
