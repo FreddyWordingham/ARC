@@ -1,5 +1,6 @@
 //! Aspect-ratio implementation.
 
+use crate::rend::settings::Quality;
 use attr::json;
 use std::fmt::{Display, Formatter, Result};
 
@@ -30,6 +31,19 @@ impl AspectRatio {
             Self::Standard => (16, 9),
             Self::Widescreen => (43, 18),
             Self::IPhoneXS => (375, 812),
+        }
+    }
+
+    /// Generate a resolution for a given quality level.
+    #[inline]
+    #[must_use]
+    pub fn gen_resolution(&self, quality: Quality) -> (usize, usize) {
+        match quality {
+            Quality::Super => self.super_res(),
+            Quality::High => self.high_res(),
+            Quality::Medium => self.medium_res(),
+            Quality::Low => self.low_res(),
+            Quality::Potato => self.potato_res(),
         }
     }
 
@@ -72,7 +86,7 @@ impl AspectRatio {
     /// Generate a half-resolution (in each axis) quality resolution.
     #[inline]
     #[must_use]
-    pub fn mid_res(&self) -> (usize, usize) {
+    pub fn medium_res(&self) -> (usize, usize) {
         self.resolution(match self {
             Self::Square => 1024,
             Self::Classic => 512,
@@ -112,6 +126,18 @@ impl AspectRatio {
 impl Display for AspectRatio {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         let (rx, ry) = self.ratio();
-        write!(fmt, "{}:{}", rx, ry)
+        write!(
+            fmt,
+            "{} [{}:{}]",
+            match self {
+                Self::Square => "Square",
+                Self::Classic => "Classic",
+                Self::Standard => "Standard",
+                Self::Widescreen => "Widescreen",
+                Self::IPhoneXS => "IPhone XS",
+            },
+            rx,
+            ry
+        )
     }
 }

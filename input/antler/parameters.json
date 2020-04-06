@@ -6,5 +6,14 @@
     },
     "scene": "scenes/riverside",
     "shader": "shaders/sunny_day",
-    "palette": "palettes/grey"
+    "palette": "palettes/grey",
+    "images": {
+        "img_0": {
+            "cam_pos": [0.0, 0.0, 3.0],
+            "tar_pos": [1.0, 0.0, 3.0],
+            "fov": 60.0,
+            "aspect_ratio": "Square",
+            "quality": "High"
+        }
+    }
 }

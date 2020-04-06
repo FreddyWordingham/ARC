@@ -3,12 +3,15 @@
 use arc::{
     args,
     file::Load,
-    rend::settings::{Grid, Palette, Scene, Shader},
+    rend::settings::{Grid, Image, Palette, Scene, Shader},
     report,
     util::{banner, exec, init},
 };
 use attr::form;
-use std::path::{Path, PathBuf};
+use std::{
+    collections::BTreeMap,
+    path::{Path, PathBuf},
+};
 
 /// Input parameters.
 #[form]
@@ -21,6 +24,8 @@ struct Parameters {
     palette: String,
     /// Shader settings.
     shader: String,
+    /// Images.
+    images: BTreeMap<String, Image>,
 }
 
 fn main() {
@@ -53,6 +58,12 @@ fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Pa
     let params_path = in_dir.join(params_filename);
     report!(params_path.display(), "Loading parameters file");
     let params = Parameters::load(&params_path);
+    report!(params.grid, "Grid settings");
+    report!(params.images.len(), "Total images");
+    for (name, img) in &params.images {
+        report!(img, name);
+        // report!(img, format!(""));
+    }
 
     let scene_path = in_dir.join(format!("{}.json", params.scene));
     report!(scene_path.display(), "Loading scene file");

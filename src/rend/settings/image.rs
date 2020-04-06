@@ -1,9 +1,9 @@
 //! Image input settings implementation.
 
-use crate::{access, rend::AspectRatio};
+use crate::{access, clone, rend::AspectRatio};
 use attr::json;
-// use std::fmt::{Display, Formatter, Result};
 use nalgebra::Point3;
+use std::fmt::{Display, Formatter, Result};
 
 /// Image settings.
 #[json]
@@ -21,18 +21,16 @@ pub struct Image {
 impl Image {
     access!(cam_pos, Point3<f64>);
     access!(tar_pos, Point3<f64>);
+    clone!(fov, f64);
+    clone!(aspect_ratio, AspectRatio);
 }
 
-// impl Display for Image {
-//     fn fmt(&self, fmt: &mut Formatter) -> Result {
-//         writeln!(fmt)?;
-//         writeln!(fmt, "{:>30} : {}", "target triangles", self.tar_tris)?;
-//         writeln!(fmt, "{:>30} : {}", "max depth", self.max_depth)?;
-//         writeln!(
-//             fmt,
-//             "{:>30} : {}%",
-//             "collision detection padding",
-//             self.padding * 100.0
-//         )
-//     }
-// }
+impl Display for Image {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        writeln!(fmt)?;
+        writeln!(fmt, "{:>30} : {} [m]", "camera position", self.cam_pos)?;
+        writeln!(fmt, "{:>30} : {} [m]", "max depth", self.tar_pos)?;
+        writeln!(fmt, "{:>30} : {} [deg]", "field of view", self.fov)?;
+        writeln!(fmt, "{:>30} : {}", "aspect ratio", self.aspect_ratio)
+    }
+}
