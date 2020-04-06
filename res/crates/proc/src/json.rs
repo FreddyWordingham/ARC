@@ -36,6 +36,31 @@ pub fn form_derive_impl(input: TokenStream) -> TokenStream {
     TokenStream::from(output)
 }
 
+/// Implement `Load` trait using json parsing.
+#[inline]
+#[must_use]
+pub fn form_load_derive_impl(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as Item);
+
+    let name = match input {
+        Item::Struct(s) => s.ident,
+        Item::Enum(e) => e.ident,
+        Item::Union(u) => u.ident,
+        _ => panic!("Can not derive json for this item."),
+    };
+
+    let output = quote! {
+        impl arc::file::Load for #name {
+            #[inline]
+            fn load(path: &std::path::Path) -> Self {
+                arc::file::from_json(path)
+            }
+        }
+    };
+
+    TokenStream::from(output)
+}
+
 /// Implement `Save` and `Load` traits using json parsing.
 #[inline]
 #[must_use]
@@ -57,6 +82,32 @@ pub fn json_derive_impl(input: TokenStream) -> TokenStream {
             }
         }
 
+        impl crate::file::Load for #name {
+            #[inline]
+            #[must_use]
+            fn load(path: &std::path::Path) -> Self {
+                crate::file::from_json(path)
+            }
+        }
+    };
+
+    TokenStream::from(output)
+}
+
+/// Implement `Load` trait using json parsing.
+#[inline]
+#[must_use]
+pub fn json_load_derive_impl(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as Item);
+
+    let (name, _generics) = match input {
+        Item::Struct(s) => (s.ident, s.generics),
+        Item::Enum(e) => (e.ident, e.generics),
+        Item::Union(u) => (u.ident, u.generics),
+        _ => panic!("Can not derive json for this item."),
+    };
+
+    let output = quote! {
         impl crate::file::Load for #name {
             #[inline]
             #[must_use]

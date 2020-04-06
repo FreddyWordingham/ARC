@@ -1,26 +1,30 @@
 {
-    "grid": {
-        "tar_tris": 10,
-        "max_depth": 8,
-        "padding": 0.01
-    },
-    "scene": "scenes/riverside",
-    "shader": "shaders/sunny_day",
-    "palette": "palettes/grey",
-    "images": {
-        "img_0": {
-            "cam_pos": [0.0, 0.0, 3.0],
-            "tar_pos": [1.0, 0.0, 3.0],
-            "fov": 60.0,
-            "aspect_ratio": "Square",
-            "quality": "quality/test"
+    "render": {
+        "grid": {
+            "tar_tris": 10,
+            "max_depth": 8,
+            "padding": 0.01
         },
-        "img_1": {
-            "cam_pos": [0.0, 0.0, 3.0],
-            "tar_pos": [1.0, 0.0, 3.0],
-            "fov": 90.0,
-            "aspect_ratio": "Square",
-            "quality": "quality/test"
+        "scene": "scenes/riverside",
+        "images": {
+            "img_0": {
+                "quality": "quality/test",
+                "shader": "shaders/sunny_day",
+                "palette": "palettes/grey",
+                "aspect_ratio": "Square",
+                "fov": 60.0,
+                "cam_pos": [0.0, 0.0, 3.0],
+                "tar_pos": [1.0, 0.0, 3.0]
+            },
+            "img_1": {
+                "quality": "quality/test",
+                "shader": "shaders/sunny_day",
+                "palette": "palettes/grey",
+                "aspect_ratio": "Square",
+                "fov": 90.0,
+                "cam_pos": [0.0, 0.0, 3.0],
+                "tar_pos": [1.0, 0.0, 3.0]
+            }
         }
     }
 }

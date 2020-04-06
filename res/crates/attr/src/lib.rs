@@ -50,10 +50,26 @@ pub fn form(metadata: TokenStream, input: TokenStream) -> TokenStream {
     form_impl(&metadata, input)
 }
 
+/// Create the attribute macro form_load.
+#[proc_macro_attribute]
+#[inline]
+#[must_use]
+pub fn form_load(metadata: TokenStream, input: TokenStream) -> TokenStream {
+    form_load_impl(&metadata, input)
+}
+
 /// Create the attribute macro json.
 #[proc_macro_attribute]
 #[inline]
 #[must_use]
 pub fn json(metadata: TokenStream, input: TokenStream) -> TokenStream {
     json_impl(&metadata, input)
+}
+
+/// Create the attribute macro json_load.
+#[proc_macro_attribute]
+#[inline]
+#[must_use]
+pub fn json_load(metadata: TokenStream, input: TokenStream) -> TokenStream {
+    json_load_impl(&metadata, input)
 }

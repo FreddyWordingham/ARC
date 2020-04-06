@@ -2,7 +2,6 @@
 
 use crate::clone;
 use attr::json;
-use std::fmt::{Display, Formatter, Result};
 
 /// Quality settings.
 #[json]
@@ -35,24 +34,5 @@ impl Quality {
     #[must_use]
     pub fn total_samples(&self) -> usize {
         self.total_pixels * self.samples_per_pixel()
-    }
-}
-
-impl Display for Quality {
-    fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt, "{:>30} : {}", "super samples", self.super_samples)?;
-        writeln!(
-            fmt,
-            "{:>30} : {}",
-            "depth of field samples", self.dof_samples
-        )?;
-        writeln!(fmt, "{:>30} : {}", "shadow samples", self.shadow_samples)?;
-        writeln!(
-            fmt,
-            "{:>30} : {}",
-            "samples per pixel",
-            self.samples_per_pixel()
-        )?;
-        writeln!(fmt, "{:>30} : {}", "total samples", self.total_samples())
     }
 }

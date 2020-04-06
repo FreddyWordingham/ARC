@@ -4,36 +4,21 @@ use arc::{
     args, columns,
     file::Load,
     fmt,
-    rend::{
-        settings::{Grid, Image, Palette, Quality, Scene, Shader},
-        Camera,
-    },
-    report,
+    rend::Settings,
     util::{exec, init},
     values,
 };
-use attr::form;
-use std::{
-    collections::BTreeMap,
-    path::{Path, PathBuf},
-};
+use attr::form_load;
+use std::path::{Path, PathBuf};
 
 /// Column width.
 const COL_WIDTH: usize = 40;
 
 /// Input parameters.
-#[form]
+#[form_load]
 struct Parameters {
-    /// Grit settings.
-    grid: Grid,
-    /// Scene settings.
-    scene: String,
-    /// Colour settings.
-    palette: String,
-    /// Shader settings.
-    shader: String,
-    /// Images.
-    images: BTreeMap<String, Image>,
+    /// Rendering settings.
+    render: Settings,
 }
 
 fn main() {
@@ -72,7 +57,7 @@ fn input(in_dir: &Path, params_filename: &str) -> () {
     let params = Parameters::load(&params_path);
 
     fmt::sub_section("Grid");
-    let grid = params.grid;
+    let grid = params.render.grid();
     values!(COL_WIDTH, grid.tar_tris(), grid.max_depth(), grid.padding());
 
     // banner::sub_section("Images");
