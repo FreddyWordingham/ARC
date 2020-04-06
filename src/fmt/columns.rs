@@ -18,7 +18,10 @@ macro_rules! columns {
                     index += 1;
                 }
             )*
-            println!();
+
+            if index % num_cols != 0 {
+                println!();
+            }
         }
     };
 }
