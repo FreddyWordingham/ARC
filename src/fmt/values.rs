@@ -4,12 +4,14 @@ use crate::fmt::columns;
 use std::fmt::Display;
 
 /// Width allocated to value name printing.
-pub const NAME_WIDTH: usize = 24;
+pub const NAME_WIDTH: usize = 32;
 
 /// Report a list of values in evenly spaced columns.
 #[macro_export]
 macro_rules! values {
     ($col_width: expr, $($val: expr),*) => {
+        debug_assert!(($col_width * 2) > crate::fmt::NAME_WIDTH);
+
         let name_width = crate::fmt::NAME_WIDTH;
         let val_width = $col_width - crate::fmt::NAME_WIDTH - 3;
         crate::columns!($col_width,

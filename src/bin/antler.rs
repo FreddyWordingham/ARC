@@ -9,7 +9,7 @@ use arc::{
             Image as ImageSettings, Palette as PaletteSettings, Quality as QualitySettings,
             Scene as SceneSettings, Shader as ShaderSettings,
         },
-        Grid, Scene, Settings,
+        Camera, Grid, Image, Scene, Settings,
     },
     util::{exec, init},
     values,
@@ -44,9 +44,9 @@ fn main() {
     let _grid = build_grid(&params, &scene);
 
     fmt::section("Rendering");
-    for (name, image) in params.render.images() {
+    for (name, image_settings) in params.render.images() {
         fmt::sub_section(name);
-        let (_quality, _shader, _palette) = load_image_settings(&in_dir, &image);
+        let _image = load_image_settings(&in_dir, &image_settings);
     }
 
     fmt::section("Finished");
@@ -111,21 +111,68 @@ fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
 }
 
 /// Load the image settings.
-pub fn load_image_settings(
-    in_dir: &Path,
-    image: &ImageSettings,
-) -> (QualitySettings, ShaderSettings, PaletteSettings) {
-    fmt::sub_sub_section("quality");
+pub fn load_image_settings(in_dir: &Path, image: &ImageSettings) -> Image {
+    fmt::sub_sub_section("loading");
     let quality_path = in_dir.join(format!("quality/{}.json", image.quality()));
+    values!(2 * COL_WIDTH, quality_path.display());
     let quality = QualitySettings::load(&quality_path);
 
-    fmt::sub_sub_section("shader");
     let shader_path = in_dir.join(format!("shaders/{}.json", image.shader()));
+    values!(2 * COL_WIDTH, shader_path.display());
     let shader = ShaderSettings::load(&shader_path);
 
-    fmt::sub_sub_section("palette");
     let palette_path = in_dir.join(format!("palettes/{}.json", image.palette()));
-    let palette = PaletteSettings::load(&palette_path);
+    values!(2 * COL_WIDTH, palette_path.display());
+    let palette = PaletteSettings::load(&palette_path).build();
 
-    (quality, shader, palette)
+    let camera = Camera::new(
+        *image.cam_pos(),
+        *image.tar_pos(),
+        image.fov().to_radians(),
+        image.aspect_ratio(),
+        quality.total_pixels(),
+    );
+
+    let image = Image::new(image.aspect_ratio(), quality, shader, palette, camera);
+    values!(COL_WIDTH, image.aspect_ratio());
+
+    fmt::sub_sub_section("quality");
+    let qual = image.quality();
+    values!(
+        COL_WIDTH,
+        qual.total_pixels(),
+        qual.super_samples(),
+        qual.dof_samples(),
+        qual.shadow_samples(),
+        qual.samples_per_pixel(),
+        qual.total_samples()
+    );
+
+    fmt::sub_sub_section("shader");
+    let light_weights = image.shader().light_weights();
+    let shadow_weights = image.shader().shadow_weights();
+    values!(
+        COL_WIDTH,
+        light_weights.ambient(),
+        light_weights.diffuse(),
+        light_weights.specular(),
+        shadow_weights.direct(),
+        shadow_weights.local(),
+        shadow_weights.ambient()
+    );
+
+    fmt::sub_sub_section("palette");
+
+    fmt::sub_sub_section("camera");
+    let cam = image.camera();
+    values!(
+        COL_WIDTH,
+        cam.total_pixels(),
+        cam.res().0,
+        cam.res().1,
+        cam.pos(),
+        cam.tar()
+    );
+
+    image
 }
