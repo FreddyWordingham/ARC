@@ -51,7 +51,7 @@ fn main() {
             .keys()
             .map(|group| (group, scene.group_tris(*group))),
     );
-    let grid = Grid::new_root(params.render.grid());
+    let grid = Grid::new_root(params.render.grid(), &scene);
 
     // /// Build the images.
     // #[inline]
