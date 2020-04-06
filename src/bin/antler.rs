@@ -18,6 +18,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
+/// Column width.
+const COL_WIDTH: usize = 40;
+
 /// Input parameters.
 #[form]
 struct Parameters {
@@ -37,33 +40,12 @@ fn main() {
     fmt::title(&exec::name());
 
     fmt::section("Initialisation");
-    let (in_dir, _out_dir, params_filename) = init_dirs();
-
-    values!(
-        64,
-        "these are the numbers",
-        arc::fmt::term_width(),
-        "one",
-        2,
-        4 - 1,
-        -9 + 13,
-        "five",
-        "one",
-        2,
-        4 - 1,
-        -9 + 13,
-        "five",
-        "one",
-        2,
-        4 - 1,
-        -9 + 13,
-        "five",
-        "one",
-        2,
-        4 - 1,
-        -9 + 13,
-        "five"
-    );
+    let (in_dir, out_dir, params_filename) = init_dirs();
+    columns!(COL_WIDTH, "--0--", "--1--", "--2--", "--3--");
+    values!(COL_WIDTH, "bs", "cheese");
+    values!(COL_WIDTH, "bs", "c", "pies");
+    values!(COL_WIDTH, "bs", "cheese");
+    values!(COL_WIDTH, in_dir.display(), out_dir.display());
 
     fmt::section("Input");
     // let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
@@ -77,11 +59,11 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     args!(_bin_path: String;
         params_filename: String
     );
-    // values!(20, params_filename);
+    values!(COL_WIDTH, params_filename);
 
     fmt::sub_section("Directories");
     let (in_dir, out_dir) = init::io_dirs(None, None);
-    // values!(20, in_dir.display(), out_dir.display());
+    values!(COL_WIDTH * 2, in_dir.display(), out_dir.display());
 
     (in_dir, out_dir, params_filename)
 }
