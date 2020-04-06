@@ -2,7 +2,7 @@
 
 use crate::{
     geom::{Aabb, SmoothTriangle},
-    rend::Group,
+    rend::{settings::Grid as GridSettings, Group},
 };
 
 /// Grid cell enumeration.
@@ -45,7 +45,7 @@ impl<'a> Grid<'a> {
     /// Construct a new grid.
     #[inline]
     #[must_use]
-    pub fn new_root() -> Self {
+    pub fn new_root(settings: &GridSettings) -> Self {
         println!("Can't build grid yet...");
         unimplemented!()
     }

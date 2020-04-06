@@ -4,7 +4,7 @@ use arc::{
     args, columns,
     file::Load,
     fmt,
-    rend::{settings::Scene, Settings},
+    rend::{settings::Scene, Grid, Settings},
     util::{exec, init},
     values,
 };
@@ -51,13 +51,7 @@ fn main() {
             .keys()
             .map(|group| (group, scene.group_tris(*group))),
     );
-
-    // /// Build the grid.
-    // #[inline]
-    // #[must_use]
-    // pub fn build_grid(&self, _scene: &RenderScene) -> RenderGrid {
-    //     RenderGrid::new_root()
-    // }
+    let grid = Grid::new_root(params.render.grid());
 
     // /// Build the images.
     // #[inline]
