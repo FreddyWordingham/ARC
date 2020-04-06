@@ -30,9 +30,8 @@ impl Image {
 
 impl Display for Image {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {} [m]", "camera position", self.cam_pos)?;
-        writeln!(fmt, "{:>30} : {} [m]", "max depth", self.tar_pos)?;
+        writeln!(fmt, "{:>30} : {} [m]", "target position", self.tar_pos)?;
         writeln!(fmt, "{:>30} : {} [deg]", "field of view", self.fov)?;
         writeln!(fmt, "{:>30} : {}", "aspect ratio", self.aspect_ratio)
     }

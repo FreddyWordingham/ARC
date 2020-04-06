@@ -3,11 +3,15 @@
 use arc::{
     args,
     file::Load,
-    rend::settings::{Grid, Image, Palette, Quality, Scene, Shader},
+    rend::{
+        settings::{Grid, Image, Palette, Quality, Scene, Shader},
+        Camera,
+    },
     report,
     util::{banner, exec, init},
 };
 use attr::form;
+use log::info;
 use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
@@ -36,7 +40,7 @@ fn main() {
     let (in_dir, _out_dir, params_filename) = init_dirs();
 
     banner::section("Input");
-    let (_params, _scene, _shader, _palette) = input(&in_dir, &params_filename);
+    let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
 
     banner::end("Simulation complete");
 }
@@ -58,38 +62,50 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
 }
 
 /// Load the input parameters file and report the settings.
-fn input(in_dir: &Path, params_filename: &str) -> (Parameters, Scene, Shader, Palette) {
+fn input(in_dir: &Path, params_filename: &str) -> (Scene, Shader, Palette) {
     let params_path = in_dir.join(params_filename);
     banner::sub_section("Parameters");
     report!(params_path.display(), "Loading parameters file");
     let params = Parameters::load(&params_path);
-    report!(params.grid, "Grid settings");
+
+    banner::sub_section("Grid");
+    let grid = params.grid;
+    info!("Grid settings:\n{}", grid);
+
+    banner::sub_section("Images");
     report!(params.images.len(), "Total images");
+    let mut imgs = Vec::with_capacity(params.images.len());
     for (name, img) in &params.images {
-        banner::sub_section(&format!("Image {}", name));
-        report!(img, name);
+        info!("Image {}:\n{}", name, img);
+
+        let cam = Camera::new(*img.cam_pos(), *img.tar_pos());
+        info!("Camera:\n{}", cam);
+
         let qual_path = in_dir.join(format!("{}.json", img.quality()));
         report!(qual_path.display(), "Loading quality file");
         let qual = Quality::load(&qual_path);
-        report!(qual, "Quality settings");
+        info!("Quality settings:\n{}", qual);
+
+        imgs.push((cam, qual));
     }
 
     banner::sub_section("Scene");
     let scene_path = in_dir.join(format!("{}.json", params.scene));
     report!(scene_path.display(), "Loading scene file");
     let scene = Scene::load(&scene_path);
-    report!(scene, "Scene settings");
+    info!("Scene settings:\n{}", scene);
 
     banner::sub_section("Shader");
     let shader_path = in_dir.join(format!("{}.json", params.shader));
     report!(shader_path.display(), "Loading shader file");
     let shader = Shader::load(&shader_path);
-    report!(shader, "Shader settings");
+    info!("Shader settings:\n{}", shader);
 
     banner::sub_section("Palette");
     let palette_path = in_dir.join(format!("{}.json", params.palette));
     report!(palette_path.display(), "Loading palette file");
     let palette = Palette::load(&palette_path);
+    // info!("Palette settings:\n{}", palette); TODO
 
-    (params, scene, shader, palette)
+    (scene, shader, palette)
 }

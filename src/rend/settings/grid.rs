@@ -23,7 +23,6 @@ impl Grid {
 
 impl Display for Grid {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "target triangles", self.tar_tris)?;
         writeln!(fmt, "{:>30} : {}", "max depth", self.max_depth)?;
         writeln!(

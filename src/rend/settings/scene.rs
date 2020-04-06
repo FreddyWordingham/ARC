@@ -22,7 +22,6 @@ impl Scene {
 
 impl Display for Scene {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {} [m]", "sun position", self.sun_pos)?;
         writeln!(fmt, "{:>30} : {}", "number of groups", self.groups.len())?;
         for (group, meshes) in &self.groups {

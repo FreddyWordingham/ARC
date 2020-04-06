@@ -7,30 +7,39 @@ use std::fmt::{Display, Formatter, Result};
 /// Quality settings.
 #[json]
 pub struct Quality {
+    /// Total image pixels.
+    total_pixels: usize,
     /// Super samples.
-    super_samples: i32,
+    super_samples: usize,
     /// Depth of field samples.
-    dof_samples: i32,
+    dof_samples: usize,
     /// Shadow samples.
-    shadow_samples: i32,
+    shadow_samples: usize,
 }
 
 impl Quality {
-    clone!(super_samples, i32);
-    clone!(dof_samples, i32);
-    clone!(shadow_samples, i32);
+    clone!(total_pixels, usize);
+    clone!(super_samples, usize);
+    clone!(dof_samples, usize);
+    clone!(shadow_samples, usize);
 
     /// Calculate the number of samples expected per pixel.
     #[inline]
     #[must_use]
-    pub fn samples_per_pixel(&self) -> i32 {
+    pub fn samples_per_pixel(&self) -> usize {
         self.super_samples * self.dof_samples * self.shadow_samples
+    }
+
+    /// Calculate the total number of samples expected.
+    #[inline]
+    #[must_use]
+    pub fn total_samples(&self) -> usize {
+        self.total_pixels * self.samples_per_pixel()
     }
 }
 
 impl Display for Quality {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        writeln!(fmt)?;
         writeln!(fmt, "{:>30} : {}", "super samples", self.super_samples)?;
         writeln!(
             fmt,
@@ -43,6 +52,7 @@ impl Display for Quality {
             "{:>30} : {}",
             "samples per pixel",
             self.samples_per_pixel()
-        )
+        )?;
+        writeln!(fmt, "{:>30} : {}", "total samples", self.total_samples())
     }
 }
