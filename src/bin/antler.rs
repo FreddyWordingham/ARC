@@ -39,7 +39,7 @@ fn main() {
     fmt::section("Initialisation");
     let (in_dir, _out_dir, params_filename) = init_dirs();
 
-    columns!(
+    values!(
         64,
         arc::fmt::term_width(),
         "these are the numbers",
@@ -77,11 +77,11 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     args!(_bin_path: String;
         params_filename: String
     );
-    values!(params_filename);
+    // values!(20, params_filename);
 
     fmt::sub_section("Directories");
     let (in_dir, out_dir) = init::io_dirs(None, None);
-    values!(in_dir.display(), out_dir.display());
+    // values!(20, in_dir.display(), out_dir.display());
 
     (in_dir, out_dir, params_filename)
 }

@@ -1,32 +1,15 @@
 //! Value reporting macro.
 
-/// Report a set of value and their associated identifiers.
+/// Report a list of values in evenly spaced columns.
 #[macro_export]
 macro_rules! values {
-    ($($val: expr),*) => {
-        {
+    ($col_width: expr, $($val: expr),*) => {
+        let val_width = $col_width / 4;
+        let name_width = ($col_width / 2) - val_width - 1;
+        crate::columns!($col_width,
             $(
-                println!("{:>name_width$} : {:<val_width$}", stringify!($val), $val, name_width = 14, val_width = 15);
-            )*
-        }
+                format!("{:>nw$}:{:<vw$}", stringify!($val), $val, nw = name_width, vw = val_width)
+            ),*
+        );
     };
 }
-
-// /// Print to equally spaced name-value pairs in columns.
-// #[macro_export]
-// macro_rules! values {
-//     ($num_cols: expr, $total_width: expr, $($val: expr),*) => {
-//         {
-//             use std::fmt::Write;
-
-//             let col_width = $total_width / $num_cols;
-//             let name_width = col_width - 2;
-//             let val_width = col_width - 1;
-
-//             let mut string = String::new();
-//             $(write!(string, "{:>name_width$} : {:<val_width$}", $val, stringify!($val), name_width = name_width, val_width = val_width).expect("Failed to write to string buffer.");)*
-
-//             string
-//         }
-//     };
-// }

@@ -1,13 +1,13 @@
 //! Columns macro.
 
-/// Report a list of values in spaced columns.
+/// Report a list of values in evenly spaced columns.
 #[macro_export]
 macro_rules! columns {
     ($col_width: expr, $($val: expr),*) => {
         {
             use crate::fmt::term_width;
 
-            let num_cols = term_width() / $col_width;
+            let num_cols = (term_width() / $col_width).max(1);
             let mut index = 0;
             $(
                 {
