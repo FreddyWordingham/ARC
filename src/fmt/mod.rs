@@ -1,11 +1,10 @@
 //! Formatting module.
 
 mod banner;
-mod cols;
 mod columns;
 mod values;
 
-pub use self::{banner::*, cols::*, columns::*, values::*};
+pub use self::{banner::*, columns::*, values::*};
 
 use terminal_size::terminal_size;
 

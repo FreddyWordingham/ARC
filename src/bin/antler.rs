@@ -4,7 +4,7 @@ use arc::{
     args, columns,
     file::Load,
     fmt,
-    rend::Settings,
+    rend::{settings::Scene, Settings},
     util::{exec, init},
     values,
 };
@@ -32,13 +32,35 @@ fn main() {
     let params_path = in_dir.join(params_filename);
     values!(2 * COL_WIDTH, params_path.display());
     let params = Parameters::load(&params_path);
-    // fmt::sub_section("Scene");
-    // let scene = params.render.load_scene(&in_dir);
-    // fmt::sub_section("Grid");
-    // let _grid = params.render.build_grid(&scene);
-    // fmt::sub_section("Images");
-    // let _images = params.render.build_images(&in_dir);
-    let (_scene, _grid, _images) = params.render.build(&in_dir);
+
+    fmt::sub_section("Scene");
+    let scene_path = in_dir.join(&format!("{}.json", params.render.scene()));
+    values!(2 * COL_WIDTH, scene_path.display());
+    let scene = Scene::load(&scene_path).build(&in_dir.join("meshes"));
+    values!(
+        COL_WIDTH,
+        scene.sun_pos(),
+        scene.groups().len(),
+        scene.total_tris()
+    );
+    fmt::columns(
+        COL_WIDTH,
+        scene.groups().keys().map(|k| scene.group_tris(*k)),
+    );
+
+    // /// Build the grid.
+    // #[inline]
+    // #[must_use]
+    // pub fn build_grid(&self, _scene: &RenderScene) -> RenderGrid {
+    //     RenderGrid::new_root()
+    // }
+
+    // /// Build the images.
+    // #[inline]
+    // #[must_use]
+    // pub fn build_images(&self, _in_dir: &Path) -> Vec<RenderImage> {
+    //     vec![]
+    // }
 
     // banner::end("Simulation complete");
 }
