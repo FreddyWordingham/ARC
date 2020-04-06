@@ -2,8 +2,10 @@
 
 mod banner;
 mod cols;
+mod columns;
+mod values;
 
-pub use self::{banner::*, cols::*};
+pub use self::{banner::*, cols::*, columns::*, values::*};
 
 use terminal_size::terminal_size;
 

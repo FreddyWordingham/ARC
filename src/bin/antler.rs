@@ -1,7 +1,7 @@
 //! Antler rendering engine.
 
 use arc::{
-    args,
+    args, columns,
     file::Load,
     fmt,
     rend::{
@@ -10,6 +10,7 @@ use arc::{
     },
     report,
     util::{exec, init},
+    values,
 };
 use attr::form;
 use std::{
@@ -36,85 +37,54 @@ fn main() {
     fmt::title(&exec::name());
 
     fmt::section("Initialisation");
-    fmt::sub_section("Zero");
-    fmt::sub_sub_section("Beans");
-    fmt::sub_section("One");
-    fmt::sub_section("Two");
-    fmt::sub_sub_section("Beans");
-    fmt::sub_sub_section("Pies");
+    let (in_dir, _out_dir, params_filename) = init_dirs();
 
-    fmt::section("Part two");
-    fmt::sub_section("Zero");
-    fmt::sub_sub_section("Beans");
-    fmt::sub_section("One");
-    fmt::sub_section("Two");
-    fmt::sub_sub_section("Beans");
-    fmt::sub_sub_section("Pies");
-    // println!("{}", arc::cols!(4, 128, "one", "two"));
-    // println!(
-    //     "{}",
-    //     arc::cols!(
-    //         4,
-    //         128,
-    //         "one",
-    //         "two",
-    //         "three",
-    //         "four_is_super_long_haha",
-    //         "five",
-    //         "sex",
-    //         "seven",
-    //         "eight",
-    //         "nine",
-    //         "ten"
-    //     )
-    // );
-    // println!(
-    //     "{}",
-    //     arc::values!(
-    //         8,
-    //         208,
-    //         "one",
-    //         3 + 1,
-    //         10 + 2,
-    //         "ten",
-    //         arc::util::banner::term_width()
-    //     )
-    // );
-    // arc::cols!(4, "one", "two");
+    columns!(
+        64,
+        arc::fmt::term_width(),
+        "these are the numbers",
+        "one",
+        2,
+        4 - 1,
+        -9 + 13,
+        "five",
+        "one",
+        2,
+        4 - 1,
+        -9 + 13,
+        "five",
+        "one",
+        2,
+        4 - 1,
+        -9 + 13,
+        "five",
+        "one",
+        2,
+        4 - 1,
+        -9 + 13,
+        "five"
+    );
 
-    // banner::section("Initialisation");
-    // let (in_dir, _out_dir, params_filename) = init_dirs();
-    // // use arc::file::Save;
-    // // arc::rend::settings::Palette::new({
-    // //     let mut map = std::collections::BTreeMap::new();
-    // //     map.insert(
-    // //         "3".to_string(),
-    // //         vec![palette::Srgba::new(1.0, 0.0, 1.0, 1.0)],
-    // //     );
-    // //     map
-    // // })
-    // // .save(&in_dir.join("palette.json"));
-    // banner::section("Input");
+    fmt::section("Input");
     // let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
 
     // banner::end("Simulation complete");
 }
 
-// /// Get the directories.
-// fn init_dirs() -> (PathBuf, PathBuf, String) {
-//     banner::sub_section("Command line arguments");
-//     args!(_bin_path: String;
-//         params_filename: String
-//     );
-//     report!(params_filename, "parameters filename");
+/// Get the directories.
+fn init_dirs() -> (PathBuf, PathBuf, String) {
+    fmt::sub_section("Command line arguments");
+    args!(_bin_path: String;
+        params_filename: String
+    );
+    values!(params_filename);
 
-//     banner::sub_section("Directories");
-//     let (in_dir, out_dir) = init::io_dirs(None, None);
-//     report!(in_dir.display(), "input directory");
-//     report!(out_dir.display(), "output directory");
+    fmt::sub_section("Directories");
+    let (in_dir, out_dir) = init::io_dirs(None, None);
+    values!(in_dir.display(), out_dir.display());
 
-//     (in_dir, out_dir, params_filename)
-// }
+    (in_dir, out_dir, params_filename)
+}
 
 // /// Load the input parameters file and report the settings.
 // fn input(in_dir: &Path, params_filename: &str) -> (Scene, Shader, Palette) {
