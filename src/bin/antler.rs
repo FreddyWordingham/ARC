@@ -50,7 +50,7 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
 }
 
 /// Load the input parameters file and report the settings.
-fn input(in_dir: &Path, params_filename: &str) -> () {
+fn input(in_dir: &Path, params_filename: &str) {
     let params_path = in_dir.join(params_filename);
     fmt::sub_section("Parameters");
     values!(2 * COL_WIDTH, params_path.display());
@@ -96,5 +96,4 @@ fn input(in_dir: &Path, params_filename: &str) -> () {
     // info!("Palette settings:\n{}", palette);
 
     // (scene, shader, palette)
-    ()
 }
