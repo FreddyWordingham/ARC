@@ -36,22 +36,25 @@ fn main() {
     colog::init();
     banner::title(&exec::name());
 
-    banner::section("Initialisation");
-    let (in_dir, _out_dir, params_filename) = init_dirs();
-    // use arc::file::Save;
-    // arc::rend::settings::Palette::new({
-    //     let mut map = std::collections::BTreeMap::new();
-    //     map.insert(
-    //         "3".to_string(),
-    //         vec![palette::Srgba::new(1.0, 0.0, 1.0, 1.0)],
-    //     );
-    //     map
-    // })
-    // .save(&in_dir.join("palette.json"));
-    banner::section("Input");
-    let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
+    println!("{}", arc::cols!(4, 128, "one", "two"));
+    // arc::cols!(4, "one", "two");
 
-    banner::end("Simulation complete");
+    // banner::section("Initialisation");
+    // let (in_dir, _out_dir, params_filename) = init_dirs();
+    // // use arc::file::Save;
+    // // arc::rend::settings::Palette::new({
+    // //     let mut map = std::collections::BTreeMap::new();
+    // //     map.insert(
+    // //         "3".to_string(),
+    // //         vec![palette::Srgba::new(1.0, 0.0, 1.0, 1.0)],
+    // //     );
+    // //     map
+    // // })
+    // // .save(&in_dir.join("palette.json"));
+    // banner::section("Input");
+    // let (_scene, _shader, _palette) = input(&in_dir, &params_filename);
+
+    // banner::end("Simulation complete");
 }
 
 /// Get the directories.

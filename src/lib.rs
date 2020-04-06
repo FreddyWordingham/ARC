@@ -38,6 +38,7 @@
 pub mod chem;
 pub mod data;
 pub mod file;
+pub mod fmt;
 pub mod geom;
 pub mod list;
 pub mod math;
