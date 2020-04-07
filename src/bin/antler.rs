@@ -71,6 +71,7 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     (in_dir, out_dir, params_filename)
 }
 
+/// Load the parameters structure.
 fn load_parameters(in_dir: &Path, params_filename: &str) -> Parameters {
     fmt::sub_section("Parameters");
     let params_path = in_dir.join(params_filename);
@@ -213,9 +214,11 @@ pub fn build_camera(frame: &FrameSettings, quality: &QualitySettings) -> Camera 
 
     values!(
         COL_WIDTH,
-        camera.total_pixels(),
         camera.res().0,
         camera.res().1,
+        camera.total_pixels(),
+        camera.fov().0.to_degrees(),
+        camera.fov().1.to_degrees(),
         camera.pos(),
         camera.tar()
     );

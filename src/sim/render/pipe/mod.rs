@@ -23,13 +23,22 @@ pub fn colour(
     debug_assert!(bump_dist > 0.0);
 
     let grad_0 = Gradient::new(vec![
-        LinSrgba::new(0.0, 0.0, 0.0, 1.0),
-        LinSrgba::new(1.0, 1.0, 1.0, 1.0),
+        LinSrgba::new(1.0, 1.0, 0.0, 1.0),
+        LinSrgba::new(0.0, 1.0, 1.0, 1.0),
     ]);
 
-    if grid.boundary().hit(&ray) {
-        return LinSrgba::from(grad_0.get(1.0));
+    if let Some(dist) = grid.boundary().dist(&ray) {
+        let x = (dist - 10.0) / 10.0;
+
+        if x < 0.0 || x > 1.0 {
+            return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
+        }
+        return LinSrgba::from(grad_0.get(x as f32));
     }
+
+    // if let Some(hit) = grid.observe(ray, bump_dist) {
+    //     return LinSrgba::from(grad_0.get(1.0));
+    // }
 
     Srgba::new(0.2, 0.2, 0.2, 0.2).into_linear()
 }
