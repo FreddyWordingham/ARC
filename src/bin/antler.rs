@@ -20,6 +20,8 @@ use arc::{
     values,
 };
 use attr::form_load;
+use ndarray::Array2;
+use palette::LinSrgba;
 use std::path::{Path, PathBuf};
 
 /// Column width.
@@ -39,25 +41,16 @@ fn main() {
     let (in_dir, out_dir, params_filename) = init_dirs();
 
     fmt::section("Loading");
-    fmt::sub_section("Parameters");
-    let params_path = in_dir.join(params_filename);
-    values!(2 * COL_WIDTH, params_path.display());
-    let params = Parameters::load(&params_path);
-    fmt::sub_section("Scene");
+    let params = load_parameters(&in_dir, &params_filename);
     let scene = load_scene(&in_dir, &params);
-    fmt::sub_section("Grid");
     let grid = build_grid(&params, &scene);
 
     fmt::section("Rendering");
     for (name, frame_settings) in params.render.frames() {
         fmt::sub_section(name);
         let frame = load_frame_settings(&in_dir, &frame_settings);
-        fmt::sub_sub_section("Rendering");
         let img = render::image(&grid, &frame);
-        fmt::sub_sub_section("Saving");
-        let img_path = out_dir.join(format!("{}.png", name));
-        save::png(&img_path, &img);
-        println!("Frame {} saved at: {}", name, img_path.display());
+        save_frame(&out_dir, name, img);
     }
 
     fmt::section("Finished");
@@ -78,8 +71,17 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     (in_dir, out_dir, params_filename)
 }
 
+fn load_parameters(in_dir: &Path, params_filename: &str) -> Parameters {
+    fmt::sub_section("Parameters");
+    let params_path = in_dir.join(params_filename);
+    values!(2 * COL_WIDTH, params_path.display());
+
+    Parameters::load(&params_path)
+}
+
 /// Load the rendering scene.
 fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
+    fmt::sub_section("Scene");
     let scene_path = in_dir.join(&format!("scenes/{}.json", params.render.scene()));
     values!(2 * COL_WIDTH, scene_path.display());
 
@@ -107,6 +109,7 @@ fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
 
 /// Build the gridding scheme.
 fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
+    fmt::sub_section("Grid");
     println!("Building...");
     let grid = Grid::new_root(params.render.grid(), &scene);
 
@@ -210,4 +213,13 @@ pub fn build_camera(frame: &FrameSettings, quality: &QualitySettings) -> Camera 
     );
 
     camera
+}
+
+/// Save the frame as a png.
+pub fn save_frame(out_dir: &Path, name: &str, img: Array2<LinSrgba>) {
+    fmt::sub_sub_section("Saving");
+
+    let img_path = out_dir.join(format!("{}.png", name));
+    save::png(&img_path, &img);
+    println!("Frame {} saved at: {}", name, img_path.display());
 }
