@@ -3,8 +3,7 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-        {
+    "configurations": [{
             "type": "lldb",
             "request": "launch",
             "name": "Debug unit tests in library 'arc'",
@@ -63,15 +62,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'react'",
+            "name": "Debug executable 'diffusion'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=react",
+                    "--bin=diffusion",
                     "--package=arc"
                 ],
                 "filter": {
-                    "name": "react",
+                    "name": "diffusion",
                     "kind": "bin"
                 }
             },
@@ -81,16 +80,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'react'",
+            "name": "Debug unit tests in executable 'diffusion'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=react",
+                    "--bin=diffusion",
                     "--package=arc"
                 ],
                 "filter": {
-                    "name": "react",
+                    "name": "diffusion",
                     "kind": "bin"
                 }
             },
@@ -137,6 +136,43 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug executable 'raman'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=raman",
+                    "--package=arc"
+                ],
+                "filter": {
+                    "name": "raman",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'raman'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=raman",
+                    "--package=arc"
+                ],
+                "filter": {
+                    "name": "raman",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug executable 'main'",
             "cargo": {
                 "args": [
@@ -174,34 +210,34 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'photographer'",
+            "name": "Debug executable 'antler'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=photographer",
+                    "--bin=antler",
                     "--package=arc"
                 ],
                 "filter": {
-                    "name": "photographer",
+                    "name": "antler",
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": ["parameters.json"],
             "cwd": "${workspaceFolder}"
         },
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'photographer'",
+            "name": "Debug unit tests in executable 'antler'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=photographer",
+                    "--bin=antler",
                     "--package=arc"
                 ],
                 "filter": {
-                    "name": "photographer",
+                    "name": "antler",
                     "kind": "bin"
                 }
             },

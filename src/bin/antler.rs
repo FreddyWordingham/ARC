@@ -21,8 +21,10 @@ use arc::{
 };
 use attr::form_load;
 use palette::{Gradient, LinSrgba};
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 /// Column width.
 const COL_WIDTH: usize = 64;
