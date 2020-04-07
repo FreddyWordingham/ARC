@@ -60,5 +60,27 @@ impl Image {
     #[must_use]
     pub fn render(&self, _scene: &Scene, _grid: &Grid) -> Array2<LinSrgba> {
         Array2::default(self.camera.res())
+
+        // let pb = ParProgressBar::new("Rendering", total_frames as u64);
+        // let pb = Arc::new(Mutex::new(pb));
+
+        // let frames: Vec<usize> = (0..total_frames).collect();
+
+        // let frames: Vec<(usize, Array2<LinSrgba>)> = frames
+        //     .par_iter()
+        //     .map(|index| {
+        //         pb.lock().expect("Could not lock progress bar.").tick();
+        //         let frame = render_frame(*index, sett, cam, root, BUMP_DIST);
+        //         if cam.frame_saving() {
+        //             save::png(out_dir, &format!("{}_{}", name, index), frame.clone());
+        //         }
+        //         (*index, frame)
+        //     })
+        //     .collect();
+        // pb.lock()
+        //     .expect("Could not lock progress bar.")
+        //     .finish_with_message("Render complete.");
+
+        // stitch(cam, frames)
     }
 }
