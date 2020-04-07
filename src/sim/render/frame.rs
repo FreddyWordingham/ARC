@@ -54,17 +54,18 @@ impl Frame {
     #[must_use]
     pub fn gen_ray(
         &self,
-        xi: usize,
-        yi: usize,
+        coor: (usize, usize),
         sub_sample: usize,
         _depth_sample: usize,
         offset: f64,
     ) -> Ray {
-        debug_assert!(xi < self.camera.res().0);
-        debug_assert!(yi < self.camera.res().1);
+        debug_assert!(coor.0 < self.camera.res().0);
+        debug_assert!(coor.1 < self.camera.res().1);
         debug_assert!(sub_sample < self.quality.super_samples().pow(2));
         debug_assert!(offset >= 0.0);
         debug_assert!(offset <= (2.0 * PI));
+
+        let (xi, yi) = coor;
 
         let theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
         let phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);

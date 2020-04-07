@@ -80,10 +80,10 @@ fn render_section(index: usize, grid: &Grid, frame: &Frame, bump_dist: f64) -> A
         for yi in 0..section_res.1 {
             let ry = start.1 + yi;
 
-            for n in 0..super_samples {
+            for ss in 0..super_samples {
                 let offset = rng.gen_range(0.0, 2.0 * PI);
-                for m in 0..dof_samples {
-                    let ray = frame.gen_ray(rx, ry, n, m, offset);
+                for ds in 0..dof_samples {
+                    let ray = frame.gen_ray((rx, ry), ss, ds, offset);
 
                     *section
                         .get_mut((xi, yi))
