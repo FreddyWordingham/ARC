@@ -10,5 +10,5 @@
         "ambient": 0.2
     },
     "sun_pos": [-50.0, -20.0, 75.0],
-    "dof_radius": 1.0e-2
+    "dof_radius": 0.5e-1
 }
