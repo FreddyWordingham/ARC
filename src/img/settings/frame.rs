@@ -11,8 +11,8 @@ pub struct Frame {
     quality: String,
     /// Shader file.
     shader: String,
-    /// Palette file.
-    palette: String,
+    /// Colour scheme file.
+    scheme: String,
     /// Aspect ratio.
     aspect_ratio: AspectRatio,
     /// Horizontal field of view.
@@ -26,7 +26,7 @@ pub struct Frame {
 impl Frame {
     access!(quality, String);
     access!(shader, String);
-    access!(palette, String);
+    access!(scheme, String);
     clone!(aspect_ratio, AspectRatio);
     clone!(fov, f64);
     access!(cam_pos, Point3<f64>);

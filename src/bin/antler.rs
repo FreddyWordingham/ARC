@@ -7,24 +7,20 @@ use arc::{
     img::{
         save,
         settings::{
-            Frame as FrameSettings, Palette as PaletteSettings, Quality as QualitySettings,
-            Scene as SceneSettings, Shader as ShaderSettings,
+            Frame as FrameSettings, Quality as QualitySettings, Scene as SceneSettings,
+            Scheme as SchemeSettings, Shader as ShaderSettings,
         },
         Settings,
     },
     sim::{
         render,
-        render::{Camera, Frame, Grid, Group, Scene},
+        render::{Camera, Frame, Grid, Scene, Scheme},
     },
     util::{exec, init},
     values,
 };
 use attr::form_load;
-use palette::{Gradient, LinSrgba};
-use std::{
-    collections::HashMap,
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 /// Column width.
 const COL_WIDTH: usize = 64;
@@ -130,10 +126,10 @@ fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
 pub fn load_frame_settings(in_dir: &Path, frame: &FrameSettings) -> Frame {
     let quality = load_quality(in_dir, frame);
     let shader = load_shader(in_dir, frame);
-    let palette = load_palette(in_dir, frame);
+    let scheme = load_scheme(in_dir, frame);
     let camera = build_camera(frame, &quality);
 
-    Frame::new(frame.aspect_ratio(), quality, shader, palette, camera)
+    Frame::new(frame.aspect_ratio(), quality, shader, scheme, camera)
 }
 
 /// Load quality settings.
@@ -178,18 +174,18 @@ pub fn load_shader(in_dir: &Path, frame: &FrameSettings) -> ShaderSettings {
     shader
 }
 
-/// Load a colour palette.
-pub fn load_palette(in_dir: &Path, frame: &FrameSettings) -> HashMap<Group, Gradient<LinSrgba>> {
-    fmt::sub_sub_section("palette");
-    let palette_path = in_dir.join(format!("palettes/{}.json", frame.palette()));
-    values!(2 * COL_WIDTH, palette_path.display());
-    let palette = PaletteSettings::load(&palette_path).build();
+/// Load a colour scheme.
+pub fn load_scheme(in_dir: &Path, frame: &FrameSettings) -> Scheme {
+    fmt::sub_sub_section("scheme");
+    let scheme_path = in_dir.join(format!("schemes/{}.json", frame.scheme()));
+    values!(2 * COL_WIDTH, scheme_path.display());
+    let scheme = SchemeSettings::load(&scheme_path).build();
 
-    for (group, grad) in &palette {
+    for (group, grad) in scheme.grads() {
         values!(COL_WIDTH, group, fmt::gradient::to_string(&grad, 64));
     }
 
-    palette
+    scheme
 }
 
 /// Build a camera.

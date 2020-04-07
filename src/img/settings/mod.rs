@@ -2,12 +2,12 @@
 
 pub mod frame;
 pub mod grid;
-pub mod palette;
 pub mod quality;
 pub mod scene;
+pub mod scheme;
 pub mod shader;
 
-pub use self::{frame::*, grid::*, palette::*, quality::*, scene::*, shader::*};
+pub use self::{frame::*, grid::*, quality::*, scene::*, scheme::*, shader::*};
 
 use crate::access;
 use attr::json_load;

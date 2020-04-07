@@ -1,25 +1,28 @@
-//! Palette colours input settings implementation.
+//! Colour scheme colours input settings implementation.
 
-use crate::{access, sim::render::Group};
+use crate::{
+    access,
+    sim::render::{Group, Scheme as RenderScheme},
+};
 use attr::json;
 use palette::{Gradient, LinSrgba};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
-/// Palette settings.
+/// Colour scheme settings.
 #[json]
-pub struct Palette {
+pub struct Scheme {
     /// Group colours.
     grads: Vec<(Group, Vec<[f64; 4]>)>,
 }
 
-impl Palette {
+impl Scheme {
     access!(grads, Vec<(Group, Vec<[f64; 4]>)>);
 
     /// Build a complete instance.
     #[inline]
     #[must_use]
-    pub fn build(&self) -> HashMap<Group, Gradient<LinSrgba>> {
-        let mut list = HashMap::with_capacity(self.grads.len());
+    pub fn build(&self) -> RenderScheme {
+        let mut list = BTreeMap::new();
 
         for (group, cols) in &self.grads {
             if list.contains_key(group) {
@@ -43,6 +46,6 @@ impl Palette {
             );
         }
 
-        list
+        RenderScheme::new(list)
     }
 }

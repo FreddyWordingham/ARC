@@ -9,8 +9,9 @@ pub mod lighting;
 pub mod pipe;
 pub mod scan;
 pub mod scene;
+pub mod scheme;
 
-pub use self::{camera::*, frame::*, grid::*, group::*, hit::*, scan::*, scene::*};
+pub use self::{camera::*, frame::*, grid::*, group::*, hit::*, scan::*, scene::*, scheme::*};
 
 use crate::util::{ParProgressBar, ProgressBar};
 use ndarray::Array2;
