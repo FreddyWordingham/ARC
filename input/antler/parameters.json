@@ -5,24 +5,15 @@
             "max_depth": 8,
             "padding": 0.01
         },
-        "scene": "test",
+        "scene": "riverside",
         "frames": {
             "test_img": {
                 "quality": "test",
                 "shader": "sunny_day",
                 "scheme": "grey",
                 "aspect_ratio": "Widescreen",
-                "fov": 60.0,
-                "cam_pos": [-20.0, 2.0, 0.5],
-                "tar_pos": [0.0, 0.0, 0.0]
-            },
-            "high_img": {
-                "quality": "high",
-                "shader": "sunny_day",
-                "scheme": "grey",
-                "aspect_ratio": "Widescreen",
-                "fov": 60.0,
-                "cam_pos": [-20.0, 2.0, 0.5],
+                "fov": 90.0,
+                "cam_pos": [20.0, -20.0, 10.5],
                 "tar_pos": [0.0, 0.0, 0.0]
             }
         }

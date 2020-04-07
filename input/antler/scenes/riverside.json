@@ -1,22 +1,17 @@
 {
     "groups": [
         [0, [
-            ["sidewalk", null],
+            ["test_cube", null],
+            ["piece_sphere_lrg", null],
+            ["piece_sphere_med", null],
+            ["piece_sphere_sml", null],
+            ["water", null],
+            ["planet", null],
+            ["hills", null],
+            ["moon", null],
+            ["barriers", null],
+            ["banks", null],
             ["sidewalk", null]
-        ]],
-        [1, [
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null],
-            ["sidewalk", null]
-        ]],
+        ]]
     ]
 }
