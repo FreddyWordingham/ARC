@@ -5,6 +5,7 @@ pub mod grid;
 pub mod group;
 pub mod hit;
 pub mod image;
+pub mod save;
 pub mod scan;
 pub mod scene;
 pub mod settings;

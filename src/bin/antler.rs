@@ -5,6 +5,7 @@ use arc::{
     file::Load,
     fmt,
     rend::{
+        print_colour, save,
         settings::{
             Image as ImageSettings, Palette as PaletteSettings, Quality as QualitySettings,
             Scene as SceneSettings, Shader as ShaderSettings,
@@ -18,7 +19,7 @@ use attr::form_load;
 use std::path::{Path, PathBuf};
 
 /// Column width.
-const COL_WIDTH: usize = 48;
+const COL_WIDTH: usize = 64;
 
 /// Input parameters.
 #[form_load]
@@ -31,7 +32,7 @@ fn main() {
     fmt::title(&exec::name());
 
     fmt::section("Initialisation");
-    let (in_dir, _out_dir, params_filename) = init_dirs();
+    let (in_dir, out_dir, params_filename) = init_dirs();
 
     fmt::section("Loading");
     fmt::sub_section("Parameters");
@@ -41,13 +42,18 @@ fn main() {
     fmt::sub_section("Scene");
     let scene = load_scene(&in_dir, &params);
     fmt::sub_section("Grid");
-    let _grid = build_grid(&params, &scene);
+    let grid = build_grid(&params, &scene);
 
     fmt::section("Rendering");
     for (name, image_settings) in params.render.images() {
         fmt::sub_section(name);
-        let _image = load_image_settings(&in_dir, &image_settings);
-        println!("Rendering...");
+        let image = load_image_settings(&in_dir, &image_settings);
+        fmt::sub_sub_section("Rendering");
+        let render = image.render(&scene, &grid);
+        fmt::sub_sub_section("Saving");
+        let image_path = out_dir.join(format!("{}.png", name));
+        save::png(&image_path, render);
+        println!("Image {} saved at: {}", name, image_path.display());
     }
 
     fmt::section("Finished");
@@ -167,7 +173,7 @@ pub fn load_image_settings(in_dir: &Path, image: &ImageSettings) -> Image {
     fmt::sub_sub_section("palette");
     let pal = image.palette();
     for (group, grad) in pal.grads() {
-        values!(COL_WIDTH, group, arc::rend::print_colour(&grad, 64));
+        values!(COL_WIDTH, group, print_colour(&grad, 64));
     }
 
     fmt::sub_sub_section("camera");

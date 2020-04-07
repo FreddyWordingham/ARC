@@ -9,9 +9,11 @@ use crate::{
     access,
     rend::{
         settings::{Quality, Shader},
-        AspectRatio,
+        AspectRatio, Grid, Scene,
     },
 };
+use ::palette::LinSrgba;
+use ndarray::Array2;
 
 /// Image structure.
 pub struct Image {
@@ -51,5 +53,12 @@ impl Image {
             palette,
             camera,
         }
+    }
+
+    /// Create a rendering of a given scene.
+    #[inline]
+    #[must_use]
+    pub fn render(&self, _scene: &Scene, _grid: &Grid) -> Array2<LinSrgba> {
+        Array2::default(self.camera.res())
     }
 }
