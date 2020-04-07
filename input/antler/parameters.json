@@ -5,7 +5,7 @@
             "max_depth": 4,
             "padding": 0.01
         },
-        "scene": "piece",
+        "scene": "test",
         "frames": {
             "img_0": {
                 "quality": "test",
@@ -13,8 +13,8 @@
                 "scheme": "grey",
                 "aspect_ratio": "Square",
                 "fov": 60.0,
-                "cam_pos": [-13.0, 21.0, 13.0],
-                "tar_pos": [0.0, 0.0, 13.0]
+                "cam_pos": [10.0, 10.0, 10.0],
+                "tar_pos": [0.0, 0.0, 0.0]
             },
             "img_1": {
                 "quality": "test",
@@ -22,8 +22,8 @@
                 "scheme": "vivid",
                 "aspect_ratio": "Square",
                 "fov": 90.0,
-                "cam_pos": [-13.0, 21.0, 13.0],
-                "tar_pos": [0.0, 0.0, 13.0]
+                "cam_pos": [10.0, 10.0, 10.0],
+                "tar_pos": [0.0, 0.0, 0.0]
             }
         }
     }
