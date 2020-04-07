@@ -1,6 +1,7 @@
 {
-    "total_pixels": 1000000,
+    "section_splits": [172, 72],
+    "target_pixels": 4953600,
     "super_samples": 4,
-    "dof_samples": 11,
+    "dof_samples": 21,
     "shadow_samples": 1
 }

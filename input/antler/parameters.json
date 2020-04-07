@@ -2,7 +2,7 @@
     "render": {
         "grid": {
             "tar_tris": 10,
-            "max_depth": 4,
+            "max_depth": 8,
             "padding": 0.01
         },
         "scene": "test",
@@ -11,8 +11,17 @@
                 "quality": "test",
                 "shader": "sunny_day",
                 "scheme": "grey",
-                "aspect_ratio": "Square",
-                "fov": 30.0,
+                "aspect_ratio": "Widescreen",
+                "fov": 60.0,
+                "cam_pos": [-20.0, 2.0, 0.5],
+                "tar_pos": [0.0, 0.0, 0.0]
+            },
+            "high_img": {
+                "quality": "high",
+                "shader": "sunny_day",
+                "scheme": "grey",
+                "aspect_ratio": "Widescreen",
+                "fov": 60.0,
                 "cam_pos": [-20.0, 2.0, 0.5],
                 "tar_pos": [0.0, 0.0, 0.0]
             }

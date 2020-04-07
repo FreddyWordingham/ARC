@@ -3,5 +3,5 @@
     "target_pixels": 1000000,
     "super_samples": 4,
     "dof_samples": 11,
-    "shadow_samples": 16
+    "shadow_samples": 1
 }
