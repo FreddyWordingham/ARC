@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Parameters",""],["_IMPL_SERIALIZE_FOR_Parameters",""]],"fn":[["build_camera","Build the camera."],["build_grid","Build the grid."],["load_meshes","Load in the base meshes."],["main",""]],"struct":[["Parameters",""]]});

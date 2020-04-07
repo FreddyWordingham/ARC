@@ -1,1 +1,1 @@
-initSidebarItems({"type":[["Group",""]]});
+initSidebarItems({"type":[["Group","Group type alias."]]});

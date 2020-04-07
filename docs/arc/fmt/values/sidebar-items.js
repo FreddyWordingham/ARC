@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["NAME_WIDTH","Width allocated to value name printing."]],"fn":[["values","Print a given iterator of name-value pairs into equally spaced columns."]]});

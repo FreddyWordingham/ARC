@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ShadowWeights","Shadowing weights settings."]]});

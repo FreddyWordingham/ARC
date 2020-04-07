@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["section","Print a section bar."],["title","Print a main title bar."]]});
+initSidebarItems({"fn":[["end","Print a closing bar."],["section","Print a section bar."],["sub_section","Print a sub-section bar."],["term_width","Determine the terminal width."],["title","Print a main title bar."]]});

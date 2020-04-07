@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Redirect","Redirection wrapper structure."]]});

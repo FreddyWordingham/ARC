@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["load","Load trait."],["save","Save trait."]]});
+initSidebarItems({"mod":[["load","Load trait."],["redirect","Redirection during json file loading."],["save","Save trait."]]});

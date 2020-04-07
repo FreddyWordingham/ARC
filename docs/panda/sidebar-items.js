@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Parameters",""],["_IMPL_SERIALIZE_FOR_Parameters",""]],"fn":[["build_grid","Build the world grid."],["load_parameters","Load the parameters file and report the settings."],["load_surfs","Load the base meshes and transform them into their final surfaces."],["main",""]],"struct":[["Parameters",""]]});

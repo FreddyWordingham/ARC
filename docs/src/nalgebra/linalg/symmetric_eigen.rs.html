@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/freddywordingham/.cargo/registry/src/github.com-1ecc6299db9ec823/nalgebra-0.20.0/src/linalg/symmetric_eigen.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>symmetric_eigen.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="https://nalgebra.org/img/favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../nalgebra/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/freddywordingham/.cargo/registry/src/github.com-1ecc6299db9ec823/nalgebra-0.21.0/src/linalg/symmetric_eigen.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>symmetric_eigen.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="https://nalgebra.org/img/favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../nalgebra/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -420,18 +420,27 @@
 <span id="420">420</span>
 <span id="421">421</span>
 <span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde-serialize&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">use</span> <span class="ident">num</span>::<span class="ident">Zero</span>;
 <span class="kw">use</span> <span class="ident">approx</span>::<span class="ident">AbsDiffEq</span>;
+<span class="kw">use</span> <span class="ident">num</span>::<span class="ident">Zero</span>;
 
-<span class="kw">use</span> <span class="ident">alga</span>::<span class="ident">general</span>::<span class="ident">ComplexField</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">allocator</span>::<span class="ident">Allocator</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">base</span>::{<span class="ident">DefaultAllocator</span>, <span class="ident">Matrix2</span>, <span class="ident">MatrixN</span>, <span class="ident">SquareMatrix</span>, <span class="ident">Vector2</span>, <span class="ident">VectorN</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">dimension</span>::{<span class="ident">Dim</span>, <span class="ident">DimDiff</span>, <span class="ident">DimSub</span>, <span class="ident">U1</span>, <span class="ident">U2</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">storage</span>::<span class="ident">Storage</span>;
+<span class="kw">use</span> <span class="ident">simba</span>::<span class="ident">scalar</span>::<span class="ident">ComplexField</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">linalg</span>::<span class="ident">givens</span>::<span class="ident">GivensRotation</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">linalg</span>::<span class="ident">SymmetricTridiagonal</span>;
@@ -440,25 +449,22 @@
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde-serialize&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(
     <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde-serialize&quot;</span>,
-    <span class="ident">serde</span>(<span class="ident">bound</span>(
-        <span class="ident">serialize</span> <span class="op">=</span> <span class="string">&quot;DefaultAllocator: Allocator&lt;N, D, D&gt; +
+    <span class="ident">serde</span>(<span class="ident">bound</span>(<span class="ident">serialize</span> <span class="op">=</span> <span class="string">&quot;DefaultAllocator: Allocator&lt;N, D, D&gt; +
                            Allocator&lt;N::RealField, D&gt;,
          VectorN&lt;N::RealField, D&gt;: Serialize,
-         MatrixN&lt;N, D&gt;: Serialize&quot;</span>
-    ))
+         MatrixN&lt;N, D&gt;: Serialize&quot;</span>))
 )]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(
     <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde-serialize&quot;</span>,
-    <span class="ident">serde</span>(<span class="ident">bound</span>(
-        <span class="ident">deserialize</span> <span class="op">=</span> <span class="string">&quot;DefaultAllocator: Allocator&lt;N, D, D&gt; +
+    <span class="ident">serde</span>(<span class="ident">bound</span>(<span class="ident">deserialize</span> <span class="op">=</span> <span class="string">&quot;DefaultAllocator: Allocator&lt;N, D, D&gt; +
                            Allocator&lt;N::RealField, D&gt;,
          VectorN&lt;N::RealField, D&gt;: Deserialize&lt;&#39;de&gt;,
-         MatrixN&lt;N, D&gt;: Deserialize&lt;&#39;de&gt;&quot;</span>
-    ))
+         MatrixN&lt;N, D&gt;: Deserialize&lt;&#39;de&gt;&quot;</span>))
 )]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SymmetricEigen</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">ComplexField</span>, <span class="ident">D</span>: <span class="ident">Dim</span><span class="op">&gt;</span>
-<span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// The eigenvectors of the decomposed matrix.</span>
     <span class="kw">pub</span> <span class="ident">eigenvectors</span>: <span class="ident">MatrixN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>,
@@ -472,10 +478,12 @@
     <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>,
     <span class="ident">MatrixN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>: <span class="ident">Copy</span>,
     <span class="ident">VectorN</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>: <span class="ident">Copy</span>,
-{}
+{
+}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">ComplexField</span>, <span class="ident">D</span>: <span class="ident">Dim</span><span class="op">&gt;</span> <span class="ident">SymmetricEigen</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>
-<span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// Computes the eigendecomposition of the given symmetric matrix.</span>
     <span class="doccomment">///</span>
@@ -483,8 +491,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">m</span>: <span class="ident">MatrixN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">DimSub</span><span class="op">&lt;</span><span class="ident">U1</span><span class="op">&gt;</span>,
-        <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="comment">// For tridiagonalization</span>
-        <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     {
         <span class="self">Self</span>::<span class="ident">try_new</span>(<span class="ident">m</span>, <span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">default_epsilon</span>(), <span class="number">0</span>).<span class="ident">unwrap</span>()
     }
@@ -503,8 +510,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_new</span>(<span class="ident">m</span>: <span class="ident">MatrixN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span>, <span class="ident">eps</span>: <span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">max_niter</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">DimSub</span><span class="op">&lt;</span><span class="ident">U1</span><span class="op">&gt;</span>,
-        <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="comment">// For tridiagonalization</span>
-                          <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     {
         <span class="self">Self</span>::<span class="ident">do_decompose</span>(<span class="ident">m</span>, <span class="bool-val">true</span>, <span class="ident">eps</span>, <span class="ident">max_niter</span>).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">vals</span>, <span class="ident">vecs</span>)<span class="op">|</span> <span class="ident">SymmetricEigen</span> {
             <span class="ident">eigenvectors</span>: <span class="ident">vecs</span>.<span class="ident">unwrap</span>(),
@@ -520,8 +526,7 @@
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">VectorN</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">MatrixN</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span>)<span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">DimSub</span><span class="op">&lt;</span><span class="ident">U1</span><span class="op">&gt;</span>,
-        <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="comment">// For tridiagonalization</span>
-                          <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     {
         <span class="macro">assert</span><span class="macro">!</span>(
             <span class="ident">m</span>.<span class="ident">is_square</span>(),
@@ -577,7 +582,6 @@
                             <span class="ident">off_diag</span>[<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>] <span class="op">=</span> <span class="ident">norm</span>;
                         }
 
-
                         <span class="kw">let</span> <span class="ident">mii</span> <span class="op">=</span> <span class="ident">diag</span>[<span class="ident">i</span>];
                         <span class="kw">let</span> <span class="ident">mjj</span> <span class="op">=</span> <span class="ident">diag</span>[<span class="ident">j</span>];
                         <span class="kw">let</span> <span class="ident">mij</span> <span class="op">=</span> <span class="ident">off_diag</span>[<span class="ident">i</span>];
@@ -612,8 +616,10 @@
                 }
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">subdim</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
                 <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">Matrix2</span>::<span class="ident">new</span>(
-                    <span class="ident">diag</span>[<span class="ident">start</span>], <span class="ident">off_diag</span>[<span class="ident">start</span>].<span class="ident">conjugate</span>(),
-                    <span class="ident">off_diag</span>[<span class="ident">start</span>], <span class="ident">diag</span>[<span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>],
+                    <span class="ident">diag</span>[<span class="ident">start</span>],
+                    <span class="ident">off_diag</span>[<span class="ident">start</span>].<span class="ident">conjugate</span>(),
+                    <span class="ident">off_diag</span>[<span class="ident">start</span>],
+                    <span class="ident">diag</span>[<span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>],
                 );
                 <span class="kw">let</span> <span class="ident">eigvals</span> <span class="op">=</span> <span class="ident">m</span>.<span class="ident">eigenvalues</span>().<span class="ident">unwrap</span>();
                 <span class="kw">let</span> <span class="ident">basis</span> <span class="op">=</span> <span class="ident">Vector2</span>::<span class="ident">new</span>(<span class="ident">eigvals</span>.<span class="ident">x</span> <span class="op">-</span> <span class="ident">diag</span>[<span class="ident">start</span> <span class="op">+</span> <span class="number">1</span>], <span class="ident">off_diag</span>[<span class="ident">start</span>]);
@@ -728,8 +734,11 @@
  *
  */</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">N</span>: <span class="ident">ComplexField</span>, <span class="ident">D</span>: <span class="ident">DimSub</span><span class="op">&lt;</span><span class="ident">U1</span><span class="op">&gt;</span>, <span class="ident">S</span>: <span class="ident">Storage</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">SquareMatrix</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">S</span><span class="op">&gt;</span>
-<span class="kw">where</span> <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span>
-                        <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">DefaultAllocator</span>: <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span>, <span class="ident">D</span><span class="op">&gt;</span>
+        <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span>
+        <span class="op">+</span> <span class="ident">Allocator</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">DimDiff</span><span class="op">&lt;</span><span class="ident">D</span>, <span class="ident">U1</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// Computes the eigendecomposition of this symmetric matrix.</span>
     <span class="doccomment">///</span>
@@ -749,7 +758,11 @@
     <span class="doccomment">/// * `max_niter` − maximum total number of iterations performed by the algorithm. If this</span>
     <span class="doccomment">/// number of iteration is exceeded, `None` is returned. If `niter == 0`, then the algorithm</span>
     <span class="doccomment">/// continues indefinitely until convergence.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_symmetric_eigen</span>(<span class="self">self</span>, <span class="ident">eps</span>: <span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">max_niter</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SymmetricEigen</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_symmetric_eigen</span>(
+        <span class="self">self</span>,
+        <span class="ident">eps</span>: <span class="ident">N</span>::<span class="ident">RealField</span>,
+        <span class="ident">max_niter</span>: <span class="ident">usize</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SymmetricEigen</span><span class="op">&lt;</span><span class="ident">N</span>, <span class="ident">D</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="ident">SymmetricEigen</span>::<span class="ident">try_new</span>(<span class="self">self</span>.<span class="ident">into_owned</span>(), <span class="ident">eps</span>, <span class="ident">max_niter</span>)
     }
 
@@ -757,9 +770,14 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Only the lower-triangular part of the matrix is read.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">symmetric_eigenvalues</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">VectorN</span><span class="op">&lt;</span><span class="ident">N</span>::<span class="ident">RealField</span>, <span class="ident">D</span><span class="op">&gt;</span> {
-        <span class="ident">SymmetricEigen</span>::<span class="ident">do_decompose</span>(<span class="self">self</span>.<span class="ident">clone_owned</span>(), <span class="bool-val">false</span>, <span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">default_epsilon</span>(), <span class="number">0</span>)
-            .<span class="ident">unwrap</span>()
-            .<span class="number">0</span>
+        <span class="ident">SymmetricEigen</span>::<span class="ident">do_decompose</span>(
+            <span class="self">self</span>.<span class="ident">clone_owned</span>(),
+            <span class="bool-val">false</span>,
+            <span class="ident">N</span>::<span class="ident">RealField</span>::<span class="ident">default_epsilon</span>(),
+            <span class="number">0</span>,
+        )
+        .<span class="ident">unwrap</span>()
+        .<span class="number">0</span>
     }
 }
 

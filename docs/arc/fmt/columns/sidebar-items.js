@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["columns","Print a given iterator into equally spaced columns."]]});

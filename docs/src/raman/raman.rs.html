@@ -180,7 +180,7 @@
         <span class="ident">OpenOptions</span>::<span class="ident">new</span>()
             .<span class="ident">append</span>(<span class="bool-val">true</span>)
             .<span class="ident">open</span>(<span class="kw-2">&amp;</span><span class="ident">out_dir</span>.<span class="ident">join</span>(<span class="string">&quot;Ramans.txt&quot;</span>))
-            .<span class="ident">unwrap</span>(),
+            .<span class="ident">expect</span>(<span class="string">&quot;Could not open file to append to.&quot;</span>),
     );
     <span class="macro">writeln</span><span class="macro">!</span>(<span class="ident">file</span>, <span class="string">&quot;{}, {}&quot;</span>, <span class="ident">total_shifts</span>, <span class="ident">total_det_raman</span>).<span class="ident">unwrap</span>();
 

@@ -84,13 +84,13 @@
         <span class="doccomment">/// Possible values.</span>
         <span class="ident">cs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
     },
-    <span class="doccomment">/// Weighted points.</span>
-    <span class="ident">WeightedPoints</span> {
-        <span class="doccomment">/// Possible values.</span>
-        <span class="ident">cs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-        <span class="doccomment">/// Relative weightings values.</span>
-        <span class="ident">ws</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    },
+    <span class="comment">// /// Weighted points.</span>
+    <span class="comment">// WeightedPoints {</span>
+    <span class="comment">//     /// Possible values.</span>
+    <span class="comment">//     cs: Vec&lt;f64&gt;,</span>
+    <span class="comment">//     /// Relative weightings values.</span>
+    <span class="comment">//     ws: Vec&lt;f64&gt;,</span>
+    <span class="comment">// },</span>
     <span class="doccomment">/// Uniform range.</span>
     <span class="ident">Uniform</span> {
         <span class="doccomment">/// Minimum value.</span>
@@ -122,9 +122,9 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="self">Self</span>::<span class="ident">Point</span> { <span class="ident">c</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RngProb</span>::<span class="ident">new_point</span>(<span class="ident">c</span>),
             <span class="self">Self</span>::<span class="ident">Points</span> { <span class="ident">cs</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RngProb</span>::<span class="ident">new_points</span>(<span class="ident">Array1</span>::<span class="ident">from</span>(<span class="ident">cs</span>)),
-            <span class="self">Self</span>::<span class="ident">WeightedPoints</span> { <span class="ident">cs</span>, <span class="ident">ws</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">RngProb</span>::<span class="ident">new_weighted_points</span>(<span class="ident">Array1</span>::<span class="ident">from</span>(<span class="ident">cs</span>), <span class="ident">Array1</span>::<span class="ident">from</span>(<span class="ident">ws</span>))
-            }
+            <span class="comment">// Self::WeightedPoints { cs, ws } =&gt; {</span>
+            <span class="comment">// RngProb::new_weighted_points(Array1::from(cs), Array1::from(ws))</span>
+            <span class="comment">// }</span>
             <span class="self">Self</span>::<span class="ident">Uniform</span> { <span class="ident">min</span>, <span class="ident">max</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RngProb</span>::<span class="ident">new_uniform</span>(<span class="ident">min</span>, <span class="ident">max</span>),
             <span class="self">Self</span>::<span class="ident">Gaussian</span> { <span class="ident">ave</span>, <span class="ident">var</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RngProb</span>::<span class="ident">new_gaussian</span>(<span class="ident">ave</span>, <span class="ident">var</span>),
             <span class="self">Self</span>::<span class="ident">Linear</span> { <span class="ident">m</span>, <span class="ident">c</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RngProb</span>::<span class="ident">new_linear</span>(<span class="ident">m</span>, <span class="ident">c</span>),

@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["ambient","Calculate the ambient lighting coefficient."],["diffuse","Calculate the diffuse lighting coefficient."]]});

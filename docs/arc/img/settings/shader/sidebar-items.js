@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["lighting_weights","Shader lighting weightings settings implementation."],["shadow_weights","Shader shadow weightings settings implementation."]],"struct":[["Shader","Shader settings."]]});

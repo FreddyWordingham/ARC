@@ -113,9 +113,6 @@
 <span id="113">113</span>
 <span id="114">114</span>
 <span id="115">115</span>
-<span id="116">116</span>
-<span id="117">117</span>
-<span id="118">118</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Probability distribution implementation.</span>
 
@@ -138,13 +135,13 @@
         <span class="doccomment">/// Possible values.</span>
         <span class="ident">cs</span>: <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
     },
-    <span class="doccomment">/// Weighted points.</span>
-    <span class="ident">WeightedPoints</span> {
-        <span class="doccomment">/// Possible values.</span>
-        <span class="ident">cs</span>: <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-        <span class="doccomment">/// Relative weightings values.</span>
-        <span class="ident">ws</span>: <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    },
+    <span class="comment">// /// Weighted points.</span>
+    <span class="comment">// WeightedPoints {</span>
+    <span class="comment">//     /// Possible values.</span>
+    <span class="comment">//     cs: Array1&lt;f64&gt;,</span>
+    <span class="comment">//     /// Relative weightings values.</span>
+    <span class="comment">//     ws: Array1&lt;f64&gt;,</span>
+    <span class="comment">// },</span>
     <span class="doccomment">/// Uniform range.</span>
     <span class="ident">Uniform</span> {
         <span class="doccomment">/// Minimum value.</span>
@@ -184,14 +181,14 @@
         <span class="self">Self</span>::<span class="ident">Points</span> { <span class="ident">cs</span> }
     }
 
-    <span class="doccomment">/// Construct a new weighted points instance.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_weighted_points</span>(<span class="ident">cs</span>: <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>, <span class="ident">ws</span>: <span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">cs</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">1</span>);
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">cs</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">ws</span>.<span class="ident">len</span>());
-        <span class="self">Self</span>::<span class="ident">WeightedPoints</span> { <span class="ident">cs</span>, <span class="ident">ws</span> } <span class="comment">// TODO</span>
-    }
+    <span class="comment">// /// Construct a new weighted points instance.</span>
+    <span class="comment">// #[inline]</span>
+    <span class="comment">// #[must_use]</span>
+    <span class="comment">// pub fn new_weighted_points(cs: Array1&lt;f64&gt;, ws: Array1&lt;f64&gt;) -&gt; Self {</span>
+    <span class="comment">//     debug_assert!(cs.len() &gt; 1);</span>
+    <span class="comment">//     debug_assert!(cs.len() == ws.len());</span>
+    <span class="comment">//     Self::WeightedPoints { cs, ws } // TODO</span>
+    <span class="comment">// }</span>
 
     <span class="doccomment">/// Construct a new uniform instance.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -223,9 +220,6 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="self">Self</span>::<span class="ident">Point</span> { <span class="ident">c</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">c</span>,
             <span class="self">Self</span>::<span class="ident">Points</span> { <span class="ident">cs</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">cs</span>.<span class="ident">get</span>(<span class="ident">rng</span>.<span class="ident">gen_range</span>(<span class="number">0</span>, <span class="ident">cs</span>.<span class="ident">len</span>())).<span class="ident">expect</span>(<span class="string">&quot;Invalid index.&quot;</span>),
-            <span class="self">Self</span>::<span class="ident">WeightedPoints</span> { .. } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="macro">unimplemented</span><span class="macro">!</span>();
-            }
             <span class="self">Self</span>::<span class="ident">Uniform</span> { <span class="ident">min</span>, <span class="ident">max</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">rng</span>.<span class="ident">gen_range</span>(<span class="kw-2">*</span><span class="ident">min</span>, <span class="kw-2">*</span><span class="ident">max</span>),
             <span class="self">Self</span>::<span class="ident">Gaussian</span> { <span class="ident">mu</span>, <span class="ident">sigma</span> } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">distribution</span>::<span class="ident">gaussian</span>(<span class="ident">rng</span>, <span class="kw-2">*</span><span class="ident">mu</span>, <span class="kw-2">*</span><span class="ident">sigma</span>),
             <span class="self">Self</span>::<span class="ident">Linear</span> { .. } <span class="op">=</span><span class="op">&gt;</span> {

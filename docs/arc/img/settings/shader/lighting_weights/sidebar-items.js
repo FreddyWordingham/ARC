@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["LightingWeights","Lighting weights settings."]]});

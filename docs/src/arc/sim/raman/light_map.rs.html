@@ -71,6 +71,8 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Light-Map structure.</span>
 
@@ -119,11 +121,11 @@
         }
     }
 
-    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">emis_dens</span>, <span class="ident">emis</span>);
-    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">scat_dens</span>, <span class="ident">scats</span>);
-    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">abs_dens</span>, <span class="ident">abs</span>);
+    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">emissions_dens</span>, <span class="ident">emissions</span>);
+    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">scatters_dens</span>, <span class="ident">scatters</span>);
+    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">absorptions_dens</span>, <span class="ident">absorptions</span>);
     <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">shift_dens</span>, <span class="ident">shifts</span>);
-    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">dist_trav_dens</span>, <span class="ident">dist_trav</span>);
+    <span class="macro">data_dens</span><span class="macro">!</span>(<span class="ident">dist_travelled_dens</span>, <span class="ident">dist_travelled</span>);
 }
 
 <span class="kw">impl</span> <span class="ident">AddAssign</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LightMap</span> {
@@ -137,12 +139,14 @@
 
 <span class="kw">impl</span> <span class="ident">Save</span> <span class="kw">for</span> <span class="ident">LightMap</span> {
     <span class="kw">fn</span> <span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) {
-        <span class="self">self</span>.<span class="ident">emis_dens</span>().<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_emis_dens.nc&quot;</span>));
-        <span class="self">self</span>.<span class="ident">scat_dens</span>().<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_scat_dens.nc&quot;</span>));
-        <span class="self">self</span>.<span class="ident">abs_dens</span>().<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_abs_dens.nc&quot;</span>));
+        <span class="self">self</span>.<span class="ident">emissions_dens</span>()
+            .<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_emissions_dens.nc&quot;</span>));
+        <span class="self">self</span>.<span class="ident">scatters_dens</span>().<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_scatters_dens.nc&quot;</span>));
+        <span class="self">self</span>.<span class="ident">absorptions_dens</span>()
+            .<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_absorptions_dens.nc&quot;</span>));
         <span class="self">self</span>.<span class="ident">shift_dens</span>().<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_shift_dens.nc&quot;</span>));
-        <span class="self">self</span>.<span class="ident">dist_trav_dens</span>()
-            .<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_dist_trav_dens.nc&quot;</span>));
+        <span class="self">self</span>.<span class="ident">dist_travelled_dens</span>()
+            .<span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">join</span>(<span class="string">&quot;lm_dist_travelled_dens.nc&quot;</span>));
     }
 }
 </pre></div>

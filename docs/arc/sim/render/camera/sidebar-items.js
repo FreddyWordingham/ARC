@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Camera","Image forming camera."]]});
+initSidebarItems({"struct":[["Camera","Image building structure."]]});

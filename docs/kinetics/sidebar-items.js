@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Parameters",""],["_IMPL_SERIALIZE_FOR_Parameters",""]],"fn":[["init_file","Initialise the output file."],["initialisation","Initialise the directories."],["main",""],["print_vals","Print the time and current concentration values to a file."]],"struct":[["Parameters",""]]});
+initSidebarItems({"fn":[["init_file","Initialise the output file."],["initialisation","Initialise the directories."],["main",""],["print_vals","Print the time and current concentration values to a file."]],"struct":[["Parameters",""]]});

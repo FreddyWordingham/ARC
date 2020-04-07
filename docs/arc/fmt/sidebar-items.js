@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["term_width","Determine the terminal width."]],"mod":[["banner","Banner printing functions."],["columns","Columns macro."],["gradient","Gradient formatting function."],["values","Value reporting macro."]]});

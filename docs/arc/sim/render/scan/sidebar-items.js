@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["run_thread","Render using a single thread."]]});
+initSidebarItems({"enum":[["Scan","Hit scan result enumeration."]]});
