@@ -24,7 +24,7 @@ use std::{
 };
 
 /// Image splitting factor in each dimension.
-const SPLITTING_FACTOR: usize = 32;
+const SPLITTING_FACTOR: usize = 8;
 /// Distance to travel away from colliding surfaces.
 const BUMP_DIST: f64 = 1.0e-6;
 
