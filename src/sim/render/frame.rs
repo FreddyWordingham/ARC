@@ -68,13 +68,13 @@ impl Frame {
 
         let (xi, yi) = coor;
 
-        let theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
-        let phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+        let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
+        let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
 
-        // let sx = (sub_sample % self.quality.super_samples()) as f64 + 0.5;
-        // let sy = (sub_sample / self.quality.super_samples()) as f64 + 0.5;
-        // theta += (sx * self.camera.sub_delta().0) - (self.camera.delta().0 * 0.5);
-        // phi += (sy * self.camera.sub_delta().1) - (self.camera.delta().1 * 0.5);
+        let sx = (sub_sample % self.quality.super_samples()) as f64 + 0.5;
+        let sy = (sub_sample / self.quality.super_samples()) as f64 + 0.5;
+        theta += (sx * self.camera.sub_delta().0) - (self.camera.delta().0 * 0.5);
+        phi += (sy * self.camera.sub_delta().1) - (self.camera.delta().1 * 0.5);
 
         // let (r, t) = golden::circle(depth_sample as i32, self.quality.dof_samples() as i32);
         let pos = self.camera.pos();
