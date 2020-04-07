@@ -8,7 +8,7 @@ use std::{fs::File, io::BufWriter, path::Path};
 
 /// Save an array as a png image.
 #[inline]
-pub fn png(path: &Path, img: Array2<LinSrgba>) {
+pub fn png(path: &Path, img: &Array2<LinSrgba>) {
     let res = (
         *img.shape().get(0).expect("Missing shape."),
         *img.shape().get(1).expect("Missing shape."),

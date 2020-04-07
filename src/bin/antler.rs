@@ -56,18 +56,9 @@ fn main() {
         let img = render::image(&grid, &frame);
         fmt::sub_sub_section("Saving");
         let img_path = out_dir.join(format!("{}.png", name));
-        save::png(&img_path, img);
+        save::png(&img_path, &img);
         println!("Frame {} saved at: {}", name, img_path.display());
     }
-
-    let res = (50, 25);
-    use ndarray::ShapeBuilder;
-    let mut img: ndarray::Array2<palette::LinSrgba> = ndarray::Array2::default(res.f());
-    for n in 0..45 {
-        img[[n, 5]] = palette::Srgba::new(1.0, 0.0, 1.0, 1.0).into_linear();
-    }
-    let img_path = out_dir.join("test.png");
-    save::png(&img_path, img);
 
     fmt::section("Finished");
 }
