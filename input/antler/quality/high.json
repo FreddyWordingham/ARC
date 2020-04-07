@@ -1,0 +1,6 @@
+{
+    "total_pixels": 5000000,
+    "super_samples": 1,
+    "dof_samples": 1,
+    "shadow_samples": 1
+}

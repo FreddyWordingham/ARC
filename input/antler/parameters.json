@@ -8,12 +8,12 @@
         "scene": "test",
         "frames": {
             "img_0": {
-                "quality": "test",
+                "quality": "high",
                 "shader": "sunny_day",
                 "scheme": "grey",
                 "aspect_ratio": "Square",
-                "fov": 60.0,
-                "cam_pos": [10.0, 10.0, 10.0],
+                "fov": 30.0,
+                "cam_pos": [-20.0, 2.0, 0.5],
                 "tar_pos": [0.0, 0.0, 0.0]
             },
             "img_1": {
