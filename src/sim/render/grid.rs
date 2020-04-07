@@ -252,6 +252,15 @@ impl<'a> Grid<'a> {
     #[inline]
     #[must_use]
     pub fn hit_scan(&self, ray: &Ray) -> Scan {
+        let boundary = self.boundary();
+        if !self.boundary().contains(ray.pos()) {
+            println!("Ray pos: {}", ray.pos());
+            println!("Ray dir: {}\t{}\t{}", ray.dir().x, ray.dir().y, ray.dir().z);
+            println!("Mins: {}", boundary.mins());
+            println!("Maxs: {}", boundary.maxs());
+        };
+        debug_assert!(self.boundary().contains(ray.pos()));
+
         match self {
             Self::Leaf { boundary, tris } => {
                 let mut nearest: Option<Hit> = None;
@@ -309,6 +318,9 @@ impl<'a> Grid<'a> {
         }
 
         // Trace forward until leaving the grid or observing something.
+        if !self.boundary().contains(ray.pos()) {
+            return None;
+        }
         while let Some(cell) = self.find_terminal_cell(ray.pos()) {
             match cell.hit_scan(&ray) {
                 Scan::Surface { hit } => {
