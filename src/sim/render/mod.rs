@@ -91,6 +91,7 @@ fn render_section(index: usize, grid: &Grid, frame: &Frame, bump_dist: f64) -> A
                         &ray.pos().clone(),
                         grid,
                         frame.shader(),
+                        frame.scheme(),
                         ray,
                         bump_dist,
                         &mut rng,

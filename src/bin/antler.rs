@@ -89,7 +89,6 @@ fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
     let scene = SceneSettings::load(&scene_path).build(&in_dir.join("meshes"));
     values!(
         COL_WIDTH,
-        scene.sun_pos(),
         scene.boundary().mins(),
         scene.boundary().maxs(),
         scene.groups().len(),
@@ -172,7 +171,8 @@ pub fn load_shader(in_dir: &Path, frame: &FrameSettings) -> ShaderSettings {
         light_weights.specular(),
         shadow_weights.direct(),
         shadow_weights.local(),
-        shadow_weights.ambient()
+        shadow_weights.ambient(),
+        shader.sun_pos()
     );
 
     shader

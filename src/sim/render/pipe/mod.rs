@@ -4,7 +4,7 @@ use crate::{
     geom::Ray,
     // geom::{Ray, Trace},
     img::Shader,
-    sim::render::Grid,
+    sim::render::{lighting, Grid, Scheme},
 };
 use nalgebra::Point3;
 use palette::{Gradient, LinSrgba, Srgba};
@@ -16,29 +16,29 @@ use rand::rngs::ThreadRng;
 pub fn colour(
     _cam_pos: &Point3<f64>,
     grid: &Grid,
-    _shader: &Shader,
-    ray: Ray,
+    shader: &Shader,
+    scheme: &Scheme,
+    mut ray: Ray,
     bump_dist: f64,
     _rng: &mut ThreadRng,
 ) -> LinSrgba {
     debug_assert!(bump_dist > 0.0);
 
-    let grad_0 = Gradient::new(vec![
+    let backup = Gradient::new(vec![
         LinSrgba::new(1.0, 1.0, 0.0, 1.0),
         LinSrgba::new(0.0, 1.0, 1.0, 1.0),
     ]);
+    let grad_0 = if scheme.grads().contains_key(&0) {
+        &scheme.grads().get(&0).expect("Invalid gradient group.")
+    } else {
+        &backup
+    };
 
-    // if let Some(dist) = grid.boundary().dist(&ray) {
-    //     let x = (dist - 10.0) / 10.0;
+    if let Some(hit) = grid.observe(ray.clone(), bump_dist) {
+        ray.travel(hit.dist() + bump_dist);
+        let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
 
-    //     if x < 0.0 || x > 1.0 {
-    //         return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
-    //     }
-    //     return LinSrgba::from(grad_0.get(x as f32));
-    // }
-
-    if let Some(_hit) = grid.observe(ray, bump_dist) {
-        return LinSrgba::from(grad_0.get(1.0));
+        return LinSrgba::from(grad_0.get(x as f32));
     }
 
     Srgba::new(0.2, 0.2, 0.2, 0.2).into_linear()

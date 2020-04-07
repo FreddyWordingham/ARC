@@ -5,13 +5,10 @@ use crate::{
     geom::{Aabb, Collide, Mesh},
     sim::render::Group,
 };
-use nalgebra::Point3;
 use std::collections::BTreeMap;
 
 /// Scene structure.
 pub struct Scene {
-    /// Sun position.
-    sun_pos: Point3<f64>,
     /// Boundary.
     boundary: Aabb,
     /// Meshes forming the scene.
@@ -19,21 +16,16 @@ pub struct Scene {
 }
 
 impl Scene {
-    access!(sun_pos, Point3<f64>);
     access!(boundary, Aabb);
     access!(groups, BTreeMap<Group, Vec<Mesh>>);
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(sun_pos: Point3<f64>, groups: BTreeMap<Group, Vec<Mesh>>) -> Self {
+    pub fn new(groups: BTreeMap<Group, Vec<Mesh>>) -> Self {
         let boundary = Self::init_boundary(&groups);
 
-        Self {
-            sun_pos,
-            boundary,
-            groups,
-        }
+        Self { boundary, groups }
     }
 
     /// Initialise the boundary encompassing all of the mesh vertices.

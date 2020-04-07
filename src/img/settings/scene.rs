@@ -7,21 +7,17 @@ use crate::{
     sim::render::{Group, Scene as RenderScene},
 };
 use attr::json;
-use nalgebra::Point3;
 use std::{collections::BTreeMap, path::Path};
 
 /// Scene settings.
 #[allow(clippy::type_complexity)]
 #[json]
 pub struct Scene {
-    /// Sun position.
-    sun_pos: Point3<f64>,
     /// Traceable surface groups.
     groups: Vec<(Group, Vec<(String, Option<FileTransform>)>)>,
 }
 
 impl Scene {
-    access!(sun_pos, Point3<f64>);
     access!(groups, Vec<(Group, Vec<(String, Option<FileTransform>)>)>);
 
     /// Build a rendering scene.
@@ -46,6 +42,6 @@ impl Scene {
             }
         }
 
-        RenderScene::new(self.sun_pos, surfs)
+        RenderScene::new(surfs)
     }
 }
