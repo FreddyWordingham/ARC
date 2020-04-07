@@ -55,7 +55,7 @@ impl Camera {
         let right = Unit::new_normalize(forward.cross(&up));
 
         let fov = (fov_hz, fov_hz / aspect_ratio.ratio());
-        let res = aspect_ratio.resolution(tar_pix, SPLITTING_FACTOR);
+        let res = aspect_ratio.resolution(tar_pix, SPLITTING_FACTOR as usize);
 
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
         let sub_delta = (delta.0 / ss_power as f64, delta.1 / ss_power as f64);
@@ -78,5 +78,15 @@ impl Camera {
     #[must_use]
     pub fn total_pixels(&self) -> usize {
         self.res.0 * self.res.1
+    }
+
+    /// Calculate the frame resolution.
+    #[inline]
+    #[must_use]
+    pub fn frame_res(&self, splitting_factor: usize) -> (usize, usize) {
+        debug_assert!(self.res.0 % splitting_factor == 0);
+        debug_assert!(self.res.1 % splitting_factor == 0);
+
+        (self.res.0 / splitting_factor, self.res.1 / splitting_factor)
     }
 }

@@ -12,7 +12,10 @@ use arc::{
         },
         Settings,
     },
-    sim::render::{Camera, Frame, Grid, Group, Scene},
+    sim::{
+        render,
+        render::{Camera, Frame, Grid, Group, Scene},
+    },
     util::{exec, init},
     values,
 };
@@ -52,7 +55,7 @@ fn main() {
         fmt::sub_section(name);
         let frame = load_frame_settings(&in_dir, &frame_settings);
         fmt::sub_sub_section("Rendering");
-        let img = arc::sim::render::image(&grid, &frame);
+        let img = render::image(&grid, &frame);
         fmt::sub_sub_section("Saving");
         let img_path = out_dir.join(format!("{}.png", name));
         save::png(&img_path, &img);

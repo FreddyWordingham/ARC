@@ -8,5 +8,6 @@
         "direct": 0.5,
         "local": 0.3,
         "ambient": 0.2
-    }
+    },
+    "dof_radius": 1.0e-3
 }

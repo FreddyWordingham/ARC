@@ -15,9 +15,12 @@ pub struct Shader {
     light_weights: LightingWeights,
     /// Shadow weightings.
     shadow_weights: ShadowWeights,
+    /// Depth of field radius.
+    dof_radius: f64,
 }
 
 impl Shader {
     access!(light_weights, LightingWeights);
     access!(shadow_weights, ShadowWeights);
+    access!(dof_radius, f64);
 }
