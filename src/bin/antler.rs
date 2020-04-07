@@ -184,13 +184,17 @@ pub fn load_quality(in_dir: &Path, frame: &FrameSettings) -> QualitySettings {
             "OFF".to_owned()
         };
         let shadow_samples = quality.shadow_samples();
+        let horizontal_sections = quality.section_splits().0;
+        let vertical_sections = quality.section_splits().1;
         values!(
             COL_WIDTH,
             target_pixels,
             samples_per_pixel,
             super_samples,
             dof_samples,
-            shadow_samples
+            shadow_samples,
+            horizontal_sections,
+            vertical_sections
         );
     }
 

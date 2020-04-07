@@ -19,10 +19,9 @@ pub fn colour(
     shader: &Shader,
     scheme: &Scheme,
     mut ray: Ray,
-    bump_dist: f64,
     _rng: &mut ThreadRng,
 ) -> LinSrgba {
-    debug_assert!(bump_dist > 0.0);
+    debug_assert!(shader.bump_dist() > 0.0);
 
     let backup = Gradient::new(vec![
         LinSrgba::new(1.0, 1.0, 0.0, 1.0),
@@ -34,8 +33,8 @@ pub fn colour(
         &backup
     };
 
-    if let Some(hit) = grid.observe(ray.clone(), bump_dist) {
-        ray.travel(hit.dist() + bump_dist);
+    if let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
+        ray.travel(hit.dist() + shader.bump_dist());
         let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
 
         return LinSrgba::from(grad_0.get(x as f32));

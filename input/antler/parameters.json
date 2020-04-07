@@ -3,8 +3,7 @@
         "grid": {
             "tar_tris": 10,
             "max_depth": 4,
-            "padding": 0.01,
-            "bump_dist": 1e-6
+            "padding": 0.01
         },
         "scene": "test",
         "frames": {

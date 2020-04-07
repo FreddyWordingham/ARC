@@ -5,7 +5,7 @@ pub mod shadow_weights;
 
 use self::{lighting_weights::*, shadow_weights::*};
 
-use crate::access;
+use crate::{access, clone};
 use attr::json;
 use nalgebra::Point3;
 
@@ -20,11 +20,14 @@ pub struct Shader {
     dof_radius: f64,
     /// Sun position.
     sun_pos: Point3<f64>,
+    /// Collision bump distance.
+    bump_dist: f64,
 }
 
 impl Shader {
     access!(light_weights, LightingWeights);
     access!(shadow_weights, ShadowWeights);
-    access!(dof_radius, f64);
+    clone!(dof_radius, f64);
     access!(sun_pos, Point3<f64>);
+    clone!(bump_dist, f64);
 }

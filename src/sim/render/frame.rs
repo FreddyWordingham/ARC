@@ -144,7 +144,6 @@ impl Frame {
                     &self.shader,
                     &self.scheme,
                     ray,
-                    1.0e-6, // TODO
                     rng,
                 ) * weighting;
             }
