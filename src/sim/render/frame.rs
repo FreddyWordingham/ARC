@@ -4,10 +4,12 @@ use crate::{
     access,
     geom::Ray,
     img::{AspectRatio, Quality, Shader},
-    math::sample::golden,
-    sim::render::{Camera, Scheme},
+    // math::sample::golden,
+    sim::render::{pipe, Camera, Grid, Scheme},
 };
 use nalgebra::{Rotation3, Unit, Vector3};
+use palette::LinSrgba;
+use rand::{rngs::ThreadRng, Rng};
 use std::f64::consts::PI;
 
 /// Frame structure.
@@ -50,6 +52,87 @@ impl Frame {
         }
     }
 
+    // /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
+    // #[inline]
+    // #[must_use]
+    // pub fn gen_ray(
+    //     &self,
+    //     offset: f64,
+    //     coor: (usize, usize),
+    //     sub_sample: usize,
+    //     depth_sample: usize,
+    // ) -> Ray {
+    //     debug_assert!(coor.0 < self.camera.res().0);
+    //     debug_assert!(coor.1 < self.camera.res().1);
+    //     debug_assert!(sub_sample < self.quality.super_samples().pow(2));
+    //     debug_assert!(depth_sample < self.quality.dof_samples());
+    //     debug_assert!(offset >= 0.0);
+    //     debug_assert!(offset <= (2.0 * PI));
+
+    //     let (xi, yi) = coor;
+
+    //     let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
+    //     let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+
+    //     let sx = (sub_sample % self.quality.super_samples()) as f64 + 0.5;
+    //     let sy = (sub_sample / self.quality.super_samples()) as f64 + 0.5;
+    //     theta += (sx * self.camera.sub_delta().0) - (self.camera.delta().0 * 0.5);
+    //     phi += (sy * self.camera.sub_delta().1) - (self.camera.delta().1 * 0.5);
+
+    //     let (r, t) = golden::circle(depth_sample as i32, self.quality.dof_samples() as i32);
+    //     let mut pos = *self.camera.pos();
+    //     pos += self.camera.right().as_ref() * (r * (t + offset).sin() * self.shader.dof_radius());
+    //     pos += self.camera.up().as_ref() * (r * (t + offset).cos() * self.shader.dof_radius());
+
+    //     let forward = Unit::new_normalize(self.camera.tar() - pos);
+    //     let up = Vector3::z_axis();
+    //     let right = Unit::new_normalize(forward.cross(&up));
+
+    //     let mut ray = Ray::new(pos, forward);
+    //     *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
+    //         * Rotation3::from_axis_angle(&right, phi)
+    //         * ray.dir();
+
+    //     ray
+    // }
+
+    /// Calculate the colour of a pixel.
+    #[inline]
+    #[must_use]
+    pub fn colour_pixel(
+        &self,
+        pixel: (usize, usize),
+        grid: &Grid,
+        rng: &mut ThreadRng,
+        bump_dist: f64,
+    ) -> LinSrgba {
+        let super_samples = self.quality.super_samples().unwrap_or(1);
+        let dof_samples = self.quality.dof_samples().unwrap_or(1);
+
+        let weighting = 1.0 / (super_samples * dof_samples) as f32;
+
+        let mut col = LinSrgba::default();
+
+        for ss in 0..super_samples {
+            let offset = rng.gen_range(0.0, 2.0 * PI);
+            for ds in 0..dof_samples {
+                let ray = self.gen_ray(offset, pixel, ss, ds);
+
+                col += pipe::colour(
+                    &ray.pos().clone(),
+                    grid,
+                    &self.shader,
+                    &self.scheme,
+                    ray,
+                    bump_dist,
+                    rng,
+                ) * weighting;
+            }
+        }
+
+        col
+    }
+
     /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
     #[inline]
     #[must_use]
@@ -60,27 +143,12 @@ impl Frame {
         sub_sample: usize,
         depth_sample: usize,
     ) -> Ray {
-        debug_assert!(coor.0 < self.camera.res().0);
-        debug_assert!(coor.1 < self.camera.res().1);
-        debug_assert!(sub_sample < self.quality.super_samples().pow(2));
-        debug_assert!(depth_sample < self.quality.dof_samples());
-        debug_assert!(offset >= 0.0);
-        debug_assert!(offset <= (2.0 * PI));
-
         let (xi, yi) = coor;
 
         let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
         let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
 
-        let sx = (sub_sample % self.quality.super_samples()) as f64 + 0.5;
-        let sy = (sub_sample / self.quality.super_samples()) as f64 + 0.5;
-        theta += (sx * self.camera.sub_delta().0) - (self.camera.delta().0 * 0.5);
-        phi += (sy * self.camera.sub_delta().1) - (self.camera.delta().1 * 0.5);
-
-        let (r, t) = golden::circle(depth_sample as i32, self.quality.dof_samples() as i32);
         let mut pos = *self.camera.pos();
-        pos += self.camera.right().as_ref() * (r * (t + offset).sin() * self.shader.dof_radius());
-        pos += self.camera.up().as_ref() * (r * (t + offset).cos() * self.shader.dof_radius());
 
         let forward = Unit::new_normalize(self.camera.tar() - pos);
         let up = Vector3::z_axis();

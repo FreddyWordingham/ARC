@@ -16,12 +16,9 @@ pub use self::{camera::*, frame::*, grid::*, group::*, hit::*, scan::*, scene::*
 use crate::util::{ParProgressBar, ProgressBar};
 use ndarray::Array2;
 use palette::LinSrgba;
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
 use rayon::prelude::*;
-use std::{
-    f64::consts::PI,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 /// Image splitting factor in each dimension.
 const SPLITTING_FACTOR: usize = 64;
@@ -65,39 +62,19 @@ fn render_section(index: usize, grid: &Grid, frame: &Frame, bump_dist: f64) -> A
 
     let fx = index % SPLITTING_FACTOR;
     let fy = index / SPLITTING_FACTOR;
-
     let start = (section_res.0 * fx, section_res.1 * fy);
 
     let mut rng = thread_rng();
-
-    let super_samples = frame.quality().super_samples().pow(2);
-    let dof_samples = frame.quality().dof_samples();
-    let weight = 1.0 / (super_samples * dof_samples) as f32;
-
     let mut section = Array2::default(section_res);
     for xi in 0..section_res.0 {
-        let rx = start.0 + xi;
+        let rx = start.0 + xi; // TODO: Put this into xi
         for yi in 0..section_res.1 {
             let ry = start.1 + yi;
 
-            for ss in 0..super_samples {
-                let offset = rng.gen_range(0.0, 2.0 * PI);
-                for ds in 0..dof_samples {
-                    let ray = frame.gen_ray(offset, (rx, ry), ss, ds);
-
-                    *section
-                        .get_mut((xi, yi))
-                        .expect("Could not access frame pixel.") += pipe::colour(
-                        &ray.pos().clone(),
-                        grid,
-                        frame.shader(),
-                        frame.scheme(),
-                        ray,
-                        bump_dist,
-                        &mut rng,
-                    ) * weight;
-                }
-            }
+            *section
+                .get_mut((xi, yi))
+                .expect("Could not access section pixel.") =
+                frame.colour_pixel((rx, ry), grid, &mut rng, bump_dist);
         }
     }
 

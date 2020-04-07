@@ -62,11 +62,17 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
     args!(_bin_path: String;
         params_filename: String
     );
-    values!(COL_WIDTH, params_filename);
+    {
+        values!(COL_WIDTH, params_filename);
+    }
 
     fmt::sub_section("Directories");
     let (in_dir, out_dir) = init::io_dirs(None, None);
-    values!(2 * COL_WIDTH, in_dir.display(), out_dir.display());
+    {
+        let input_directory = in_dir.display();
+        let output_directory = out_dir.display();
+        values!(2 * COL_WIDTH, input_directory, output_directory);
+    }
 
     (in_dir, out_dir, params_filename)
 }
@@ -75,7 +81,10 @@ fn init_dirs() -> (PathBuf, PathBuf, String) {
 fn load_parameters(in_dir: &Path, params_filename: &str) -> Parameters {
     fmt::sub_section("Parameters");
     let params_path = in_dir.join(params_filename);
-    values!(2 * COL_WIDTH, params_path.display());
+    {
+        let parameters_path = params_path.display();
+        values!(2 * COL_WIDTH, parameters_path);
+    }
 
     Parameters::load(&params_path)
 }
@@ -84,25 +93,35 @@ fn load_parameters(in_dir: &Path, params_filename: &str) -> Parameters {
 fn load_scene(in_dir: &Path, params: &Parameters) -> Scene {
     fmt::sub_section("Scene");
     let scene_path = in_dir.join(&format!("scenes/{}.json", params.render.scene()));
-    values!(2 * COL_WIDTH, scene_path.display());
+    {
+        let scene_path = scene_path.display();
+        values!(2 * COL_WIDTH, scene_path);
+    }
 
     let scene = SceneSettings::load(&scene_path).build(&in_dir.join("meshes"));
-    values!(
-        COL_WIDTH,
-        scene.boundary().mins(),
-        scene.boundary().maxs(),
-        scene.groups().len(),
-        scene.total_tris()
-    );
-
+    {
+        let scene_minimum = scene.boundary().mins();
+        let scene_maximum = scene.boundary().maxs();
+        let number_of_groups = scene.groups().len();
+        let total_triangles = scene.total_tris();
+        values!(
+            COL_WIDTH,
+            scene_minimum,
+            scene_maximum,
+            number_of_groups,
+            total_triangles
+        );
+    }
     println!("Group triangle breakdown...");
-    fmt::values(
-        COL_WIDTH,
-        scene
-            .groups()
-            .keys()
-            .map(|group| (group, scene.group_tris(*group))),
-    );
+    {
+        fmt::values(
+            COL_WIDTH,
+            scene
+                .groups()
+                .keys()
+                .map(|group| (group, scene.group_tris(*group))),
+        );
+    }
 
     scene
 }
@@ -112,15 +131,21 @@ fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
     fmt::sub_section("Grid");
     println!("Building...");
     let grid = Grid::new_root(params.render.grid(), &scene);
-
-    values!(
-        COL_WIDTH,
-        grid.max_depth(),
-        grid.num_cells(),
-        grid.num_leaf_cells(),
-        grid.num_tri_refs(),
-        grid.ave_leaf_tris()
-    );
+    {
+        let max_depth = grid.max_depth();
+        let total_cells = grid.num_cells();
+        let total_leaves = grid.num_leaf_cells();
+        let total_references = grid.num_tri_refs();
+        let average_tris_per_leaf = grid.ave_leaf_tris();
+        values!(
+            COL_WIDTH,
+            max_depth,
+            total_cells,
+            total_leaves,
+            total_references,
+            average_tris_per_leaf
+        );
+    }
 
     grid
 }
@@ -139,18 +164,37 @@ pub fn load_frame_settings(in_dir: &Path, frame: &FrameSettings) -> Frame {
 pub fn load_quality(in_dir: &Path, frame: &FrameSettings) -> QualitySettings {
     fmt::sub_sub_section("quality");
     let quality_path = in_dir.join(format!("quality/{}.json", frame.quality()));
-    values!(2 * COL_WIDTH, quality_path.display());
-    let quality = QualitySettings::load(&quality_path);
+    {
+        let quality_path = quality_path.display();
+        values!(2 * COL_WIDTH, quality_path);
+    }
 
-    values!(
-        COL_WIDTH,
-        quality.total_pixels(),
-        quality.super_samples(),
-        quality.dof_samples(),
-        quality.shadow_samples(),
-        quality.samples_per_pixel(),
-        quality.total_samples()
-    );
+    let quality = QualitySettings::load(&quality_path);
+    {
+        let total_samples = quality.total_samples();
+        let total_pixels = quality.total_pixels();
+        let samples_per_pixel = quality.samples_per_pixel();
+        let super_samples = if let Some(power) = quality.super_samples() {
+            format!("{}", power)
+        } else {
+            "OFF".to_owned()
+        };
+        let dof_samples = if let Some(samples) = quality.dof_samples() {
+            format!("{}", samples)
+        } else {
+            "OFF".to_owned()
+        };
+        let shadow_samples = quality.shadow_samples();
+        values!(
+            COL_WIDTH,
+            total_samples,
+            total_pixels,
+            samples_per_pixel,
+            super_samples,
+            dof_samples,
+            shadow_samples
+        );
+    }
 
     quality
 }
@@ -159,21 +203,31 @@ pub fn load_quality(in_dir: &Path, frame: &FrameSettings) -> QualitySettings {
 pub fn load_shader(in_dir: &Path, frame: &FrameSettings) -> ShaderSettings {
     fmt::sub_sub_section("shader");
     let shader_path = in_dir.join(format!("shaders/{}.json", frame.shader()));
-    values!(2 * COL_WIDTH, shader_path.display());
-    let shader = ShaderSettings::load(&shader_path);
+    {
+        let shader_path = shader_path.display();
+        values!(2 * COL_WIDTH, shader_path);
+    }
 
-    let light_weights = shader.light_weights();
-    let shadow_weights = shader.shadow_weights();
-    values!(
-        COL_WIDTH,
-        light_weights.ambient(),
-        light_weights.diffuse(),
-        light_weights.specular(),
-        shadow_weights.direct(),
-        shadow_weights.local(),
-        shadow_weights.ambient(),
-        shader.sun_pos()
-    );
+    let shader = ShaderSettings::load(&shader_path);
+    {
+        let ambient_lighting = shader.light_weights().ambient();
+        let diffuse_lighting = shader.light_weights().diffuse();
+        let specular_lighting = shader.light_weights().specular();
+        let direct_shadowing = shader.shadow_weights().direct();
+        let local_shadowing = shader.shadow_weights().local();
+        let ambient_shadowing = shader.shadow_weights().ambient();
+        let sun_pos = shader.sun_pos();
+        values!(
+            COL_WIDTH,
+            ambient_lighting,
+            diffuse_lighting,
+            specular_lighting,
+            direct_shadowing,
+            local_shadowing,
+            ambient_shadowing,
+            sun_pos
+        );
+    }
 
     shader
 }
@@ -182,19 +236,23 @@ pub fn load_shader(in_dir: &Path, frame: &FrameSettings) -> ShaderSettings {
 pub fn load_scheme(in_dir: &Path, frame: &FrameSettings) -> Scheme {
     fmt::sub_sub_section("scheme");
     let scheme_path = in_dir.join(format!("schemes/{}.json", frame.scheme()));
-    values!(2 * COL_WIDTH, scheme_path.display());
-    let scheme = SchemeSettings::load(&scheme_path).build();
+    {
+        let scheme_path = scheme_path.display();
+        values!(2 * COL_WIDTH, scheme_path);
+    }
 
-    for (group, grad) in scheme.grads() {
-        // values!(COL_WIDTH, group, fmt::gradient::to_string(&grad, 64));
-        let group_width = COL_WIDTH / 2;
-        let term_width = arc::fmt::term_width();
-        println!(
-            "{:>gw$} : {}",
-            format!("[{:^3}]", group),
-            fmt::gradient::to_string(&grad, term_width - group_width - 3),
-            gw = group_width
-        );
+    let scheme = SchemeSettings::load(&scheme_path).build();
+    {
+        for (group, grad) in scheme.grads() {
+            let group_width = COL_WIDTH / 2;
+            let term_width = arc::fmt::term_width();
+            println!(
+                "{:>gw$} : {}",
+                format!("[{:^3}]", group),
+                fmt::gradient::to_string(&grad, term_width - group_width - 3),
+                gw = group_width
+            );
+        }
     }
 
     scheme
@@ -211,17 +269,25 @@ pub fn build_camera(frame: &FrameSettings, quality: &QualitySettings) -> Camera 
         quality.total_pixels(),
         quality.super_samples(),
     );
-
-    values!(
-        COL_WIDTH,
-        camera.res().0,
-        camera.res().1,
-        camera.total_pixels(),
-        camera.fov().0.to_degrees(),
-        camera.fov().1.to_degrees(),
-        camera.pos(),
-        camera.tar()
-    );
+    {
+        let horizontal_res = camera.res().0;
+        let vertical_res = camera.res().1;
+        let total_pixels = camera.total_pixels();
+        let horizontal_fov = camera.fov().0.to_degrees();
+        let vertical_fov = camera.fov().1.to_degrees();
+        let camera_position = camera.pos();
+        let camera_target = camera.tar();
+        values!(
+            COL_WIDTH,
+            horizontal_res,
+            vertical_res,
+            total_pixels,
+            horizontal_fov,
+            vertical_fov,
+            camera_position,
+            camera_target
+        );
+    }
 
     camera
 }

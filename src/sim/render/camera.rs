@@ -22,7 +22,7 @@ pub struct Camera {
     /// Scanning deltas.
     delta: (f64, f64),
     /// Sub-sampling deltas.
-    sub_delta: (f64, f64),
+    sub_delta: Option<(f64, f64)>,
 }
 
 impl Camera {
@@ -34,7 +34,7 @@ impl Camera {
     clone!(fov, (f64, f64));
     clone!(res, (usize, usize));
     clone!(delta, (f64, f64));
-    clone!(sub_delta, (f64, f64));
+    clone!(sub_delta, Option<(f64, f64)>);
 
     /// Construct a new instance.
     #[inline]
@@ -45,7 +45,7 @@ impl Camera {
         fov_hz: f64,
         aspect_ratio: &AspectRatio,
         tar_pix: usize,
-        ss_power: usize,
+        ss_power: Option<usize>,
     ) -> Self {
         debug_assert!(fov_hz > 0.0);
         debug_assert!(tar_pix > 0);
@@ -58,7 +58,11 @@ impl Camera {
         let res = aspect_ratio.resolution(tar_pix, SPLITTING_FACTOR as usize);
 
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
-        let sub_delta = (delta.0 / ss_power as f64, delta.1 / ss_power as f64);
+        let sub_delta = if let Some(power) = ss_power {
+            Some((delta.0 / power as f64, delta.1 / power as f64))
+        } else {
+            None
+        };
 
         Self {
             pos,
