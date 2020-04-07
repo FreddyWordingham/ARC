@@ -12,10 +12,7 @@ use arc::{
         },
         Settings,
     },
-    sim::{
-        render,
-        render::{Camera, Frame, Grid, Scene, Scheme},
-    },
+    sim::render::{Camera, Frame, Grid, Scene, Scheme},
     util::{exec, init},
     values,
 };

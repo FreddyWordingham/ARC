@@ -5,7 +5,7 @@ use crate::{
     access,
     geom::Ray,
     img::{AspectRatio, Quality, Shader},
-    // math::sample::golden,
+    math::sample::golden,
     sim::render::{pipe, Camera, Grid, Scheme},
 };
 use nalgebra::{Point3, Rotation3, Unit, Vector3};
@@ -135,8 +135,8 @@ impl Frame {
 
         for sub_sample in 0..super_samples {
             let offset = rng.gen_range(0.0, 2.0 * PI);
-            for dof_sample in 0..dof_samples {
-                let ray = self.gen_ray(pixel, offset, sub_sample, dof_sample);
+            for depth_sample in 0..dof_samples {
+                let ray = self.gen_ray(pixel, offset, sub_sample, depth_sample);
 
                 col += pipe::colour(
                     &ray.pos().clone(),
@@ -160,15 +160,31 @@ impl Frame {
         pixel: (usize, usize),
         offset: f64,
         sub_sample: usize,
-        dof_sample: usize,
+        depth_sample: usize,
     ) -> Ray {
-        // if dof_sample > 1 {
-        // }
+        let pos = if let Some(dof_samples) = self.quality.dof_samples() {
+            debug_assert!(dof_samples > 1);
+
+            let (rho, theta) = golden::circle(depth_sample as i32, dof_samples as i32);
+            let mut pos = *self.camera.pos();
+
+            let forward = Unit::new_normalize(self.camera.tar() - pos);
+            let up = Vector3::z_axis();
+            let right = Unit::new_normalize(forward.cross(&up));
+
+            pos += right.as_ref() * (rho * (theta + offset).sin() * self.shader.dof_radius());
+            pos += up.as_ref() * (rho * (theta + offset).cos() * self.shader.dof_radius());
+
+            pos
+        } else {
+            *self.camera.pos()
+        };
+
         if self.quality.super_samples().is_some() {
-            return self.gen_ss_ray(*self.camera().pos(), pixel, sub_sample);
+            return self.gen_ss_ray(pos, pixel, sub_sample);
         }
 
-        self.gen_pix_ray(*self.camera().pos(), pixel)
+        self.gen_pix_ray(pos, pixel)
     }
 
     /// Generate a sub-pixel ray.
@@ -212,8 +228,8 @@ impl Frame {
         let up = Vector3::z_axis();
         let right = Unit::new_normalize(forward.cross(&up));
 
-        let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
-        let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+        let theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
+        let phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
 
         let mut ray = Ray::new(pos, forward);
         *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)

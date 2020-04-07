@@ -251,8 +251,9 @@ impl<'a> Grid<'a> {
     /// Scan for hits within the cell.
     #[inline]
     #[must_use]
-    pub fn hit_scan(&self, ray: &Ray) -> Scan {
+    pub fn hit_scan(&self, ray: &Ray, bump_dist: f64) -> Scan {
         debug_assert!(self.boundary().contains(ray.pos()));
+        debug_assert!(bump_dist > 0.0);
 
         match self {
             Self::Leaf { boundary, tris } => {
@@ -273,18 +274,25 @@ impl<'a> Grid<'a> {
 
                 let boundary_dist = boundary.dist(ray).expect("Ray has escaped cell.");
                 if let Some(hit) = nearest {
-                    if hit.dist() < boundary_dist {
-                        return Scan::new_surface_scan(hit);
+                    if hit.dist() < (boundary_dist - bump_dist) {
+                        return Scan::Surface { hit };
+                    } else if hit.dist() < (boundary_dist + bump_dist) {
+                        return Scan::Both {
+                            hit,
+                            dist: boundary_dist,
+                        };
                     }
                 }
 
-                Scan::new_boundary_scan(boundary_dist)
+                Scan::Boundary {
+                    dist: boundary_dist,
+                }
             }
-            Self::Empty { boundary } => Scan::new_boundary_scan(
-                boundary
+            Self::Empty { boundary } => Scan::Boundary {
+                dist: boundary
                     .dist(ray)
                     .expect("Could not determine boundary distance."),
-            ),
+            },
             Self::Root { .. } | Self::Branch { .. } => {
                 panic!("Should not be performing hit scans on branching cells!");
             }
@@ -315,8 +323,8 @@ impl<'a> Grid<'a> {
             return None;
         }
         while let Some(cell) = self.find_terminal_cell(ray.pos()) {
-            match cell.hit_scan(&ray) {
-                Scan::Surface { hit } => {
+            match cell.hit_scan(&ray, bump_dist) {
+                Scan::Surface { hit } | Scan::Both { hit, .. } => {
                     return Some(Hit::new(
                         hit.group(),
                         hit.dist() + dist_travelled,
