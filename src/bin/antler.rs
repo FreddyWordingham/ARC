@@ -12,11 +12,13 @@ use arc::{
         },
         Settings,
     },
-    sim::render::{Camera, Frame, Grid, Scene},
+    sim::render::{Camera, Frame, Grid, Group, Scene},
     util::{exec, init},
     values,
 };
 use attr::form_load;
+use palette::{Gradient, LinSrgba};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 /// Column width.
@@ -50,11 +52,11 @@ fn main() {
         fmt::sub_section(name);
         let frame = load_frame_settings(&in_dir, &frame_settings);
         fmt::sub_sub_section("Rendering");
-        let render = arc::sim::render::image(&grid, &frame);
+        let img = arc::sim::render::image(&grid, &frame);
         fmt::sub_sub_section("Saving");
-        let frame_path = out_dir.join(format!("{}.png", name));
-        save::png(&frame_path, render);
-        println!("Frame {} saved at: {}", name, frame_path.display());
+        let img_path = out_dir.join(format!("{}.png", name));
+        save::png(&img_path, &img);
+        println!("Frame {} saved at: {}", name, img_path.display());
     }
 
     fmt::section("Finished");
@@ -121,46 +123,43 @@ fn build_grid<'a>(params: &Parameters, scene: &'a Scene) -> Grid<'a> {
 
 /// Load the frame settings.
 pub fn load_frame_settings(in_dir: &Path, frame: &FrameSettings) -> Frame {
-    fmt::sub_sub_section("loading");
+    let quality = load_quality(in_dir, frame);
+    let shader = load_shader(in_dir, frame);
+    let palette = load_palette(in_dir, frame);
+    let camera = build_camera(frame, &quality);
+
+    Frame::new(frame.aspect_ratio(), quality, shader, palette, camera)
+}
+
+/// Load quality settings.
+pub fn load_quality(in_dir: &Path, frame: &FrameSettings) -> QualitySettings {
+    fmt::sub_sub_section("quality");
     let quality_path = in_dir.join(format!("quality/{}.json", frame.quality()));
     values!(2 * COL_WIDTH, quality_path.display());
     let quality = QualitySettings::load(&quality_path);
 
+    values!(
+        COL_WIDTH,
+        quality.total_pixels(),
+        quality.super_samples(),
+        quality.dof_samples(),
+        quality.shadow_samples(),
+        quality.samples_per_pixel(),
+        quality.total_samples()
+    );
+
+    quality
+}
+
+/// Load shader settings.
+pub fn load_shader(in_dir: &Path, frame: &FrameSettings) -> ShaderSettings {
+    fmt::sub_sub_section("shader");
     let shader_path = in_dir.join(format!("shaders/{}.json", frame.shader()));
     values!(2 * COL_WIDTH, shader_path.display());
     let shader = ShaderSettings::load(&shader_path);
 
-    let palette_path = in_dir.join(format!("palettes/{}.json", frame.palette()));
-    values!(2 * COL_WIDTH, palette_path.display());
-    let palette = PaletteSettings::load(&palette_path).build();
-
-    let camera = Camera::new(
-        *frame.cam_pos(),
-        *frame.tar_pos(),
-        frame.fov().to_radians(),
-        frame.aspect_ratio(),
-        quality.total_pixels(),
-        quality.super_samples(),
-    );
-
-    let frame = Frame::new(frame.aspect_ratio(), quality, shader, palette, camera);
-    values!(COL_WIDTH, frame.aspect_ratio());
-
-    fmt::sub_sub_section("quality");
-    let qual = frame.quality();
-    values!(
-        COL_WIDTH,
-        qual.total_pixels(),
-        qual.super_samples(),
-        qual.dof_samples(),
-        qual.shadow_samples(),
-        qual.samples_per_pixel(),
-        qual.total_samples()
-    );
-
-    fmt::sub_sub_section("shader");
-    let light_weights = frame.shader().light_weights();
-    let shadow_weights = frame.shader().shadow_weights();
+    let light_weights = shader.light_weights();
+    let shadow_weights = shader.shadow_weights();
     values!(
         COL_WIDTH,
         light_weights.ambient(),
@@ -171,22 +170,43 @@ pub fn load_frame_settings(in_dir: &Path, frame: &FrameSettings) -> Frame {
         shadow_weights.ambient()
     );
 
+    shader
+}
+
+/// Load a colour palette.
+pub fn load_palette(in_dir: &Path, frame: &FrameSettings) -> HashMap<Group, Gradient<LinSrgba>> {
     fmt::sub_sub_section("palette");
-    let pal = frame.palette();
-    for (group, grad) in pal {
+    let palette_path = in_dir.join(format!("palettes/{}.json", frame.palette()));
+    values!(2 * COL_WIDTH, palette_path.display());
+    let palette = PaletteSettings::load(&palette_path).build();
+
+    for (group, grad) in &palette {
         values!(COL_WIDTH, group, fmt::gradient::to_string(&grad, 64));
     }
 
+    palette
+}
+
+/// Build a camera.
+pub fn build_camera(frame: &FrameSettings, quality: &QualitySettings) -> Camera {
     fmt::sub_sub_section("camera");
-    let cam = frame.camera();
-    values!(
-        COL_WIDTH,
-        cam.total_pixels(),
-        cam.res().0,
-        cam.res().1,
-        cam.pos(),
-        cam.tar()
+    let camera = Camera::new(
+        *frame.cam_pos(),
+        *frame.tar_pos(),
+        frame.fov().to_radians(),
+        &frame.aspect_ratio(),
+        quality.total_pixels(),
+        quality.super_samples(),
     );
 
-    frame
+    values!(
+        COL_WIDTH,
+        camera.total_pixels(),
+        camera.res().0,
+        camera.res().1,
+        camera.pos(),
+        camera.tar()
+    );
+
+    camera
 }

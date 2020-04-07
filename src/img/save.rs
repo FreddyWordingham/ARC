@@ -8,26 +8,28 @@ use std::{fs::File, io::BufWriter, path::Path};
 
 /// Save an array as a png image.
 #[inline]
-pub fn png(path: &Path, img: Array2<LinSrgba>) {
-    let mut data = Array2::from_elem(
-        (
-            *img.shape().get(1).expect("Missing dimension."),
-            *img.shape().get(0).expect("Missing dimension."),
-        ),
-        Srgba::default().into_linear(),
-    );
-    for xi in 0..*img.shape().get(1).expect("Missing dimension.") {
-        for yi in 0..*img.shape().get(0).expect("Missing dimension.") {
-            data[[
-                *img.shape().get(1).expect("Missing dimension.") - xi - 1,
-                *img.shape().get(0).expect("Missing dimension.") - yi - 1,
-            ]] = img[[yi, xi]];
-        }
-    }
-    let data = data.t();
+pub fn png(path: &Path, img: &Array2<LinSrgba>) {
+    let data = img.mapv(|col| Srgba::from_linear(col).into_format().into_raw());
+
+    // let mut data = Array2::from_elem(
+    //     (
+    //         *img.shape().get(1).expect("Missing dimension."),
+    //         *img.shape().get(0).expect("Missing dimension."),
+    //     ),
+    //     Srgba::default().into_linear(),
+    // );
+    // for xi in 0..*img.shape().get(1).expect("Missing dimension.") {
+    //     for yi in 0..*img.shape().get(0).expect("Missing dimension.") {
+    //         data[[
+    //             *img.shape().get(1).expect("Missing dimension.") - xi - 1,
+    //             *img.shape().get(0).expect("Missing dimension.") - yi - 1,
+    //         ]] = img[[yi, xi]];
+    //     }
+    // }
+    // let data = data.t();
 
     let file = File::create(path).expect("Could not create png file.");
-    let ref mut w = BufWriter::new(file);
+    let w = BufWriter::new(file);
     let mut encoder = Encoder::new(
         w,
         *data.shape().get(0).expect("Missing dimension.") as u32,
@@ -39,10 +41,8 @@ pub fn png(path: &Path, img: Array2<LinSrgba>) {
         .write_header()
         .expect("Could not build image writer.");
 
-    let data: Vec<[u8; 4]> = data
-        .mapv(|col| Srgba::from_linear(col).into_format().into_raw())
-        .into_raw_vec();
+    let img: Vec<[u8; 4]> = data.into_raw_vec();
     writer
-        .write_image_data(data.flat())
+        .write_image_data(img.flat())
         .expect("Failed to save png.");
 }

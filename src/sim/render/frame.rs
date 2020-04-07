@@ -5,7 +5,6 @@ use crate::{
     img::{AspectRatio, Quality, Shader},
     sim::render::{Camera, Group},
 };
-use ndarray::Array2;
 use palette::{Gradient, LinSrgba};
 use std::collections::HashMap;
 

@@ -43,7 +43,7 @@ impl Scene {
         let mut mins = None;
         let mut maxs = None;
 
-        for (_group, meshes) in groups {
+        for meshes in groups.values() {
             for mesh in meshes {
                 let (mesh_mins, mesh_maxs) = mesh.bounding_box().mins_maxs();
 

@@ -43,7 +43,7 @@ impl Camera {
         pos: Point3<f64>,
         tar: Point3<f64>,
         fov_hz: f64,
-        aspect_ratio: AspectRatio,
+        aspect_ratio: &AspectRatio,
         tar_pix: usize,
         ss_power: usize,
     ) -> Self {

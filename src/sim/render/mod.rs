@@ -17,7 +17,7 @@ use palette::LinSrgba;
 /// Run a rendering simulation.
 #[inline]
 #[must_use]
-pub fn image(grid: &Grid, frame: &Frame) -> Array2<LinSrgba> {
+pub fn image(_grid: &Grid, frame: &Frame) -> Array2<LinSrgba> {
     let cam = frame.camera();
 
     Array2::default(cam.res())
