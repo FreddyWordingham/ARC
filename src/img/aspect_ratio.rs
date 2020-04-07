@@ -54,7 +54,7 @@ impl AspectRatio {
         } else {
             fx + (mult.0 - (fx % mult.0))
         };
-        let my = if ny % mult.1 == 0 {
+        let my = if fy % mult.1 == 0 {
             fy
         } else {
             fy + (mult.1 - (fx % mult.1))
