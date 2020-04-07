@@ -165,6 +165,10 @@ pub fn load_image_settings(in_dir: &Path, image: &ImageSettings) -> Image {
     );
 
     fmt::sub_sub_section("palette");
+    let pal = image.palette();
+    for (group, grad) in pal.grads() {
+        values!(COL_WIDTH, group, arc::rend::print_colour(&grad, 64));
+    }
 
     fmt::sub_sub_section("camera");
     let cam = image.camera();

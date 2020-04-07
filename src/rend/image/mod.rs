@@ -3,8 +3,7 @@
 pub mod camera;
 pub mod palette;
 
-pub use self::camera::*;
-pub use self::palette::*;
+pub use self::{camera::*, palette::*};
 
 use crate::{
     access,
