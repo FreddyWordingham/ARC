@@ -12,10 +12,13 @@ pub struct Grid {
     max_depth: i32,
     /// Collision detection padding.
     padding: f64,
+    /// Collision bump distance.
+    bump_dist: f64,
 }
 
 impl Grid {
     clone!(tar_tris, usize);
     clone!(max_depth, i32);
     clone!(padding, f64);
+    clone!(bump_dist, f64);
 }

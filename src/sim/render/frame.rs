@@ -1,5 +1,6 @@
 //! Frame implementation.
 
+use crate::util::{ParProgressBar, ProgressBar};
 use crate::{
     access,
     geom::Ray,
@@ -7,10 +8,19 @@ use crate::{
     // math::sample::golden,
     sim::render::{pipe, Camera, Grid, Scheme},
 };
-use nalgebra::{Rotation3, Unit, Vector3};
+use nalgebra::{Point3, Rotation3, Unit, Vector3};
+use ndarray::Array2;
 use palette::LinSrgba;
+use rand::thread_rng;
 use rand::{rngs::ThreadRng, Rng};
+use rayon::prelude::*;
 use std::f64::consts::PI;
+use std::sync::{Arc, Mutex};
+
+// /// Image splitting factor in each dimension.
+// pub const SPLITTING_FACTOR: usize = 64;
+// /// Distance to travel away from colliding surfaces.
+// const BUMP_DIST: f64 = 1.0e-6;
 
 /// Frame structure.
 pub struct Frame {
@@ -52,49 +62,60 @@ impl Frame {
         }
     }
 
-    // /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
-    // #[inline]
-    // #[must_use]
-    // pub fn gen_ray(
-    //     &self,
-    //     offset: f64,
-    //     coor: (usize, usize),
-    //     sub_sample: usize,
-    //     depth_sample: usize,
-    // ) -> Ray {
-    //     debug_assert!(coor.0 < self.camera.res().0);
-    //     debug_assert!(coor.1 < self.camera.res().1);
-    //     debug_assert!(sub_sample < self.quality.super_samples().pow(2));
-    //     debug_assert!(depth_sample < self.quality.dof_samples());
-    //     debug_assert!(offset >= 0.0);
-    //     debug_assert!(offset <= (2.0 * PI));
+    /// Run a rendering simulation.
+    #[inline]
+    #[must_use]
+    pub fn image(&self, grid: &Grid) -> Array2<LinSrgba> {
+        debug_assert!(self.camera.res().0 % self.quality.section_splits().0 == 0);
+        debug_assert!(self.camera.res().1 % self.quality.section_splits().1 == 0);
 
-    //     let (xi, yi) = coor;
+        let num_sections = self.quality.section_splits().0 * self.quality.section_splits().1;
+        let pb = ParProgressBar::new("Rendering", num_sections as u64);
+        let pb = Arc::new(Mutex::new(pb));
 
-    //     let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
-    //     let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+        let sections: Vec<usize> = (0..num_sections).collect();
+        let sections: Vec<(usize, Array2<LinSrgba>)> = sections
+            .par_iter()
+            .map(|index| {
+                pb.lock().expect("Could not lock progress bar.").tick();
+                let section = self.render_section(*index, grid);
+                (*index, section)
+            })
+            .collect();
+        pb.lock()
+            .expect("Could not lock progress bar.")
+            .finish_with_message("Render complete.");
 
-    //     let sx = (sub_sample % self.quality.super_samples()) as f64 + 0.5;
-    //     let sy = (sub_sample / self.quality.super_samples()) as f64 + 0.5;
-    //     theta += (sx * self.camera.sub_delta().0) - (self.camera.delta().0 * 0.5);
-    //     phi += (sy * self.camera.sub_delta().1) - (self.camera.delta().1 * 0.5);
+        self.stitch(sections)
+    }
 
-    //     let (r, t) = golden::circle(depth_sample as i32, self.quality.dof_samples() as i32);
-    //     let mut pos = *self.camera.pos();
-    //     pos += self.camera.right().as_ref() * (r * (t + offset).sin() * self.shader.dof_radius());
-    //     pos += self.camera.up().as_ref() * (r * (t + offset).cos() * self.shader.dof_radius());
+    /// Render a section of the image.
+    #[inline]
+    #[must_use]
+    fn render_section(&self, index: usize, grid: &Grid) -> Array2<LinSrgba> {
+        let section_res = self.camera.frame_res(self.quality.section_splits());
 
-    //     let forward = Unit::new_normalize(self.camera.tar() - pos);
-    //     let up = Vector3::z_axis();
-    //     let right = Unit::new_normalize(forward.cross(&up));
+        let fx = index % self.quality.section_splits().0;
+        let fy = index / self.quality.section_splits().0;
+        let start = (section_res.0 * fx, section_res.1 * fy);
 
-    //     let mut ray = Ray::new(pos, forward);
-    //     *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
-    //         * Rotation3::from_axis_angle(&right, phi)
-    //         * ray.dir();
+        let mut rng = thread_rng();
+        let mut section = Array2::default(section_res);
 
-    //     ray
-    // }
+        for xi in 0..section_res.0 {
+            let rx = start.0 + xi; // TODO: Put this into xi
+            for yi in 0..section_res.1 {
+                let ry = start.1 + yi;
+
+                *section
+                    .get_mut((xi, yi))
+                    .expect("Could not access section pixel.") =
+                    self.colour_pixel((rx, ry), grid, &mut rng);
+            }
+        }
+
+        section
+    }
 
     /// Calculate the colour of a pixel.
     #[inline]
@@ -104,7 +125,6 @@ impl Frame {
         pixel: (usize, usize),
         grid: &Grid,
         rng: &mut ThreadRng,
-        bump_dist: f64,
     ) -> LinSrgba {
         let super_samples = self.quality.super_samples().unwrap_or(1);
         let dof_samples = self.quality.dof_samples().unwrap_or(1);
@@ -113,10 +133,10 @@ impl Frame {
 
         let mut col = LinSrgba::default();
 
-        for ss in 0..super_samples {
+        for sub_sample in 0..super_samples {
             let offset = rng.gen_range(0.0, 2.0 * PI);
-            for ds in 0..dof_samples {
-                let ray = self.gen_ray(offset, pixel, ss, ds);
+            for dof_sample in 0..dof_samples {
+                let ray = self.gen_ray(pixel, offset, sub_sample, dof_sample);
 
                 col += pipe::colour(
                     &ray.pos().clone(),
@@ -124,7 +144,7 @@ impl Frame {
                     &self.shader,
                     &self.scheme,
                     ray,
-                    bump_dist,
+                    1.0e-6, // TODO
                     rng,
                 ) * weighting;
             }
@@ -133,26 +153,47 @@ impl Frame {
         col
     }
 
-    /// Generate a super-sampling depth-of-field ray for the corresponding pixel indices.
+    /// Generate a new observation ray.
     #[inline]
     #[must_use]
     pub fn gen_ray(
         &self,
+        pixel: (usize, usize),
         offset: f64,
-        coor: (usize, usize),
         sub_sample: usize,
-        depth_sample: usize,
+        dof_sample: usize,
     ) -> Ray {
-        let (xi, yi) = coor;
+        // if dof_sample > 1 {
+        // }
+        if self.quality.super_samples().is_some() {
+            return self.gen_ss_ray(*self.camera().pos(), pixel, sub_sample);
+        }
 
-        let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
-        let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+        self.gen_pix_ray(*self.camera().pos(), pixel)
+    }
 
-        let mut pos = *self.camera.pos();
+    /// Generate a sub-pixel ray.
+    #[inline]
+    #[must_use]
+    pub fn gen_ss_ray(&self, pos: Point3<f64>, pixel: (usize, usize), sub_sample: usize) -> Ray {
+        let (xi, yi) = pixel;
 
         let forward = Unit::new_normalize(self.camera.tar() - pos);
         let up = Vector3::z_axis();
         let right = Unit::new_normalize(forward.cross(&up));
+
+        let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
+        let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+
+        let super_samples = self
+            .quality
+            .super_samples()
+            .expect("Bad attempt super sample.");
+        let sub_delta = self.camera.sub_delta().expect("Bad attempt super sample.");
+        let sx = (sub_sample % super_samples) as f64 + 0.5;
+        let sy = (sub_sample / super_samples) as f64 + 0.5;
+        theta += (sx * sub_delta.0) - (self.camera.delta().0 * 0.5);
+        phi += (sy * sub_delta.1) - (self.camera.delta().1 * 0.5);
 
         let mut ray = Ray::new(pos, forward);
         *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
@@ -160,5 +201,60 @@ impl Frame {
             * ray.dir();
 
         ray
+    }
+
+    /// Generate a pixel central ray.
+    #[inline]
+    #[must_use]
+    pub fn gen_pix_ray(&self, pos: Point3<f64>, pixel: (usize, usize)) -> Ray {
+        let (xi, yi) = pixel;
+
+        let forward = Unit::new_normalize(self.camera.tar() - pos);
+        let up = Vector3::z_axis();
+        let right = Unit::new_normalize(forward.cross(&up));
+
+        let mut theta = (xi as f64 * self.camera.delta().0) - (self.camera.fov().0 * 0.5);
+        let mut phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
+
+        let mut ray = Ray::new(pos, forward);
+        *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
+            * Rotation3::from_axis_angle(&right, phi)
+            * ray.dir();
+
+        ray
+    }
+
+    /// Stitch together the stack of sections.
+    #[inline]
+    #[must_use]
+    fn stitch(&self, sections: Vec<(usize, Array2<LinSrgba>)>) -> Array2<LinSrgba> {
+        let mut img = unsafe { Array2::uninitialized(self.camera.res()) };
+
+        let img_res = self.camera.res();
+        let section_res = (
+            img_res.0 / self.quality.section_splits().0,
+            img_res.1 / self.quality.section_splits().1,
+        );
+
+        let mut pb = ProgressBar::new("Stitching", sections.len() as u64);
+        for (index, section) in sections {
+            pb.tick();
+
+            let nx = index % self.quality.section_splits().0;
+            let ny = index / self.quality.section_splits().0;
+
+            let start_x = nx * section_res.0;
+            let start_y = ny * section_res.1;
+
+            for (px, fx) in (start_x..(start_x + section_res.0)).zip(0..section_res.0) {
+                for (py, fy) in (start_y..(start_y + section_res.1)).zip(0..section_res.1) {
+                    *img.get_mut((px, py)).expect("Could not write to image.") =
+                        *section.get((fx, fy)).expect("Could not read from frame.");
+                }
+            }
+        }
+        pb.finish_with_message("Stitching complete.");
+
+        img
     }
 }

@@ -49,7 +49,7 @@ fn main() {
     for (name, frame_settings) in params.render.frames() {
         fmt::sub_section(name);
         let frame = load_frame_settings(&in_dir, &frame_settings);
-        let img = render::image(&grid, &frame);
+        let img = frame.image(&grid);
         save_frame(&out_dir, name, img);
     }
 
@@ -171,8 +171,7 @@ pub fn load_quality(in_dir: &Path, frame: &FrameSettings) -> QualitySettings {
 
     let quality = QualitySettings::load(&quality_path);
     {
-        let total_samples = quality.total_samples();
-        let total_pixels = quality.total_pixels();
+        let target_pixels = quality.target_pixels();
         let samples_per_pixel = quality.samples_per_pixel();
         let super_samples = if let Some(power) = quality.super_samples() {
             format!("{}", power)
@@ -187,8 +186,7 @@ pub fn load_quality(in_dir: &Path, frame: &FrameSettings) -> QualitySettings {
         let shadow_samples = quality.shadow_samples();
         values!(
             COL_WIDTH,
-            total_samples,
-            total_pixels,
+            target_pixels,
             samples_per_pixel,
             super_samples,
             dof_samples,
@@ -266,13 +264,15 @@ pub fn build_camera(frame: &FrameSettings, quality: &QualitySettings) -> Camera 
         *frame.tar_pos(),
         frame.fov().to_radians(),
         &frame.aspect_ratio(),
-        quality.total_pixels(),
+        quality.section_splits(),
+        quality.target_pixels(),
         quality.super_samples(),
     );
     {
         let horizontal_res = camera.res().0;
         let vertical_res = camera.res().1;
         let total_pixels = camera.total_pixels();
+        let total_samples = total_pixels * quality.samples_per_pixel();
         let horizontal_fov = camera.fov().0.to_degrees();
         let vertical_fov = camera.fov().1.to_degrees();
         let camera_position = camera.pos();
@@ -282,6 +282,7 @@ pub fn build_camera(frame: &FrameSettings, quality: &QualitySettings) -> Camera 
             horizontal_res,
             vertical_res,
             total_pixels,
+            total_samples,
             horizontal_fov,
             vertical_fov,
             camera_position,

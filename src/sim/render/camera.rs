@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone, img::AspectRatio, sim::render::SPLITTING_FACTOR};
+use crate::{access, clone, img::AspectRatio};
 use nalgebra::{Point3, Unit, Vector3};
 
 /// Image building structure.
@@ -44,10 +44,13 @@ impl Camera {
         tar: Point3<f64>,
         fov_hz: f64,
         aspect_ratio: &AspectRatio,
+        section_splits: (usize, usize),
         tar_pix: usize,
         ss_power: Option<usize>,
     ) -> Self {
         debug_assert!(fov_hz > 0.0);
+        debug_assert!(section_splits.0 > 0);
+        debug_assert!(section_splits.1 > 0);
         debug_assert!(tar_pix > 0);
 
         let forward = Unit::new_normalize(tar - pos);
@@ -55,7 +58,7 @@ impl Camera {
         let right = Unit::new_normalize(forward.cross(&up));
 
         let fov = (fov_hz, fov_hz / aspect_ratio.ratio());
-        let res = aspect_ratio.resolution(tar_pix, SPLITTING_FACTOR as usize);
+        let res = aspect_ratio.resolution(tar_pix, section_splits);
 
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
         let sub_delta = if let Some(power) = ss_power {
@@ -87,10 +90,10 @@ impl Camera {
     /// Calculate the frame resolution.
     #[inline]
     #[must_use]
-    pub fn frame_res(&self, splitting_factor: usize) -> (usize, usize) {
-        debug_assert!(self.res.0 % splitting_factor == 0);
-        debug_assert!(self.res.1 % splitting_factor == 0);
+    pub fn frame_res(&self, section_splits: (usize, usize)) -> (usize, usize) {
+        debug_assert!(self.res.0 % section_splits.0 == 0);
+        debug_assert!(self.res.1 % section_splits.1 == 0);
 
-        (self.res.0 / splitting_factor, self.res.1 / splitting_factor)
+        (self.res.0 / section_splits.0, self.res.1 / section_splits.1)
     }
 }
