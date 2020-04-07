@@ -6,6 +6,7 @@ use std::collections::BTreeMap;
 
 /// Group colour gradients.
 pub struct Scheme {
+    /// Colour scheme gradients.
     grads: BTreeMap<Group, Gradient<LinSrgba>>,
 }
 

@@ -252,13 +252,6 @@ impl<'a> Grid<'a> {
     #[inline]
     #[must_use]
     pub fn hit_scan(&self, ray: &Ray) -> Scan {
-        let boundary = self.boundary();
-        if !self.boundary().contains(ray.pos()) {
-            println!("Ray pos: {}", ray.pos());
-            println!("Ray dir: {}\t{}\t{}", ray.dir().x, ray.dir().y, ray.dir().z);
-            println!("Mins: {}", boundary.mins());
-            println!("Maxs: {}", boundary.maxs());
-        };
         debug_assert!(self.boundary().contains(ray.pos()));
 
         match self {
