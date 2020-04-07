@@ -185,11 +185,14 @@ pub fn load_scheme(in_dir: &Path, frame: &FrameSettings) -> Scheme {
     let scheme = SchemeSettings::load(&scheme_path).build();
 
     for (group, grad) in scheme.grads() {
+        // values!(COL_WIDTH, group, fmt::gradient::to_string(&grad, 64));
+        let group_width = COL_WIDTH / 2;
+        let term_width = arc::fmt::term_width();
         println!(
-            "{:>width$} : {}",
-            group,
-            fmt::gradient::to_string(&grad, COL_WIDTH - 3),
-            width = (COL_WIDTH / 2)
+            "{:>gw$} : {}",
+            format!("[{:^3}]", group),
+            fmt::gradient::to_string(&grad, term_width - group_width - 3),
+            gw = group_width
         );
     }
 
