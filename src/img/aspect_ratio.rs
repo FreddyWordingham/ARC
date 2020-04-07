@@ -42,15 +42,21 @@ impl AspectRatio {
     /// Determine a resolution for the target number of pixels.
     #[inline]
     #[must_use]
-    pub fn resolution(&self, total: usize) -> (usize, usize) {
+    pub fn resolution(&self, total: usize, mult: usize) -> (usize, usize) {
         debug_assert!(total > 0);
 
         let ratio = self.ratio();
 
-        let nx = (total as f64 * self.ratio()).sqrt();
-        let ny = nx / ratio;
+        let fx = (total as f64 * self.ratio()).sqrt();
+        let fy = fx / ratio;
 
-        (nx.ceil() as usize, ny.ceil() as usize)
+        let nx = fx.ceil() as usize;
+        let ny = fy.ceil() as usize;
+
+        let mx = nx + (mult - (nx % mult));
+        let my = ny + (mult - (ny % mult));
+
+        (mx, my)
     }
 }
 

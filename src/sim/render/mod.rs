@@ -14,6 +14,9 @@ pub use self::{camera::*, frame::*, grid::*, group::*, hit::*, scan::*, scene::*
 use ndarray::Array2;
 use palette::LinSrgba;
 
+/// Image splitting factor in each dimension.
+const SPLITTING_FACTOR: usize = 32;
+
 /// Run a rendering simulation.
 #[inline]
 #[must_use]

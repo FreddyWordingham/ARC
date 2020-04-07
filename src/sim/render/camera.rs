@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone, img::AspectRatio};
+use crate::{access, clone, img::AspectRatio, sim::render::SPLITTING_FACTOR};
 use nalgebra::{Point3, Unit, Vector3};
 
 /// Image building structure.
@@ -55,7 +55,7 @@ impl Camera {
         let right = Unit::new_normalize(forward.cross(&up));
 
         let fov = (fov_hz, fov_hz / aspect_ratio.ratio());
-        let res = aspect_ratio.resolution(tar_pix);
+        let res = aspect_ratio.resolution(tar_pix, SPLITTING_FACTOR);
 
         let delta = (fov.0 / (res.0 - 1) as f64, fov.1 / (res.1 - 1) as f64);
         let sub_delta = (delta.0 / ss_power as f64, delta.1 / ss_power as f64);
