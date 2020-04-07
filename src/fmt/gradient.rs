@@ -1,29 +1,13 @@
-//! Rendering module.
+//! Gradient formatting function.
 
-pub mod aspect_ratio;
-pub mod grid;
-pub mod group;
-pub mod hit;
-pub mod image;
-pub mod lighting;
-pub mod save;
-pub mod scan;
-pub mod scene;
-pub mod settings;
-
-pub use self::{
-    aspect_ratio::*, grid::*, group::*, hit::*, image::*, lighting::*, scan::*, scene::*,
-    settings::Settings,
-};
-
-use ::palette::{Gradient, LinSrgba};
 use ansi_rgb::Background;
+use palette::{Gradient, LinSrgba};
 use rgb::RGB8;
 
 /// Create a string of a gradients colour.
 #[inline]
 #[must_use]
-pub fn print_colour(grad: &Gradient<LinSrgba>, len: usize) -> String {
+pub fn to_string(grad: &Gradient<LinSrgba>, len: usize) -> String {
     let mut scale = String::new();
 
     for i in 0..len {

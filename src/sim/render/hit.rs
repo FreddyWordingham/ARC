@@ -1,6 +1,6 @@
 //! Hit implementation.
 
-use crate::{access, clone, rend::Group};
+use crate::{access, clone, sim::render::Group};
 use nalgebra::{Unit, Vector3};
 
 /// Hit collision information.

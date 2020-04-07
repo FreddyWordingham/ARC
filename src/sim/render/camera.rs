@@ -1,6 +1,6 @@
 //! Camera implementation.
 
-use crate::{access, clone, rend::AspectRatio};
+use crate::{access, clone, img::AspectRatio};
 use nalgebra::{Point3, Unit, Vector3};
 
 /// Image building structure.

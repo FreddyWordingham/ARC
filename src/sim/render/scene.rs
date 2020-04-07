@@ -3,7 +3,7 @@
 use crate::{
     access,
     geom::{Aabb, Collide, Mesh},
-    rend::Group,
+    sim::render::Group,
 };
 use nalgebra::Point3;
 use std::collections::BTreeMap;

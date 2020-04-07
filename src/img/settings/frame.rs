@@ -1,12 +1,12 @@
-//! Image input settings implementation.
+//! Frame input settings implementation.
 
-use crate::{access, clone, rend::AspectRatio};
+use crate::{access, clone, img::AspectRatio};
 use attr::json;
 use nalgebra::Point3;
 
-/// Image settings.
+/// Frame settings.
 #[json]
-pub struct Image {
+pub struct Frame {
     /// Quality file.
     quality: String,
     /// Shader file.
@@ -23,7 +23,7 @@ pub struct Image {
     tar_pos: Point3<f64>,
 }
 
-impl Image {
+impl Frame {
     access!(quality, String);
     access!(shader, String);
     access!(palette, String);

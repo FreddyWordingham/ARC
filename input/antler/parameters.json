@@ -6,7 +6,7 @@
             "padding": 0.01
         },
         "scene": "piece",
-        "images": {
+        "frames": {
             "img_0": {
                 "quality": "test",
                 "shader": "sunny_day",

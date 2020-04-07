@@ -4,7 +4,7 @@ use crate::{
     access,
     file::{Load, Transform as FileTransform},
     geom::{Mesh, Transform},
-    rend::Group,
+    sim::render::{Group, Scene as RenderScene},
 };
 use attr::json;
 use nalgebra::Point3;
@@ -27,7 +27,7 @@ impl Scene {
     /// Build a rendering scene.
     #[inline]
     #[must_use]
-    pub fn build(&self, in_dir: &Path) -> crate::rend::Scene {
+    pub fn build(&self, in_dir: &Path) -> RenderScene {
         let mut surfs: BTreeMap<Group, Vec<_>> = BTreeMap::new();
         for (group, meshes) in &self.groups {
             for (name, transform) in meshes {
@@ -46,6 +46,6 @@ impl Scene {
             }
         }
 
-        crate::rend::Scene::new(self.sun_pos, surfs)
+        RenderScene::new(self.sun_pos, surfs)
     }
 }

@@ -2,7 +2,8 @@
 
 use crate::{
     geom::{Aabb, Collide, Ray, SmoothTriangle, Trace},
-    rend::{settings::Grid as GridSettings, Group, Hit, Scan, Scene},
+    img::settings::Grid as GridSettings,
+    sim::render::{Group, Hit, Scan, Scene},
 };
 use nalgebra::Point3;
 

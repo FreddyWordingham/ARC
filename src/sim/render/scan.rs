@@ -1,6 +1,6 @@
 //! Hit scan implementation.
 
-use crate::rend::Hit;
+use crate::sim::render::Hit;
 
 /// Hit scan result enumeration.
 pub enum Scan {

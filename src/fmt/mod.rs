@@ -1,8 +1,9 @@
 //! Formatting module.
 
-mod banner;
-mod columns;
-mod values;
+pub mod banner;
+pub mod columns;
+pub mod gradient;
+pub mod values;
 
 pub use self::{banner::*, columns::*, values::*};
 

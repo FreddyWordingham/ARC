@@ -1,9 +1,6 @@
 //! Palette colours input settings implementation.
 
-use crate::{
-    access,
-    rend::{image::Palette as ImagePalette, Group},
-};
+use crate::{access, sim::render::Group};
 use attr::json;
 use palette::{Gradient, LinSrgba};
 use std::collections::HashMap;
@@ -21,7 +18,7 @@ impl Palette {
     /// Build a complete instance.
     #[inline]
     #[must_use]
-    pub fn build(&self) -> ImagePalette {
+    pub fn build(&self) -> HashMap<Group, Gradient<LinSrgba>> {
         let mut list = HashMap::with_capacity(self.grads.len());
 
         for (group, cols) in &self.grads {
@@ -46,6 +43,6 @@ impl Palette {
             );
         }
 
-        ImagePalette::new(list)
+        list
     }
 }
