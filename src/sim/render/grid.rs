@@ -298,14 +298,14 @@ impl<'a> Grid<'a> {
         let mut dist_travelled = 0.0;
 
         // Move the ray to within the domain of the grid if it isn't already within it.
-        if let Some(dist) = self.boundary().dist(&ray) {
-            if !self.boundary().contains(ray.pos()) {
+        if !self.boundary().contains(ray.pos()) {
+            if let Some(dist) = self.boundary().dist(&ray) {
                 let d = dist + bump_dist;
                 ray.travel(d);
                 dist_travelled += d;
+            } else {
+                return None;
             }
-        } else {
-            return None;
         }
 
         // Trace forward until leaving the grid or observing something.
@@ -322,6 +322,10 @@ impl<'a> Grid<'a> {
                     let d = dist + bump_dist;
                     ray.travel(d);
                     dist_travelled += d;
+
+                    if !self.boundary().contains(ray.pos()) {
+                        return None;
+                    }
                 }
             }
         }

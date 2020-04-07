@@ -1,7 +1,8 @@
 //! Rendering pipe sub-module.
 
 use crate::{
-    geom::{Ray, Trace},
+    geom::Ray,
+    // geom::{Ray, Trace},
     img::Shader,
     sim::render::Grid,
 };
@@ -27,18 +28,18 @@ pub fn colour(
         LinSrgba::new(0.0, 1.0, 1.0, 1.0),
     ]);
 
-    if let Some(dist) = grid.boundary().dist(&ray) {
-        let x = (dist - 10.0) / 10.0;
+    // if let Some(dist) = grid.boundary().dist(&ray) {
+    //     let x = (dist - 10.0) / 10.0;
 
-        if x < 0.0 || x > 1.0 {
-            return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
-        }
-        return LinSrgba::from(grad_0.get(x as f32));
-    }
-
-    // if let Some(hit) = grid.observe(ray, bump_dist) {
-    //     return LinSrgba::from(grad_0.get(1.0));
+    //     if x < 0.0 || x > 1.0 {
+    //         return LinSrgba::new(1.0, 0.0, 1.0, 1.0);
+    //     }
+    //     return LinSrgba::from(grad_0.get(x as f32));
     // }
+
+    if let Some(_hit) = grid.observe(ray, bump_dist) {
+        return LinSrgba::from(grad_0.get(1.0));
+    }
 
     Srgba::new(0.2, 0.2, 0.2, 0.2).into_linear()
 }

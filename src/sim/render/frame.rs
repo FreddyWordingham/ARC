@@ -56,12 +56,13 @@ impl Frame {
         &self,
         coor: (usize, usize),
         sub_sample: usize,
-        _depth_sample: usize,
+        depth_sample: usize,
         offset: f64,
     ) -> Ray {
         debug_assert!(coor.0 < self.camera.res().0);
         debug_assert!(coor.1 < self.camera.res().1);
         debug_assert!(sub_sample < self.quality.super_samples().pow(2));
+        debug_assert!(depth_sample < self.quality.dof_samples());
         debug_assert!(offset >= 0.0);
         debug_assert!(offset <= (2.0 * PI));
 
