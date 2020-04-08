@@ -28,7 +28,16 @@
             ["trees", null],
             ["umbrella", null],
             ["walkway", null],
-            ["whale", null]
+            ["whale", null],
+            ["splash", null],
+            ["sphere_0", null],
+            ["sphere_1", null],
+            ["sphere_2", null],
+            ["sphere_3", null],
+            ["sphere_cube", null],
+            ["splash", null],
+            ["birds", null],
+            ["puddles", null],
         ]]
     ]
 }
