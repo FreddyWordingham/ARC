@@ -12,7 +12,7 @@ use arc::{
         },
         Settings,
     },
-    sim::render::{Camera, Frame, Grid, Scene, Scheme},
+    sim::render::{painter, Camera, Frame, Grid, Scene, Scheme},
     util::{exec, init},
     values,
 };
@@ -46,7 +46,7 @@ fn main() {
     for (name, frame_settings) in params.render.frames() {
         fmt::sub_section(name);
         let frame = load_frame_settings(&in_dir, &frame_settings);
-        let img = frame.image(arc::sim::render::pipe::colour, &grid);
+        let img = frame.image(painter::lighting::paint, &grid);
         save_frame(&out_dir, name, img);
     }
 

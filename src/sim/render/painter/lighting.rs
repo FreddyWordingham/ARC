@@ -2,7 +2,6 @@
 
 use crate::{
     geom::Ray,
-    // geom::{Ray, Trace},
     img::Shader,
     sim::render::{lighting, Grid, Scheme},
 };
@@ -10,10 +9,10 @@ use nalgebra::Point3;
 use palette::{Gradient, LinSrgba};
 use rand::rngs::ThreadRng;
 
-/// Determine the colour of a given ray.
+/// Paint the ray with the luminance.
 #[inline]
 #[must_use]
-pub fn colour(
+pub fn paint(
     _cam_pos: &Point3<f64>,
     grid: &Grid,
     shader: &Shader,
