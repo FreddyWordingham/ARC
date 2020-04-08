@@ -17,11 +17,6 @@ use rayon::prelude::*;
 use std::f64::consts::PI;
 use std::sync::{Arc, Mutex};
 
-// /// Image splitting factor in each dimension.
-// pub const SPLITTING_FACTOR: usize = 64;
-// /// Distance to travel away from colliding surfaces.
-// const BUMP_DIST: f64 = 1.0e-6;
-
 /// Frame structure.
 pub struct Frame {
     /// Target aspect ratio.
