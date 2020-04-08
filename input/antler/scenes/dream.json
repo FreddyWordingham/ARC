@@ -1,0 +1,29 @@
+{
+    "groups": [
+        [0, [
+            ["banks", null],
+            ["barriers", null],
+            ["bushes", null],
+            ["dog", null],
+            ["downfall", null],
+            ["fjmw", null],
+            ["inner_ring", null],
+            ["klm", null],
+            ["leaves_0", null],
+            ["leaves_1", null],
+            ["leaves_2", null],
+            ["med_ring", null],
+            ["nucleus", null],
+            ["outer_ring", null],
+            ["path", null],
+            ["river", null],
+            ["river_cube", null],
+            ["rocks_0", null],
+            ["rocks_1", null],
+            ["sidewalk", null],
+            ["trees", null],
+            ["umbrella", null],
+            ["whale", null]
+        ]]
+    ]
+}

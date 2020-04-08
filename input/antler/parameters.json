@@ -5,16 +5,16 @@
             "max_depth": 8,
             "padding": 0.01
         },
-        "scene": "riverside",
+        "scene": "dream",
         "frames": {
             "test_img": {
-                "quality": "test",
+                "quality": "high",
                 "shader": "sunny_day",
                 "scheme": "grey",
                 "aspect_ratio": "Widescreen",
-                "fov": 90.0,
-                "cam_pos": [20.0, -20.0, 10.5],
-                "tar_pos": [0.0, 0.0, 0.0]
+                "fov": 60.0,
+                "cam_pos": [40, -62, 17],
+                "tar_pos": [-12, -9, 3]
             }
         }
     }
