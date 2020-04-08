@@ -2,6 +2,7 @@
 
 pub mod hit;
 pub mod lighting;
+pub mod test;
 
 use crate::{
     geom::Ray,

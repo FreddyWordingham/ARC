@@ -12,7 +12,8 @@ use arc::{
         },
         Settings,
     },
-    sim::render::{painter, Camera, Frame, Grid, Scene, Scheme},
+    sim::render::painter,
+    sim::render::{Camera, Frame, Grid, Scene, Scheme},
     util::{exec, init},
     values,
 };
