@@ -32,12 +32,28 @@ pub fn colour(
     } else {
         &backup
     };
+    let grad_1 = if scheme.grads().contains_key(&1) {
+        &scheme.grads().get(&1).expect("Invalid gradient group.")
+    } else {
+        &backup
+    };
 
     if let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
         ray.travel(hit.dist() + shader.bump_dist());
-        let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
 
-        return LinSrgba::from(grad_0.get(x as f32));
+        match hit.group() {
+            0 => {
+                let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
+                return LinSrgba::from(grad_0.get(x as f32));
+            }
+            1 => {
+                let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
+                return LinSrgba::from(grad_1.get(x as f32));
+            }
+            _ => {
+                panic!("Do not know how to handle group: {}", hit.group());
+            }
+        }
     }
 
     Srgba::new(0.2, 0.2, 0.2, 0.2).into_linear()

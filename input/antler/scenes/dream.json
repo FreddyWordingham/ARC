@@ -5,7 +5,6 @@
             ["barriers", null],
             ["bushes", null],
             ["dog", null],
-            ["downfall", null],
             ["fjmw", null],
             ["inner_ring", null],
             ["klm", null],
@@ -16,7 +15,6 @@
             ["nucleus", null],
             ["outer_ring", null],
             ["path", null],
-            ["river", null],
             ["river_cube", null],
             ["rocks_0", null],
             ["rocks_1", null],
@@ -24,6 +22,10 @@
             ["trees", null],
             ["umbrella", null],
             ["whale", null]
+        ]],
+        [1, [
+            ["downfall", null],
+            ["river", null]
         ]]
     ]
 }
