@@ -7,7 +7,7 @@ use crate::{
     sim::render::{lighting, Grid, Scheme},
 };
 use nalgebra::Point3;
-use palette::{Gradient, LinSrgba, Srgba};
+use palette::{Gradient, LinSrgba};
 use rand::rngs::ThreadRng;
 
 /// Determine the colour of a given ray.
@@ -38,17 +38,18 @@ pub fn colour(
         &backup
     };
 
-    if let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
+    let mut col = LinSrgba::default();
+    while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
         ray.travel(hit.dist() + shader.bump_dist());
 
         match hit.group() {
             0 => {
                 let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
-                return LinSrgba::from(grad_0.get(x as f32));
+                return col + LinSrgba::from(grad_0.get(x as f32));
             }
             1 => {
                 let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
-                return LinSrgba::from(grad_1.get(x as f32));
+                col += LinSrgba::from(grad_1.get(x as f32));
             }
             _ => {
                 panic!("Do not know how to handle group: {}", hit.group());
@@ -56,5 +57,5 @@ pub fn colour(
         }
     }
 
-    Srgba::new(0.2, 0.2, 0.2, 0.2).into_linear()
+    col
 }
