@@ -11,5 +11,5 @@
     },
     "sun_pos": [-50.0, -20.0, 75.0],
     "dof_radius": 1e-1,
-    "bump_dist": 1e-2
+    "bump_dist": 1e-6
 }
