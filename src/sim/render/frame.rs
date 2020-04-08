@@ -6,7 +6,7 @@ use crate::{
     geom::Ray,
     img::{AspectRatio, Quality, Shader},
     math::sample::golden,
-    sim::render::{pipe, Camera, Grid, Scheme},
+    sim::render::{Camera, Grid, PipeFunc, Scheme},
 };
 use nalgebra::{Point3, Rotation3, Unit, Vector3};
 use ndarray::Array2;
@@ -60,7 +60,7 @@ impl Frame {
     /// Run a rendering simulation.
     #[inline]
     #[must_use]
-    pub fn image(&self, grid: &Grid) -> Array2<LinSrgba> {
+    pub fn image(&self, pipe: PipeFunc, grid: &Grid) -> Array2<LinSrgba> {
         debug_assert!(self.camera.res().0 % self.quality.section_splits().0 == 0);
         debug_assert!(self.camera.res().1 % self.quality.section_splits().1 == 0);
 
@@ -73,7 +73,7 @@ impl Frame {
             .par_iter()
             .map(|index| {
                 pb.lock().expect("Could not lock progress bar.").tick();
-                let section = self.render_section(*index, grid);
+                let section = self.render_section(pipe, *index, grid);
                 (*index, section)
             })
             .collect();
@@ -87,7 +87,7 @@ impl Frame {
     /// Render a section of the image.
     #[inline]
     #[must_use]
-    fn render_section(&self, index: usize, grid: &Grid) -> Array2<LinSrgba> {
+    fn render_section(&self, pipe: PipeFunc, index: usize, grid: &Grid) -> Array2<LinSrgba> {
         let section_res = self.camera.frame_res(self.quality.section_splits());
 
         let fx = index % self.quality.section_splits().0;
@@ -105,7 +105,7 @@ impl Frame {
                 *section
                     .get_mut((xi, yi))
                     .expect("Could not access section pixel.") =
-                    self.colour_pixel((rx, ry), grid, &mut rng);
+                    self.colour_pixel(pipe, (rx, ry), grid, &mut rng);
             }
         }
 
@@ -117,6 +117,7 @@ impl Frame {
     #[must_use]
     pub fn colour_pixel(
         &self,
+        pipe: PipeFunc,
         pixel: (usize, usize),
         grid: &Grid,
         rng: &mut ThreadRng,
@@ -133,7 +134,7 @@ impl Frame {
             for depth_sample in 0..dof_samples {
                 let ray = self.gen_ray(pixel, offset, sub_sample, depth_sample);
 
-                col += pipe::colour(
+                col += pipe(
                     &ray.pos().clone(),
                     grid,
                     &self.shader,
