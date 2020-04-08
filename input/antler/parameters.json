@@ -13,8 +13,8 @@
                 "scheme": "grey",
                 "aspect_ratio": "Square",
                 "fov": 60.0,
-                "cam_pos": [40, -62, 17],
-                "tar_pos": [-12, -9, 3]
+                "cam_pos": [-12, -52, 4],
+                "tar_pos": [-12, -37, 3]
             }
         }
     }
