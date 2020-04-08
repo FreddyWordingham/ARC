@@ -1,5 +1,6 @@
 //! Painter function alias.
 
+pub mod hit;
 pub mod lighting;
 
 use crate::{
