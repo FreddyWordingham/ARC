@@ -45,11 +45,11 @@ pub fn colour(
         match hit.group() {
             0 => {
                 let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
-                return col + LinSrgba::from(grad_0.get(x as f32));
+                return col + grad_0.get(x as f32);
             }
             1 => {
                 let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
-                col += LinSrgba::from(grad_1.get(x as f32));
+                col += grad_1.get(x as f32);
             }
             _ => {
                 panic!("Do not know how to handle group: {}", hit.group());
