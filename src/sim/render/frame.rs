@@ -208,7 +208,7 @@ impl Frame {
         phi += (sy * sub_delta.1) - (self.camera.delta().1 * 0.5);
 
         let mut ray = Ray::new(pos, forward);
-        *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
+        *ray.dir_mut() = Rotation3::from_axis_angle(&-up, theta)
             * Rotation3::from_axis_angle(&right, phi)
             * ray.dir();
 
@@ -229,7 +229,7 @@ impl Frame {
         let phi = (yi as f64 * self.camera.delta().1) - (self.camera.fov().1 * 0.5);
 
         let mut ray = Ray::new(pos, forward);
-        *ray.dir_mut() = Rotation3::from_axis_angle(&up, theta)
+        *ray.dir_mut() = Rotation3::from_axis_angle(&-up, theta)
             * Rotation3::from_axis_angle(&right, phi)
             * ray.dir();
 
