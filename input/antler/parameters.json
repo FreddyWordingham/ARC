@@ -11,8 +11,8 @@
                 "quality": "test",
                 "shader": "sunny_day",
                 "scheme": "grey",
-                "aspect_ratio": "Widescreen",
-                "fov": 60.0,
+                "aspect_ratio": "Square",
+                "fov": 90.0,
                 "cam_pos": [-12, -52, 4],
                 "tar_pos": [-12, -37, 3]
             }
