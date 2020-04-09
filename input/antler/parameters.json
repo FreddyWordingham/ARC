@@ -10,7 +10,7 @@
             "test_img": {
                 "quality": "test",
                 "shader": "sunny_day",
-                "scheme": "grey",
+                "scheme": "vivid",
                 "aspect_ratio": "Square",
                 "fov": 90.0,
                 "cam_pos": [-12, -52, 4],

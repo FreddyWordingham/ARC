@@ -1,43 +1,98 @@
 {
     "groups": [
-        [0, [
-            ["banks", null],
-            ["barriers", null],
-            ["basin", null],
-            ["bushes", null],
-            ["dog", null],
-            ["fjmw", null],
-            ["klm", null],
-            ["lamps", null],
-            ["leaves_0", null],
-            ["leaves_1", null],
-            ["leaves_2", null],
+        [1, [
+            ["fjmw", null]
+        ]],
+        [2, [
+            ["klm", null]
+        ]],
+        [3, [
+            ["dog", null]
+        ]],
+        [4, [
+            ["umbrella", null]
+        ]],
+        [5, [
+            ["path", null]
+        ]],
+        [6, [
+            ["lamps", null]
+        ]],
+        [7, [
+            ["trees", null]
+        ]],
+        [8, [
+            ["stars", null]
+        ]],
+        [9, [
+            ["stag", null]
+        ]],
+        [10, [
+            ["birds", null]
+        ]],
+        [11, [
+            ["banks", null]
+        ]],
+        [12, [
+            ["walkway", null]
+        ]],
+        [13, [
+            ["leaves_0", null]
+        ]],
+        [14, [
+            ["leaves_1", null]
+        ]],
+        [15, [
+            ["leaves_2", null]
+        ]],
+        [16, [
+            ["river_cube", null]
+        ]],
+        [17, [
+            ["river", null]
+        ]],
+        [18, [
+            ["splash", null]
+        ]],
+        [19, [
+            ["bushes", null]
+        ]],
+        [20, [
+            ["barriers", null]
+        ]],
+        [21, [
+            ["rocks_small", null]
+        ]],
+        [22, [
+            ["rocks_big", null]
+        ]],
+        [23, [
+            ["shatter", null]
+        ]],
+        [24, [
+            ["outer_mirror", null]
+        ]],
+        [25, [
+            ["puddles", null]
+        ]],
+        [26, [
             ["nucleus", null],
-            ["outer_mirror", null],
-            ["path", null],
             ["ring_inner", null],
             ["ring_middle", null],
-            ["ring_outer", null],
-            ["river", null],
-            ["river_cube", null],
-            ["rocks_big", null],
-            ["rocks_small", null],
-            ["shatter", null],
-            ["stag", null],
-            ["stars", null],
-            ["trees", null],
-            ["umbrella", null],
-            ["walkway", null],
-            ["whale", null],
-            ["splash", null],
+            ["ring_outer", null]
+        ]],
+        [27, [
             ["sphere_0", null],
             ["sphere_1", null],
             ["sphere_2", null],
             ["sphere_3", null],
-            ["sphere_cube", null],
-            ["splash", null],
-            ["birds", null],
-            ["puddles", null],
-        ]]
+            ["sphere_cube", null]
+        ]],
+        [28, [
+            ["whale", null]
+        ]],
+        [29, [
+            ["basin", null]
+        ]],
     ]
 }
