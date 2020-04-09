@@ -142,7 +142,6 @@ impl Frame {
                     &self.scheme,
                     ray,
                     rng,
-                    1.0,
                 ) * weighting;
             }
         }

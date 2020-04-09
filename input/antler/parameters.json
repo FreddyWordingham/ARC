@@ -11,10 +11,10 @@
                 "quality": "test_iphone",
                 "shader": "sunny_day",
                 "scheme": "vivid",
-                "aspect_ratio": "IPhoneXS",
-                "fov": 60.0,
-                "cam_pos": [-12, -52, 2.5],
-                "tar_pos": [-12, -37, 3.5]
+                "aspect_ratio": "Square",
+                "fov": 10.0,
+                "cam_pos": [0, -52, 5],
+                "tar_pos": [0, 31, 12.5]
             }
         }
     }

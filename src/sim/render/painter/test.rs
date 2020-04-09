@@ -23,10 +23,7 @@ pub fn paint(
     scheme: &Scheme,
     mut ray: Ray,
     rng: &mut ThreadRng,
-    mut weighting: f64,
 ) -> LinSrgba {
-    debug_assert!(weighting > 0.0);
-
     let mut col = LinSrgba::default();
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
         if weighting < 0.01 {
