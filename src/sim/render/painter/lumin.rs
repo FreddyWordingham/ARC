@@ -10,6 +10,9 @@ use nalgebra::{Point3, Unit, Vector3};
 use palette::LinSrgba;
 use rand::rngs::ThreadRng;
 
+/// Minimum fragment weight to simulate.
+const MIN_WEIGHT: f64 = 0.01;
+
 /// Mirror colouring fraction.
 const MIRROR_COLOURING: f32 = 0.05;
 
@@ -28,11 +31,13 @@ pub fn paint(
     scheme: &Scheme,
     mut ray: Ray,
     rng: &mut ThreadRng,
-    depth: usize,
+    weight: f64,
 ) -> LinSrgba {
+    debug_assert!(weight > 0.0);
+
     let mut col = LinSrgba::default();
 
-    if depth > 8 {
+    if weight <= MIN_WEIGHT {
         return col;
     }
 
@@ -58,16 +63,33 @@ pub fn paint(
                 let crossing = Crossing::new(ray.dir(), hit.side().norm(), 1.0, 1.1);
                 if let Some(trans_dir) = crossing.trans_dir() {
                     let ref_prob = crossing.ref_prob();
+                    let trans_prob = 1.0 - ref_prob;
 
                     let mut ref_ray =
                         Ray::new(ray.pos().clone(), reflect_dir(ray.dir(), hit.side().norm()));
                     ref_ray.travel(shader.bump_dist());
-                    let ref_col = paint(cam_pos, grid, shader, scheme, ref_ray, rng, depth + 1);
+                    let ref_col = paint(
+                        cam_pos,
+                        grid,
+                        shader,
+                        scheme,
+                        ref_ray,
+                        rng,
+                        weight * ref_prob,
+                    );
 
                     let mut trans_ray = ray;
                     *trans_ray.dir_mut() = *trans_dir;
                     trans_ray.travel(shader.bump_dist());
-                    let trans_col = paint(cam_pos, grid, shader, scheme, trans_ray, rng, depth + 1);
+                    let trans_col = paint(
+                        cam_pos,
+                        grid,
+                        shader,
+                        scheme,
+                        trans_ray,
+                        rng,
+                        weight * trans_prob,
+                    );
 
                     return col
                         + (ref_col * ref_prob as f32)
@@ -120,7 +142,7 @@ fn light(cam_pos: &Point3<f64>, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<
 #[inline]
 #[must_use]
 fn shadow(grid: &Grid, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) -> f64 {
-    let mut light_ray = Ray::new(ray.pos().clone(), *norm);
+    let mut light_ray = Ray::new(*ray.pos(), *norm);
     light_ray.travel(shader.bump_dist());
     let light_dir = Unit::new_normalize(shader.sun_pos() - light_ray.pos());
     *light_ray.dir_mut() = light_dir;
