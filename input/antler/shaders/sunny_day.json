@@ -1,8 +1,8 @@
 {
     "light_weights": {
         "ambient": 0.1,
-        "diffuse": 1,
-        "specular": 2,
+        "diffuse": 0.5,
+        "specular": 0.4,
         "specular_power": 16
     },
     "shadow_weights": {

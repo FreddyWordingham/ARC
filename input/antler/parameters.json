@@ -8,13 +8,13 @@
         "scene": "dream",
         "frames": {
             "test_img": {
-                "quality": "test_iphone",
+                "quality": "test",
                 "shader": "sunny_day",
                 "scheme": "vivid",
                 "aspect_ratio": "Square",
-                "fov": 10.0,
-                "cam_pos": [0, -52, 5],
-                "tar_pos": [0, 31, 12.5]
+                "fov": 90.0,
+                "cam_pos": [-12, -52, 2.5],
+                "tar_pos": [-12, -37, 4.5]
             }
         }
     }
