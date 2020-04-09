@@ -12,10 +12,13 @@ pub struct ShadowWeights {
     local: f64,
     /// Ambient shadowing scalar.
     ambient: f64,
+    /// Transparency multiplier.
+    transparency: f64,
 }
 
 impl ShadowWeights {
     clone!(direct, f64);
     clone!(local, f64);
     clone!(ambient, f64);
+    clone!(transparency, f64);
 }

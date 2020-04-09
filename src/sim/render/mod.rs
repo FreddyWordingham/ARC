@@ -10,7 +10,9 @@ pub mod painter;
 pub mod scan;
 pub mod scene;
 pub mod scheme;
+pub mod shadowing;
 
 pub use self::{
     camera::*, frame::*, grid::*, group::*, hit::*, painter::*, scan::*, scene::*, scheme::*,
+    shadowing::*,
 };

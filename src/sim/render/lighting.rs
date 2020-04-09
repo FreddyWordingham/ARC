@@ -1,9 +1,6 @@
 //! Lighting sub-module.
 
-use crate::{
-    geom::{optics, Ray},
-    img::Shader,
-};
+use crate::{geom::optics, img::Shader};
 use nalgebra::{Unit, Vector3};
 
 /// Calculate the ambient lighting coefficient.
@@ -16,12 +13,7 @@ pub fn ambient(shader: &Shader) -> f64 {
 /// Calculate the diffuse lighting coefficient.
 #[inline]
 #[must_use]
-pub fn diffuse(
-    shader: &Shader,
-    ray: &Ray,
-    norm: &Unit<Vector3<f64>>,
-    light_dir: &Unit<Vector3<f64>>,
-) -> f64 {
+pub fn diffuse(shader: &Shader, norm: &Unit<Vector3<f64>>, light_dir: &Unit<Vector3<f64>>) -> f64 {
     shader.light_weights().diffuse() * norm.dot(&light_dir).max(0.0)
 }
 

@@ -3,7 +3,7 @@
 use crate::{
     geom::Ray,
     img::Shader,
-    sim::render::{lighting, Grid, Scheme},
+    sim::render::{lighting, shadowing, Grid, Scheme},
 };
 use nalgebra::{Point3, Unit};
 // use palette::{Gradient, LinSrgba};
@@ -33,9 +33,12 @@ pub fn paint(
                 let light_dir = Unit::new_normalize(shader.sun_pos() - ray.pos());
                 let view_dir = Unit::new_normalize(cam_pos - ray.pos());
 
-                let x = lighting::ambient(&shader)
-                    + lighting::diffuse(&shader, &ray, hit.side().norm(), &light_dir)
+                let light = lighting::ambient(&shader)
+                    + lighting::diffuse(&shader, hit.side().norm(), &light_dir)
                     + lighting::specular(&shader, hit.side().norm(), &light_dir, &view_dir);
+                let shadow = shadowing::direct(grid, shader, ray, hit.side().norm());
+
+                let x = light * shadow;
 
                 col += scheme.get(hit.group()).get(x as f32);
                 break;

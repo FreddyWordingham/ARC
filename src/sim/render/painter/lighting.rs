@@ -31,12 +31,12 @@ pub fn paint(
         match hit.group() {
             0 => {
                 let x = lighting::ambient(shader)
-                    + lighting::diffuse(shader, &ray, hit.side().norm(), &light_dir);
+                    + lighting::diffuse(shader, hit.side().norm(), &light_dir);
                 return col + scheme.get(0).get(x as f32);
             }
             1 => {
                 let x = lighting::ambient(shader)
-                    + lighting::diffuse(shader, &ray, hit.side().norm(), &light_dir);
+                    + lighting::diffuse(shader, hit.side().norm(), &light_dir);
                 col += scheme.get(1).get(x as f32);
             }
             _ => {
