@@ -3,12 +3,18 @@
 use crate::{
     geom::Ray,
     img::Shader,
-    phys::laws::reflect_dir,
+    phys::{laws::reflect_dir, Crossing},
     sim::render::{Grid, Scheme},
 };
 use nalgebra::{Point3, Unit, Vector3};
 use palette::LinSrgba;
 use rand::rngs::ThreadRng;
+
+/// Mirror colouring fraction.
+const MIRROR_COLOURING: f32 = 0.05;
+
+/// Refraction colouring fraction.
+const REFRACTION_COLOURING: f32 = 0.01;
 
 /// Paint the ray if it hits something.
 #[allow(clippy::never_loop)]
@@ -21,17 +27,63 @@ pub fn paint(
     shader: &Shader,
     scheme: &Scheme,
     mut ray: Ray,
-    _rng: &mut ThreadRng,
+    rng: &mut ThreadRng,
+    depth: usize,
 ) -> LinSrgba {
     let mut col = LinSrgba::default();
+
+    if depth > 8 {
+        return col;
+    }
+
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
         ray.travel(hit.dist());
 
         let light = light(cam_pos, shader, &ray, hit.side().norm());
-        let shadow = 0.1;
-        let illumination = light * (1.0 - shadow);
+        let shadow = shadow(grid, shader, &ray, hit.side().norm());
+        let illumination = light * shadow;
 
         match hit.group() {
+            13..=15 => {
+                // Leaves
+                col += scheme.get(hit.group()).get(illumination as f32)
+                    * shader.shadow_weights().transparency() as f32;
+
+                ray.travel(shader.bump_dist());
+            }
+            17..=18 => {
+                // Water
+                col += scheme.get(hit.group()).get(illumination as f32) * REFRACTION_COLOURING;
+
+                let crossing = Crossing::new(ray.dir(), hit.side().norm(), 1.0, 1.1);
+                if let Some(trans_dir) = crossing.trans_dir() {
+                    let ref_prob = crossing.ref_prob();
+
+                    let mut ref_ray =
+                        Ray::new(ray.pos().clone(), reflect_dir(ray.dir(), hit.side().norm()));
+                    ref_ray.travel(shader.bump_dist());
+                    let ref_col = paint(cam_pos, grid, shader, scheme, ref_ray, rng, depth + 1);
+
+                    let mut trans_ray = ray;
+                    *trans_ray.dir_mut() = *trans_dir;
+                    trans_ray.travel(shader.bump_dist());
+                    let trans_col = paint(cam_pos, grid, shader, scheme, trans_ray, rng, depth + 1);
+
+                    return col
+                        + (ref_col * ref_prob as f32)
+                        + (trans_col * (1.0 - ref_prob as f32));
+                } else {
+                    *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
+                    ray.travel(shader.bump_dist());
+                }
+            }
+            23..=25 => {
+                // Mirrors
+                col += scheme.get(hit.group()).get(illumination as f32) * MIRROR_COLOURING;
+
+                *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
+                ray.travel(shader.bump_dist());
+            }
             _ => {
                 col += scheme.get(hit.group()).get(illumination as f32);
                 break;
@@ -42,7 +94,7 @@ pub fn paint(
     col
 }
 
-/// Calculate the lighting.
+/// Calculate the lighting. 0.0 = Complete darkness. 1.0 = Full brightness.
 #[inline]
 #[must_use]
 fn light(cam_pos: &Point3<f64>, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) -> f64 {
@@ -62,4 +114,61 @@ fn light(cam_pos: &Point3<f64>, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<
     specular *= shader.light_weights().specular();
 
     ambient + diffuse + specular
+}
+
+/// Calculate the shadowing multiplier. 0.0 = Full shadow. 1.0 = No shadow.
+#[inline]
+#[must_use]
+fn shadow(grid: &Grid, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) -> f64 {
+    let mut light_ray = Ray::new(ray.pos().clone(), *norm);
+    light_ray.travel(shader.bump_dist());
+    let light_dir = Unit::new_normalize(shader.sun_pos() - light_ray.pos());
+    *light_ray.dir_mut() = light_dir;
+
+    let mut direct = visibility(grid, shader, light_ray);
+
+    direct *= shader.shadow_weights().direct();
+
+    direct
+}
+
+/// Calculate the visibility of a given ray.
+#[inline]
+#[must_use]
+fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray) -> f64 {
+    let mut vis = 1.0;
+    while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
+        if vis <= 0.0 {
+            break;
+        }
+
+        let mut dist = hit.dist();
+
+        match hit.group() {
+            13..=15 => {
+                // Leaves
+                vis *= shader.shadow_weights().transparency();
+                dist += shader.bump_dist();
+            }
+            17..=18 => {
+                // Water
+                // TODO: Could make trace ray refract here.
+                dist += shader.bump_dist();
+            }
+            23..=25 => {
+                // Mirrors
+                *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
+                dist += shader.bump_dist();
+            }
+            _ => {
+                // Opaque
+                vis = 0.0;
+                break;
+            }
+        }
+
+        ray.travel(dist);
+    }
+
+    vis
 }
