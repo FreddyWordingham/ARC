@@ -47,7 +47,7 @@ fn main() {
     for (name, frame_settings) in params.render.frames() {
         fmt::sub_section(name);
         let frame = load_frame_settings(&in_dir, &frame_settings);
-        let img = frame.image(painter::lighting::paint, &grid);
+        let img = frame.image(painter::test::paint, &grid);
         save_frame(&out_dir, name, img);
     }
 
