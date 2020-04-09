@@ -6,12 +6,12 @@
         "specular_power": 16
     },
     "shadow_weights": {
-        "direct": 0.5,
+        "direct": 0.8,
         "local": 0.3,
         "ambient": 0.2,
         "transparency": 0.5
     },
-    "sun_pos": [-50.0, 20.0, 75.0],
+    "sun_pos": [50.0, -70.0, 75.0],
     "dof_radius": 5e-2,
     "bump_dist": 1e-6
 }

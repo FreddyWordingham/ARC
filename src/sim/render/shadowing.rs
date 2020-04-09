@@ -18,14 +18,15 @@ pub fn direct(grid: &Grid, shader: &Shader, mut ray: Ray, norm: &Unit<Vector3<f6
         ray.travel(hit.dist() + shader.bump_dist());
 
         match hit.group() {
-            1 => {
-                return 0.0;
+            13..=15 => {
+                light *= shader.shadow_weights().transparency();
             }
             _ => {
-                light *= shader.shadow_weights().direct();
+                light = 0.0;
+                break;
             }
         }
     }
 
-    light
+    light * shader.shadow_weights().direct()
 }

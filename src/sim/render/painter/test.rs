@@ -46,6 +46,13 @@ pub fn paint(
         let x = light * shadow;
 
         match hit.group() {
+            13..=15 => {
+                col += scheme.get(hit.group()).get(x as f32)
+                    * (weighting as f32)
+                    * shader.shadow_weights().transparency() as f32;
+
+                ray.travel(shader.bump_dist());
+            }
             17..=18 => {
                 col += scheme.get(hit.group()).get(x as f32) * (weighting as f32) * 0.1;
 
