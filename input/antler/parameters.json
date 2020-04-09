@@ -13,8 +13,8 @@
                 "scheme": "vivid",
                 "aspect_ratio": "Widescreen",
                 "fov": 120.0,
-                "cam_pos": [-12, -52, 2.5],
-                "tar_pos": [-12, -37, 3]
+                "cam_pos": [-12, -52, 1.5],
+                "tar_pos": [-12, -37, 3.5]
             }
         }
     }
