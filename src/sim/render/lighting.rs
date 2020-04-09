@@ -1,6 +1,6 @@
 //! Lighting sub-module.
 
-use crate::{geom::optics, img::Shader};
+use crate::{img::Shader, phys::laws};
 use nalgebra::{Unit, Vector3};
 
 /// Calculate the ambient lighting coefficient.
@@ -26,7 +26,7 @@ pub fn specular(
     light_dir: &Unit<Vector3<f64>>,
     view_dir: &Unit<Vector3<f64>>,
 ) -> f64 {
-    let ref_dir = optics::reflect_dir(&Unit::new_normalize(-light_dir.as_ref()), norm);
+    let ref_dir = laws::reflect_dir(&Unit::new_normalize(-light_dir.as_ref()), norm);
     (view_dir.dot(&ref_dir))
         .max(0.0)
         .powi(shader.light_weights().specular_power())

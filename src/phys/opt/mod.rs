@@ -2,6 +2,7 @@
 
 pub mod crossing;
 pub mod environment;
+pub mod laws;
 pub mod optics;
 pub mod spectrum;
 
