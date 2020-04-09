@@ -23,7 +23,7 @@ pub fn paint(
     debug_assert!(shader.bump_dist() > 0.0);
 
     let mut col = LinSrgba::default();
-    if grid.observe(ray.clone(), shader.bump_dist()).is_some() {
+    if grid.observe(ray, shader.bump_dist()).is_some() {
         col += scheme.get(0).get(1.0);
     }
 
