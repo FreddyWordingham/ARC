@@ -23,7 +23,11 @@ pub trait Trace {
 
     /// Distance to the surface along the ray's line of travel and side of collision.
     fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
-        if let Some((dist, inside, norm)) = self.dist_inside_norm(ray) {
+        if let Some((dist, inside, mut norm)) = self.dist_inside_norm(ray) {
+            if ray.dir().dot(&norm) > 0.0 {
+                norm = -norm;
+            }
+
             if inside {
                 Some((dist, Side::Inside { norm }))
             } else {

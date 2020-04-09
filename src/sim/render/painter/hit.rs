@@ -33,13 +33,9 @@ pub fn paint(
     };
 
     let mut col = LinSrgba::default();
-    while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
-        match hit.group() {
-            _ => {
-                col += grad_0.get(1.0);
-                break;
-            }
-        }
+    if grid.observe(ray.clone(), shader.bump_dist()).is_some() {
+        col += grad_0.get(1.0);
+        break;
     }
 
     col
