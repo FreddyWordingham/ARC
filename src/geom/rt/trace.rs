@@ -18,17 +18,21 @@ pub trait Trace {
     /// Distance to the surface along the ray's line of travel and side of collision.
     fn dist_inside(&self, ray: &Ray) -> Option<(f64, bool)>;
 
+    /// Distance to the surface along the ray's line of travel, side of collision, and normal unit vector at the point of collision.
+    fn dist_inside_norm(&self, ray: &Ray) -> Option<(f64, bool, Unit<Vector3<f64>>)>;
+
     /// Distance to the surface along the ray's line of travel and side of collision.
     fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
-        if let Some((dist, norm)) = self.dist_norm(ray) {
-            Some((dist, Side::new(ray.dir(), norm)))
+        if let Some((dist, inside, norm)) = self.dist_inside_norm(ray) {
+            if inside {
+                Some((dist, Side::Inside { norm }))
+            } else {
+                Some((dist, Side::Outside { norm }))
+            }
         } else {
             None
         }
     }
-
-    /// Distance to the surface along the ray's line of travel, side of collision, and normal unit vector at the point of collision.
-    fn dist_inside_norm(&self, ray: &Ray) -> Option<(f64, bool, Unit<Vector3<f64>>)>;
 
     /// Calculate the hit point of a ray.
     #[inline]

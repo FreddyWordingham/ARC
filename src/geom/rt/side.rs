@@ -19,17 +19,6 @@ pub enum Side {
 }
 
 impl Side {
-    /// Determine the side of hit from the travel direction and the surface normal.
-    #[inline]
-    #[must_use]
-    pub fn new(dir: &Unit<Vector3<f64>>, norm: Unit<Vector3<f64>>) -> Self {
-        if dir.dot(&norm) > 0.0 {
-            Self::Inside { norm: -norm }
-        } else {
-            Self::Outside { norm }
-        }
-    }
-
     /// Reference the normal vector.
     #[inline]
     #[must_use]
