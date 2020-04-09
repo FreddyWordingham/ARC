@@ -1,6 +1,6 @@
 //! Trace trait.
 
-use crate::geom::Ray;
+use crate::geom::{Ray, Side};
 use nalgebra::{Point3, Unit, Vector3};
 
 /// Trace trait implementation.
@@ -17,6 +17,15 @@ pub trait Trace {
 
     /// Distance to the surface along the ray's line of travel and side of collision.
     fn dist_inside(&self, ray: &Ray) -> Option<(f64, bool)>;
+
+    /// Distance to the surface along the ray's line of travel and side of collision.
+    fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
+        if let Some((dist, norm)) = self.dist_norm(ray) {
+            Some((dist, Side::new(ray.dir(), norm)))
+        } else {
+            None
+        }
+    }
 
     /// Distance to the surface along the ray's line of travel, side of collision, and normal unit vector at the point of collision.
     fn dist_inside_norm(&self, ray: &Ray) -> Option<(f64, bool, Unit<Vector3<f64>>)>;
