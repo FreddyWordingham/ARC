@@ -21,5 +21,11 @@ pub fn paint(
     _ray: Ray,
     _rng: &mut ThreadRng,
 ) -> LinSrgba {
-    LinSrgba::default()
+    let mut col = LinSrgba::default();
+
+    // while let Some(hit) = root.observe() {
+
+    // }
+
+    col
 }

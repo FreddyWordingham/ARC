@@ -1,7 +1,6 @@
 //! Hit implementation.
 
-use crate::{access, clone, sim::render::Group};
-use nalgebra::{Unit, Vector3};
+use crate::{access, clone, geom::Side, sim::render::Group};
 
 /// Hit collision information.
 #[derive(Clone)]
@@ -11,20 +10,20 @@ pub struct Hit {
     /// Distance to the hit.
     dist: f64,
     /// Normal of the surface.
-    norm: Unit<Vector3<f64>>,
+    side: Side,
 }
 
 impl Hit {
     clone!(group, Group);
-    clone!(dist, f64);
-    access!(norm, Unit<Vector3<f64>>);
+    clone!(dist, dist_mut, f64);
+    access!(side, Side);
 
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(group: Group, dist: f64, norm: Unit<Vector3<f64>>) -> Self {
+    pub fn new(group: Group, dist: f64, side: Side) -> Self {
         debug_assert!(dist > 0.0);
 
-        Self { group, dist, norm }
+        Self { group, dist, side }
     }
 }

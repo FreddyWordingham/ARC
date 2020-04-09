@@ -259,7 +259,7 @@ impl<'a> Grid<'a> {
             Self::Leaf { boundary, tris } => {
                 let mut nearest: Option<Hit> = None;
                 for (group, tri) in tris {
-                    if let Some((dist, norm)) = tri.dist_norm(ray) {
+                    if let Some((dist, side)) = tri.dist_side(ray) {
                         if nearest.is_none()
                             || (nearest
                                 .as_ref()
@@ -267,7 +267,7 @@ impl<'a> Grid<'a> {
                                 .dist()
                                 > dist)
                         {
-                            nearest = Some(Hit::new(*group, dist, norm));
+                            nearest = Some(Hit::new(*group, dist, side));
                         }
                     }
                 }
@@ -324,12 +324,9 @@ impl<'a> Grid<'a> {
         }
         while let Some(cell) = self.find_terminal_cell(ray.pos()) {
             match cell.hit_scan(&ray, bump_dist) {
-                Scan::Surface { hit } | Scan::Both { hit, .. } => {
-                    return Some(Hit::new(
-                        hit.group(),
-                        hit.dist() + dist_travelled,
-                        *hit.norm(),
-                    ));
+                Scan::Surface { mut hit } | Scan::Both { mut hit, .. } => {
+                    *hit.dist_mut() += dist_travelled;
+                    return Some(hit);
                 }
                 Scan::Boundary { dist } => {
                     let d = dist + bump_dist;

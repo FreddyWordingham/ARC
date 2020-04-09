@@ -5,6 +5,7 @@ use nalgebra::{Unit, Vector3};
 
 /// Side of a surface hit.
 #[json]
+#[derive(Clone)]
 pub enum Side {
     /// Inside of mesh hit. d.dot(n) > 0.0
     Inside {
@@ -22,7 +23,7 @@ impl Side {
     /// Reference the normal vector.
     #[inline]
     #[must_use]
-    pub fn norm(&self) -> &Vector3<f64> {
+    pub fn norm(&self) -> &Unit<Vector3<f64>> {
         match self {
             Self::Inside { norm } => norm,
             Self::Outside { norm } => norm,

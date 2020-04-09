@@ -28,11 +28,13 @@ pub fn paint(
 
         match hit.group() {
             0 => {
-                let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
+                let x =
+                    lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.side().norm());
                 return col + scheme.get(0).get(x as f32);
             }
             1 => {
-                let x = lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.norm());
+                let x =
+                    lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.side().norm());
                 col += scheme.get(1).get(x as f32);
             }
             _ => {
