@@ -19,8 +19,10 @@ pub fn paint(
     scheme: &Scheme,
     ray: Ray,
     _rng: &mut ThreadRng,
+    weighting: f64,
 ) -> LinSrgba {
     debug_assert!(shader.bump_dist() > 0.0);
+    debug_assert!(weighting > 0.0);
 
     let mut col = LinSrgba::default();
     if grid.observe(ray, shader.bump_dist()).is_some() {

@@ -19,8 +19,10 @@ pub fn paint(
     scheme: &Scheme,
     mut ray: Ray,
     _rng: &mut ThreadRng,
+    weighting: f64,
 ) -> LinSrgba {
     debug_assert!(shader.bump_dist() > 0.0);
+    debug_assert!(weighting > 0.0);
 
     let mut col = LinSrgba::default();
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
