@@ -8,7 +8,7 @@
         "scene": "dream",
         "frames": {
             "test_img": {
-                "quality": "test_iphone",
+                "quality": "high_iphone",
                 "shader": "sunny_day",
                 "scheme": "vivid",
                 "aspect_ratio": "IPhoneXS",

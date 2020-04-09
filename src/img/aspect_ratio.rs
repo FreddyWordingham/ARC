@@ -35,7 +35,7 @@ impl AspectRatio {
             Self::Silver => 1.0 + 2.0_f64.sqrt(),
             Self::Standard => 16.0 / 9.0,
             Self::Widescreen => 43.0 / 18.0,
-            Self::IPhoneXS => 375.0 / 81.0,
+            Self::IPhoneXS => 1125.0 / 2436.0,
         }
     }
 
