@@ -12,10 +12,13 @@ pub struct LightingWeights {
     diffuse: f64,
     /// Specular lighting scalar.
     specular: f64,
+    /// Specular power factor.
+    specular_power: i32,
 }
 
 impl LightingWeights {
     clone!(ambient, f64);
     clone!(diffuse, f64);
     clone!(specular, f64);
+    clone!(specular_power, i32);
 }

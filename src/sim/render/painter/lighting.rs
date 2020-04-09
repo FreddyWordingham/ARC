@@ -5,7 +5,7 @@ use crate::{
     img::Shader,
     sim::render::{lighting, Grid, Scheme},
 };
-use nalgebra::Point3;
+use nalgebra::{Point3, Unit};
 use palette::LinSrgba;
 use rand::rngs::ThreadRng;
 
@@ -26,15 +26,17 @@ pub fn paint(
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
         ray.travel(hit.dist() + shader.bump_dist());
 
+        let light_dir = Unit::new_normalize(shader.sun_pos() - ray.pos());
+
         match hit.group() {
             0 => {
-                let x =
-                    lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.side().norm());
+                let x = lighting::ambient(shader)
+                    + lighting::diffuse(shader, &ray, hit.side().norm(), &light_dir);
                 return col + scheme.get(0).get(x as f32);
             }
             1 => {
-                let x =
-                    lighting::ambient(shader) + lighting::diffuse(shader, &ray, hit.side().norm());
+                let x = lighting::ambient(shader)
+                    + lighting::diffuse(shader, &ray, hit.side().norm(), &light_dir);
                 col += scheme.get(1).get(x as f32);
             }
             _ => {

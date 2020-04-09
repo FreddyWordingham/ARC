@@ -1,6 +1,9 @@
 //! Lighting sub-module.
 
-use crate::{geom::Ray, img::Shader};
+use crate::{
+    geom::{optics, Ray},
+    img::Shader,
+};
 use nalgebra::{Unit, Vector3};
 
 /// Calculate the ambient lighting coefficient.
@@ -13,8 +16,26 @@ pub fn ambient(shader: &Shader) -> f64 {
 /// Calculate the diffuse lighting coefficient.
 #[inline]
 #[must_use]
-pub fn diffuse(shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) -> f64 {
-    let light_dir = Unit::new_normalize(shader.sun_pos() - ray.pos());
+pub fn diffuse(
+    shader: &Shader,
+    ray: &Ray,
+    norm: &Unit<Vector3<f64>>,
+    light_dir: &Unit<Vector3<f64>>,
+) -> f64 {
+    shader.light_weights().diffuse() * norm.dot(&light_dir).max(0.0)
+}
 
-    shader.light_weights().diffuse() * norm.dot(&light_dir).abs()
+/// Calculate the specular lighting coefficient.
+#[inline]
+#[must_use]
+pub fn specular(
+    shader: &Shader,
+    norm: &Unit<Vector3<f64>>,
+    light_dir: &Unit<Vector3<f64>>,
+    view_dir: &Unit<Vector3<f64>>,
+) -> f64 {
+    let ref_dir = optics::reflect(&Unit::new_normalize(-light_dir.as_ref()), norm);
+    (view_dir.dot(&ref_dir))
+        .max(0.0)
+        .powi(shader.light_weights().specular_power())
 }
