@@ -4,6 +4,7 @@ use crate::{geom::Ray, img::Shader, sim::render::Grid};
 use nalgebra::{Unit, Vector3};
 
 /// Calculate the direct shadowing factor.
+#[allow(clippy::single_match_else)]
 #[inline]
 #[must_use]
 pub fn direct(grid: &Grid, shader: &Shader, mut ray: Ray, norm: &Unit<Vector3<f64>>) -> f64 {

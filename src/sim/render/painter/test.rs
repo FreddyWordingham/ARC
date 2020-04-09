@@ -11,6 +11,8 @@ use palette::LinSrgba;
 use rand::rngs::ThreadRng;
 
 /// Paint the ray if it hits something.
+#[allow(clippy::never_loop)]
+#[allow(clippy::single_match_else)]
 #[inline]
 #[must_use]
 pub fn paint(
@@ -26,16 +28,16 @@ pub fn paint(
         ray.travel(hit.dist() + shader.bump_dist());
 
         match hit.group() {
-            99 => {
+            90..=99 => {
                 break;
             }
             _ => {
                 let light_dir = Unit::new_normalize(shader.sun_pos() - ray.pos());
                 let view_dir = Unit::new_normalize(cam_pos - ray.pos());
 
-                let light = lighting::ambient(&shader)
-                    + lighting::diffuse(&shader, hit.side().norm(), &light_dir)
-                    + lighting::specular(&shader, hit.side().norm(), &light_dir, &view_dir);
+                let light = lighting::ambient(shader)
+                    + lighting::diffuse(shader, hit.side().norm(), &light_dir)
+                    + lighting::specular(shader, hit.side().norm(), &light_dir, &view_dir);
                 let shadow = shadowing::direct(grid, shader, ray, hit.side().norm());
 
                 let x = light * shadow;

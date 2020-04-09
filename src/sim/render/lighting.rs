@@ -14,7 +14,7 @@ pub fn ambient(shader: &Shader) -> f64 {
 #[inline]
 #[must_use]
 pub fn diffuse(shader: &Shader, norm: &Unit<Vector3<f64>>, light_dir: &Unit<Vector3<f64>>) -> f64 {
-    shader.light_weights().diffuse() * norm.dot(&light_dir).max(0.0)
+    shader.light_weights().diffuse() * norm.dot(light_dir).max(0.0)
 }
 
 /// Calculate the specular lighting coefficient.
