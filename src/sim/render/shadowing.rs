@@ -15,6 +15,10 @@ pub fn direct(grid: &Grid, shader: &Shader, mut ray: Ray, norm: &Unit<Vector3<f6
 
     let mut light = 1.0;
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
+        if light < 0.01 {
+            break;
+        }
+
         ray.travel(hit.dist());
 
         match hit.group() {
@@ -24,7 +28,11 @@ pub fn direct(grid: &Grid, shader: &Shader, mut ray: Ray, norm: &Unit<Vector3<f6
             }
             17..=18 => {
                 ray.travel(shader.bump_dist());
-                light *= shader.shadow_weights().transparency();
+
+                let light_dir = Unit::new_normalize(shader.sun_pos() - ray.pos());
+                light *= light_dir.dot(ray.dir()).max(0.0);
+
+                *ray.dir_mut() = light_dir;
             }
             23..=25 => {
                 *ray.dir_mut() = laws::reflect_dir(ray.dir(), hit.side().norm());
