@@ -47,6 +47,7 @@ pub fn paint(
         let light = light(cam_pos, shader, &ray, hit.side().norm());
         let shadow = shadow(grid, shader, &ray, hit.side().norm());
         let illumination = light * shadow;
+        // let illumination = light ;
 
         match hit.group() {
             13..=15 => {
@@ -184,7 +185,7 @@ fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray) -> f64 {
             }
             _ => {
                 // Opaque
-                vis = 0.0;
+                vis = 0.1;
                 break;
             }
         }

@@ -19,8 +19,10 @@ pub enum AspectRatio {
     Standard,
     /// Widescreen. 43:18
     Widescreen,
-    /// IPhone XS. 375:812 (1125 x 2436)
+    /// IPhone XS. (1125 x 2436)
     IPhoneXS,
+    /// IPhone 7. (750 x 1334)
+    IPhone7,
 }
 
 impl AspectRatio {
@@ -36,6 +38,7 @@ impl AspectRatio {
             Self::Standard => 16.0 / 9.0,
             Self::Widescreen => 43.0 / 18.0,
             Self::IPhoneXS => 1125.0 / 2436.0,
+            Self::IPhone7 => 750.0 / 1334.0,
         }
     }
 
@@ -77,6 +80,7 @@ impl Display for AspectRatio {
                 Self::Standard => "Standard",
                 Self::Widescreen => "Widescreen",
                 Self::IPhoneXS => "IPhone XS",
+                Self::IPhone7 => "IPhone 7",
             }
         )
     }
