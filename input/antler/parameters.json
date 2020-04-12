@@ -8,7 +8,7 @@
         "scene": "dream",
         "frames": {
             "test_img": {
-                "quality": "test",
+                "quality": "high",
                 "shader": "sunny_day",
                 "scheme": "vivid",
                 "aspect_ratio": "Square",
