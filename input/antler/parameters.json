@@ -12,9 +12,9 @@
                 "shader": "sunny_day",
                 "scheme": "vivid",
                 "aspect_ratio": "Square",
-                "fov": 30.0,
-                "cam_pos": [-12, -52, 2.5],
-                "tar_pos": [-12, -37, 4.5]
+                "fov": 45.0,
+                "cam_pos": [14.5, -60.5, 2.25],
+                "tar_pos": [10.5, -56.0, 2.25]
             }
         }
     }
