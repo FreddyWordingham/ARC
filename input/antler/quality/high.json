@@ -1,5 +1,5 @@
 {
-    "section_splits": [172, 72],
+    "section_splits": [100, 100],
     "target_pixels": 4953600,
     "super_samples": 4,
     "dof_samples": 21,
