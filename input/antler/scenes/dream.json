@@ -98,10 +98,13 @@
             ["lilies", null]
         ]],
         [31, [
-            ["fox_out", null]
+            ["fox_body", null]
         ]],
         [32, [
             ["fox_in", null]
+        ]],
+        [33, [
+            ["fox_feet", null]
         ]]
     ]
 }
