@@ -8,13 +8,13 @@
         "scene": "dream",
         "frames": {
             "test_img": {
-                "quality": "high",
+                "quality": "test",
                 "shader": "sunny_day",
                 "scheme": "vivid",
                 "aspect_ratio": "Square",
                 "fov": 45.0,
-                "cam_pos": [14.5, -60.5, 2.25],
-                "tar_pos": [10.5, -56.0, 2.25]
+                "cam_pos": [14.5, -61.5, 2.25],
+                "tar_pos": [10.5, -56.5, 2.25]
             }
         }
     }
