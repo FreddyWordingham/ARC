@@ -51,9 +51,9 @@
         [17, [
             ["river", null]
         ]],
-        [18, [
-            ["splash", null]
-        ]],
+        // [18, [
+        //     ["splash", null]
+        // ]],
         [19, [
             ["bushes", null]
         ]],
@@ -95,10 +95,13 @@
             ["basin", null]
         ]],
         [30, [
-            ["fox", null]
+            ["lilies", null]
         ]],
         [31, [
-            ["lilies", null]
+            ["fox_out", null]
+        ]],
+        [32, [
+            ["fox_in", null]
         ]]
     ]
 }
