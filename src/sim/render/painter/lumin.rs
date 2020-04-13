@@ -100,7 +100,7 @@ pub fn paint(
                     ray.travel(shader.bump_dist());
                 }
             }
-            23..=25 => {
+            23..=25 | 39 => {
                 // Mirrors
                 col += scheme.get(hit.group()).get(illumination as f32) * MIRROR_COLOURING;
 
@@ -178,7 +178,7 @@ fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray) -> f64 {
                 // TODO: Could make trace ray refract here.
                 dist += shader.bump_dist();
             }
-            23..=25 => {
+            23..=25 | 39 => {
                 // Mirrors
                 *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
                 dist += shader.bump_dist();

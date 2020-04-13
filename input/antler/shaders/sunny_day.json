@@ -11,7 +11,7 @@
         "ambient": 0.2,
         "transparency": 0.75
     },
-    "sun_pos": [50.0, -70.0, 75.0],
+    "sun_pos": [50.0, -30.0, 75.0],
     "dof_radius": 5e-2,
     "bump_dist": 1e-6
 }
