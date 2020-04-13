@@ -50,7 +50,7 @@ pub fn paint(
         // let illumination = light ;
 
         match hit.group() {
-            13..=15 => {
+            13..=15 | 35..=38 => {
                 // Leaves
                 col += scheme.get(hit.group()).get(illumination as f32)
                     * shader.shadow_weights().transparency() as f32;
@@ -168,7 +168,7 @@ fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray) -> f64 {
         let mut dist = hit.dist();
 
         match hit.group() {
-            13..=15 => {
+            13..=15 | 35..=38 => {
                 // Leaves
                 vis *= shader.shadow_weights().transparency();
                 dist += shader.bump_dist();
