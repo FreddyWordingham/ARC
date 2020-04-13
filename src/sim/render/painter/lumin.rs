@@ -19,6 +19,9 @@ const MIRROR_COLOURING: f32 = 0.05;
 /// Refraction colouring fraction.
 const REFRACTION_COLOURING: f32 = 0.01;
 
+/// Puddle reflection shimmer factor.
+const PUDDLE_SHIMMER: f64 = 24.0;
+
 /// Paint the ray if it hits something.
 #[allow(clippy::never_loop)]
 #[allow(clippy::single_match_else)]
@@ -41,7 +44,9 @@ pub fn paint(
         return col;
     }
 
+    let mut sky = true;
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
+        sky = false;
         ray.travel(hit.dist());
 
         let light = light(cam_pos, shader, &ray, hit.side().norm());
@@ -100,11 +105,23 @@ pub fn paint(
                     ray.travel(shader.bump_dist());
                 }
             }
-            23..=25 | 39 => {
+            23..=24 | 39 => {
                 // Mirrors
                 col += scheme.get(hit.group()).get(illumination as f32) * MIRROR_COLOURING;
 
                 *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
+                ray.travel(shader.bump_dist());
+            }
+            25 => {
+                // Puddles
+                col += scheme.get(hit.group()).get(illumination as f32) * MIRROR_COLOURING;
+
+                *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
+                let theta = ((ray.pos().x * PUDDLE_SHIMMER).sin().powi(2)
+                    * (ray.pos().y * PUDDLE_SHIMMER).sin().powi(2))
+                    * 0.5e-1;
+                let rot = nalgebra::Rotation3::from_axis_angle(&nalgebra::Vector3::y_axis(), theta);
+                *ray.dir_mut() = nalgebra::Unit::new_normalize(rot * ray.dir().as_ref());
                 ray.travel(shader.bump_dist());
             }
             _ => {
@@ -112,6 +129,10 @@ pub fn paint(
                 break;
             }
         }
+    }
+
+    if sky {
+        col += palette::Srgba::new(0.0, 0.0, (1.0 - ray.dir().z).powi(4) as f32, 1.0).into_linear();
     }
 
     col

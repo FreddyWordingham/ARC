@@ -8,13 +8,13 @@
         "scene": "dream",
         "frames": {
             "test_img": {
-                "quality": "iphone7",
+                "quality": "high_iphone",
                 "shader": "sunny_day",
                 "scheme": "vivid",
-                "aspect_ratio": "IPhone7",
-                "fov": 60.0,
-                "cam_pos": [-12, -52, 2.5],
-                "tar_pos": [-12, -37, 3.5]
+                "aspect_ratio": "IPhoneXS",
+                "fov": 30.0,
+                "cam_pos": [36.5, -31.5, 11.75],
+                "tar_pos": [32, -29.5, 10.5]
             }
         }
     }
