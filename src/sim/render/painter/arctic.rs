@@ -102,7 +102,7 @@ pub fn paint(
 
                     return col + (ref_col * ref_prob as f32) + (trans_col * trans_prob as f32);
                 } else {
-                    *ray.dir_mut() = reflect_dir(ray.dir(), hit.side().norm());
+                    *ray.dir_mut() = *crossing.ref_dir();
                     ray.travel(shader.bump_dist());
                 }
             }
@@ -162,21 +162,25 @@ fn shadow(grid: &Grid, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) ->
 fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray) -> f64 {
     let mut vis = 1.0;
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
-        if vis <= 0.0 {
-            break;
-        }
-
-        let mut dist = hit.dist();
-
         match hit.group() {
+            11 => {
+                // Rocks 1
+                vis *= 0.9;
+                let crossing = Crossing::new(ray.dir(), hit.side().norm(), 1.1, 1.0);
+                ray.travel(hit.dist());
+                if let Some(trans_dir) = crossing.trans_dir() {
+                    *ray.dir_mut() = *trans_dir;
+                    ray.travel(shader.bump_dist());
+                } else {
+                    *ray.dir_mut() = *crossing.ref_dir();
+                    ray.travel(shader.bump_dist());
+                }
+            }
             _ => {
                 // Opaque
-                vis = 0.1;
-                break;
+                return 0.0;
             }
         }
-
-        ray.travel(dist);
     }
 
     vis
