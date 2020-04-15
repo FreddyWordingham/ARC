@@ -7,8 +7,8 @@
         },
         "scene": "arctic",
         "frames": {
-            "test_img": {
-                "quality": "test",
+            "high_img": {
+                "quality": "high",
                 "shader": "basic",
                 "scheme": "cold",
                 "aspect_ratio": "IPhoneXS",
