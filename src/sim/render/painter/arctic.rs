@@ -22,7 +22,11 @@ const REFRACTION_COLOURING: f32 = 0.20;
 /// Puddle reflection shimmer factor.
 const PUDDLE_SHIMMER: f64 = 12.0;
 
+/// Refractive index of refracting surfaces.
+const REF_INDEX: f64 = 1.1;
+
 /// Paint the ray if it hits something.
+#[allow(clippy::too_many_arguments)]
 #[allow(clippy::never_loop)]
 #[allow(clippy::single_match_else)]
 #[inline]
@@ -35,6 +39,7 @@ pub fn paint(
     mut ray: Ray,
     rng: &mut ThreadRng,
     weight: f64,
+    mut inside: bool,
 ) -> LinSrgba {
     debug_assert!(shader.bump_dist() > 0.0);
     debug_assert!(weight > 0.0);
@@ -49,7 +54,7 @@ pub fn paint(
         ray.travel(hit.dist());
 
         let light = light(cam_pos, shader, &ray, hit.side().norm());
-        let shadow = shadow(grid, shader, &ray, hit.side().norm());
+        let shadow = shadow(grid, shader, &ray, hit.side().norm(), inside);
         let illumination = light * shadow;
 
         match hit.group() {
@@ -69,7 +74,14 @@ pub fn paint(
                 // Rocks 1
                 col += scheme.get(hit.group()).get(illumination as f32) * REFRACTION_COLOURING;
 
-                let crossing = Crossing::new(ray.dir(), hit.side().norm(), 1.0, 1.1);
+                inside = !inside;
+
+                let (n0, n1) = if inside {
+                    (REF_INDEX, 1.0)
+                } else {
+                    (1.0, REF_INDEX)
+                };
+                let crossing = Crossing::new(ray.dir(), hit.side().norm(), n0, n1);
                 if let Some(trans_dir) = crossing.trans_dir() {
                     let ref_prob = crossing.ref_prob();
                     let trans_prob = 1.0 - ref_prob;
@@ -85,6 +97,7 @@ pub fn paint(
                         ref_ray,
                         rng,
                         weight * ref_prob,
+                        inside,
                     );
 
                     let mut trans_ray = ray;
@@ -98,6 +111,7 @@ pub fn paint(
                         trans_ray,
                         rng,
                         weight * trans_prob,
+                        inside,
                     );
 
                     return col + (ref_col * ref_prob as f32) + (trans_col * trans_prob as f32);
@@ -141,13 +155,13 @@ fn light(cam_pos: &Point3<f64>, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<
 /// Calculate the shadowing multiplier. 0.0 = Full shadow. 1.0 = No shadow.
 #[inline]
 #[must_use]
-fn shadow(grid: &Grid, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) -> f64 {
+fn shadow(grid: &Grid, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>, inside: bool) -> f64 {
     let mut light_ray = Ray::new(*ray.pos(), *norm);
     light_ray.travel(shader.bump_dist());
     let light_dir = Unit::new_normalize(shader.sun_pos() - light_ray.pos());
     *light_ray.dir_mut() = light_dir;
 
-    let mut direct = visibility(grid, shader, light_ray);
+    let mut direct = visibility(grid, shader, light_ray, inside);
 
     direct *= shader.shadow_weights().direct();
 
@@ -159,14 +173,22 @@ fn shadow(grid: &Grid, shader: &Shader, ray: &Ray, norm: &Unit<Vector3<f64>>) ->
 #[allow(clippy::single_match_else)]
 #[inline]
 #[must_use]
-fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray) -> f64 {
+fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray, mut inside: bool) -> f64 {
     let mut vis = 1.0;
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
         match hit.group() {
             11 => {
                 // Rocks 1
                 vis *= 0.9;
-                let crossing = Crossing::new(ray.dir(), hit.side().norm(), 1.1, 1.0);
+                inside = !inside;
+
+                let (n0, n1) = if inside {
+                    (REF_INDEX, 1.0)
+                } else {
+                    (1.0, REF_INDEX)
+                };
+                let crossing = Crossing::new(ray.dir(), hit.side().norm(), n0, n1);
+
                 ray.travel(hit.dist());
                 if let Some(trans_dir) = crossing.trans_dir() {
                     *ray.dir_mut() = *trans_dir;

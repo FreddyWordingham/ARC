@@ -13,4 +13,5 @@ use palette::LinSrgba;
 use rand::rngs::ThreadRng;
 
 /// Fragment painter function.
-pub type Painter = fn(&Point3<f64>, &Grid, &Shader, &Scheme, Ray, &mut ThreadRng, f64) -> LinSrgba;
+pub type Painter =
+    fn(&Point3<f64>, &Grid, &Shader, &Scheme, Ray, &mut ThreadRng, f64, bool) -> LinSrgba;

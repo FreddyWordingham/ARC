@@ -143,6 +143,7 @@ impl Frame {
                     ray,
                     rng,
                     1.0,
+                    false,
                 ) * weighting;
             }
         }
