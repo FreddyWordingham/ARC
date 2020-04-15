@@ -1,0 +1,7 @@
+{
+    "section_splits": [20, 20],
+    "target_pixels": 1000000,
+    "super_samples": null,
+    "dof_samples": null,
+    "shadow_samples": 1
+}
