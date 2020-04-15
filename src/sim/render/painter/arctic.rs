@@ -50,7 +50,9 @@ pub fn paint(
         return col;
     }
 
+    let mut sky = true;
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
+        sky = false;
         ray.travel(hit.dist());
 
         let light = light(cam_pos, shader, &ray, hit.side().norm());
@@ -125,6 +127,11 @@ pub fn paint(
                 break;
             }
         }
+    }
+
+    if sky {
+        let x = (1.0 - ray.dir().z).powi(4);
+        col += palette::Srgba::new(0.0, x as f32, (x * 0.2) as f32, 1.0).into_linear() * 0.25;
     }
 
     col
