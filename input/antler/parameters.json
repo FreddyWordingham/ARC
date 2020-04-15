@@ -1,3 +1,21 @@
 {
-
+    "render": {
+        "grid": {
+            "tar_tris": 10,
+            "max_depth": 8,
+            "padding": 0.01
+        },
+        "scene": "arctic",
+        "frames": {
+            "test_img": {
+                "quality": "test",
+                "shader": "basic",
+                "scheme": "cold",
+                "aspect_ratio": "Square",
+                "fov": 60.0,
+                "cam_pos": [-26, -6, 6],
+                "tar_pos": [-11, -4, 3]
+            }
+        }
+    }
 }
