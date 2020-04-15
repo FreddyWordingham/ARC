@@ -20,7 +20,8 @@ const MIRROR_COLOURING: f32 = 0.15;
 const REFRACTION_COLOURING: f32 = 0.75;
 
 /// Puddle reflection shimmer factor.
-const PUDDLE_SHIMMER: f64 = 12.0;
+// const PUDDLE_SHIMMER: f64 = 12.0;
+const PUDDLE_SHIMMER: f64 = 2.0;
 
 /// Refractive index of refracting surfaces.
 const REF_INDEX: f64 = 1.1;
@@ -50,9 +51,7 @@ pub fn paint(
         return col;
     }
 
-    let mut sky = true;
     while let Some(hit) = grid.observe(ray.clone(), shader.bump_dist()) {
-        sky = false;
         ray.travel(hit.dist());
 
         let light = light(cam_pos, shader, &ray, hit.side().norm());
@@ -122,16 +121,15 @@ pub fn paint(
                     ray.travel(shader.bump_dist());
                 }
             }
+            50 => {
+                col += scheme.get(hit.group()).get(light as f32) * 0.2;
+                break;
+            }
             _ => {
                 col += scheme.get(hit.group()).get(illumination as f32);
                 break;
             }
         }
-    }
-
-    if sky {
-        let x = (1.0 - ray.dir().z).powi(4);
-        col += palette::Srgba::new(0.0, x as f32, (x * 0.2) as f32, 1.0).into_linear() * 0.25;
     }
 
     col
@@ -186,7 +184,7 @@ fn visibility(grid: &Grid, shader: &Shader, mut ray: Ray, mut inside: bool) -> f
         match hit.group() {
             11 => {
                 // Rocks 1
-                vis *= 0.9;
+                vis *= 0.75;
                 inside = !inside;
 
                 let (n0, n1) = if inside {

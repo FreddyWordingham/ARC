@@ -36,6 +36,9 @@
         ]],
         [43, [
             ["penguin_yellow", null]
+        ]],
+        [50, [
+            ["aurora", null]
         ]]
     ]
 }
