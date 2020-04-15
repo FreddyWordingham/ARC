@@ -1,0 +1,17 @@
+{
+    "light_weights": {
+        "ambient": 0.1,
+        "diffuse": 0.5,
+        "specular": 0.4,
+        "specular_power": 16
+    },
+    "shadow_weights": {
+        "direct": 0.8,
+        "local": 0.3,
+        "ambient": 0.2,
+        "transparency": 0.5
+    },
+    "sun_pos": [-10, -25, 30],
+    "dof_radius": 5e-2,
+    "bump_dist": 1e-6
+}
