@@ -17,7 +17,7 @@ const MIN_WEIGHT: f64 = 0.01;
 const MIRROR_COLOURING: f32 = 0.15;
 
 /// Refraction colouring fraction.
-const REFRACTION_COLOURING: f32 = 0.20;
+const REFRACTION_COLOURING: f32 = 0.75;
 
 /// Puddle reflection shimmer factor.
 const PUDDLE_SHIMMER: f64 = 12.0;
