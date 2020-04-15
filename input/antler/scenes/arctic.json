@@ -21,7 +21,16 @@
             ["ice", null]
         ]],
         [40, [
-            ["penguin", null]
+            ["penguin_black", null]
+        ]],
+        [41, [
+            ["penguin_white", null]
+        ]],
+        [42, [
+            ["penguin_orange", null]
+        ]],
+        [43, [
+            ["penguin_yellow", null]
         ]]
     ]
 }
