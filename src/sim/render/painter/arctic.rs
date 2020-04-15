@@ -14,7 +14,7 @@ use rand::rngs::ThreadRng;
 const MIN_WEIGHT: f64 = 0.01;
 
 /// Mirror colouring fraction.
-const MIRROR_COLOURING: f32 = 0.05;
+const MIRROR_COLOURING: f32 = 0.15;
 
 // /// Refraction colouring fraction.
 // const REFRACTION_COLOURING: f32 = 0.01;

@@ -1,15 +1,27 @@
 {
     "groups": [
-        [0, [
-            ["ice", null],
-            ["penguin", null],
-            ["rocks_0", null],
-            ["rocks_1", null],
-            ["rocks_2", null],
-            ["stars", null],
-        ]],
         [1, [
-            ["water", null]
+            ["water", {
+                "trans": [0.0, 0.0, 0.25]
+            }]
+        ]],
+        [10, [
+            ["rocks_0", null]
+        ]],
+        [11, [
+            ["rocks_1", null]
+        ]],
+        [12, [
+            ["rocks_2", null]
+        ]],
+        [20, [
+            ["stars", null]
+        ]],
+        [30, [
+            ["ice", null]
+        ]],
+        [40, [
+            ["penguin", null]
         ]]
     ]
 }
