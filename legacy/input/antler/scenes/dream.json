@@ -98,13 +98,19 @@
             ["lilies", null]
         ]],
         [31, [
-            ["fox_body", null]
+            ["fox_body", {
+                "trans": [0.0, 0.0, -0.1]
+            }]
         ]],
         [32, [
-            ["fox_in", null]
+            ["fox_in", {
+                "trans": [0.0, 0.0, -0.1]
+            }]
         ]],
         [33, [
-            ["fox_feet", null]
+            ["fox_feet", {
+                "trans": [0.0, 0.0, -0.1]
+            }]
         ]],
         [34, [
             ["perch", null]

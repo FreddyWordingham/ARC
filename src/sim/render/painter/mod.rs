@@ -1,5 +1,6 @@
 //! Painter function alias.
 
+pub mod arctic;
 pub mod lumin;
 
 use crate::{
